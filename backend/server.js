@@ -4,6 +4,7 @@ const express = require("express");
 const connectDB = require("./config/dbConfig");
 const cors = require("cors");
 const userRoutes = require("./routes/userRoutes");
+const recipeRoutes = require("./routes/recipeRoutes");
 
 const app = express();
 app.use(cors());
@@ -13,17 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.APP_PORT || 5000;
 
-app.get("/", (req, res) => {
-  res.send("API MERN fonctionne 🚀");
-});
-app.use(
-  "/api/users/",
-  (req, res, next) => {
-    console.log("Hit:", req.method, req.path);
-    next();
-  },
-  userRoutes,
-);
+app.use("/api/users/", userRoutes);
+app.use("/api/recipes/", recipeRoutes);
 
 connectDB();
 

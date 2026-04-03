@@ -1,6 +1,6 @@
 import { type ChangeEvent, type ReactNode, forwardRef } from "react";
 import { Input } from "@/components/ui/input";
-import { Field, FieldDescription, FieldLabel } from "./ui/field";
+import { Field, FieldDescription, FieldLabel } from "../ui/field";
 
 type TextInputProps = {
   label?: string;

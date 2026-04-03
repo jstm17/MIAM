@@ -4,20 +4,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../hooks/useAuth";
 import { toast } from "sonner";
-import { Loading } from "@/components/Loading";
-import { Layout } from "@/components/Layout";
+import { Layout } from "@/components/shared/Layout";
 import { Button } from "@/components/ui/button";
 import {
   registerSchema,
   type RegisterFormData,
 } from "../schemas/registerForm.schemas";
 import type { ApiError } from "../types/error.types";
-import { TextInput } from "@/components/TextInput";
+import { TextInput } from "@/components/shared/TextInput";
 import { FieldGroup } from "@/components/ui/field";
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { register: registerUser, error, loading } = useAuth();
+  const { register: registerUser, error } = useAuth();
 
   const {
     register,
@@ -33,7 +32,10 @@ export const RegisterPage: React.FC = () => {
 
   const onSubmit = async (formData: RegisterFormData) => {
     try {
-      const res = await registerUser(formData.name, formData.password);
+      const res = (await registerUser(
+        formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
+        formData.password,
+      )) as { message: string };
       toast.success(res.message);
       navigate("/login");
     } catch (err: unknown) {
@@ -42,10 +44,8 @@ export const RegisterPage: React.FC = () => {
     }
   };
 
-  if (loading) return <Loading />;
-
   return (
-    <Layout title="Inscription" noHeader className="min-h-screen">
+    <Layout title="Inscription" className="items-center justify-center p-4">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm">
         <FieldGroup>
           <TextInput

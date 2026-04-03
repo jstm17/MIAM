@@ -1,7 +1,7 @@
-import axios from "axios";
+import axiosInstance from "../lib/axiosInstance";
 import type { User } from "../types/user.types";
 
-const USER_URL = "/api/users";
+const USER_URL = "/users";
 
 // 👇 Typage des réponses
 interface AuthResponse {
@@ -19,7 +19,7 @@ export const LoginUser = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const res = await axios.post<AuthResponse>(`${USER_URL}/login`, {
+    const res = await axiosInstance.post<AuthResponse>(`${USER_URL}/login`, {
       name,
       password,
     });
@@ -35,7 +35,7 @@ export const RegisterUser = async (
   password: string,
 ): Promise<AuthResponse> => {
   try {
-    const res = await axios.post<AuthResponse>(`${USER_URL}/register`, {
+    const res = await axiosInstance.post<AuthResponse>(`${USER_URL}/register`, {
       name,
       password,
     });
@@ -50,7 +50,7 @@ export const RegisterUser = async (
 // Get current user
 export const getMe = async (token: string): Promise<{ data: User }> => {
   try {
-    const res = await axios.get<{ data: User }>(`${USER_URL}/me`, {
+    const res = await axiosInstance.get<{ data: User }>(`${USER_URL}/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;

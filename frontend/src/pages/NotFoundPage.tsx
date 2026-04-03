@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Layout } from "../components/Layout";
+import { Layout } from "../components/shared/Layout";
 
 type NotFoundPageProps = {
   children?: ReactNode;

@@ -1,5 +1,3 @@
-import { Ellipsis, LogOut, Pencil, Plus, Trash } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
 import { Typography } from "@/components/shared/Typography";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,12 +8,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { ProfileHeaderSkeleton } from "./skeletons/ProfileHeaderSkeleton";
-import { ProfileUpdateNameDialog } from "./ProfileUpdateNameDialog";
+import { Ellipsis, LogOut, Pencil, Plus, Trash } from "lucide-react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { ProfileDeleteAccountDialog } from "./ProfileDeleteAccountDialog";
+import { ProfileUpdateNameDialog } from "./ProfileUpdateNameDialog";
+import { ProfileHeaderSkeleton } from "./skeletons/ProfileHeaderSkeleton";
 
 export const ProfileHeader = () => {
   const navigate = useNavigate();
@@ -52,14 +52,14 @@ export const ProfileHeader = () => {
           <DropdownMenuGroup>
             <DropdownMenuItem onSelect={() => setUpdateDialogOpen(true)}>
               <Pencil />
-              Modifier son nom
+              Modifier mon nom
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => setDeleteDialogOpen(true)}
               variant="destructive"
             >
               <Trash />
-              Supprimer son compte
+              Supprimer mon compte
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

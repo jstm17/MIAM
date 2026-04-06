@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,17 +13,19 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { FieldGroup } from "../ui/field";
-import { TextInput } from "../shared/TextInput";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useUpdateUserName } from "@/hooks/users/useUpdateUserName";
+import { cn } from "@/lib/utils";
 import {
   updateUserNameSchema,
   type UpdateUserNameFormData,
 } from "@/schemas/updateUserNameForm.schemas";
-import { useUpdateUserName } from "@/hooks/users/useUpdateUserName";
-import { toast } from "sonner";
 import type { ApiError } from "@/types/error.types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { TextInput } from "../shared/TextInput";
+import { FieldGroup } from "../ui/field";
 
 type ProfileUpdateNameDialogProps = {
   open: boolean;

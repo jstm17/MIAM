@@ -1,4 +1,5 @@
-import { createContext, useState, useEffect, type ReactNode } from "react";
+import { useGetStoredToken } from "@/hooks/useGetStoredToken";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 import { LoginUser, RegisterUser, getMe } from "../services/authService";
 import type { User } from "../types/user.types";
 
@@ -6,7 +7,11 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string;
-  login: (name: string, password: string) => Promise<unknown>;
+  login: (
+    name: string,
+    password: string,
+    rememberMe: boolean,
+  ) => Promise<unknown>;
   logout: () => void;
   register: (name: string, password: string) => Promise<unknown>;
   getToken: () => Promise<string>;
@@ -24,26 +29,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { token } = useGetStoredToken();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
-      setLoading(false); // 👈 dans un bloc séparé, pas inline
+      setLoading(false);
       return;
     }
 
     getMe(token)
       .then((data) => setUser(data.data))
       .catch((err: { message?: string }) => {
-        setError(
-          err.message || "Erreur lors de la récupération de l'utilisateur",
-        );
+        setError(err.message || "Utilisateur déconnecté");
         localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
 
-  const login = async (name: string, password: string) => {
+  const login = async (name: string, password: string, rememberMe: boolean) => {
+    console.log("rememberMe", rememberMe);
     setError("");
     const data = await LoginUser(name, password);
     if (data.error) {
@@ -56,7 +61,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const me = await getMe(token); // 👈 plus d'erreur string | undefined
 
-    localStorage.setItem("token", token);
+    if (rememberMe) {
+      localStorage.setItem("token", token);
+    } else {
+      sessionStorage.setItem("token", token);
+    }
     setUser(me.data);
 
     return data;
@@ -64,6 +73,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setUser(null);
     setError("");
   };
@@ -79,7 +89,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const getToken = async (): Promise<string> => {
-    const token = localStorage.getItem("token");
     if (!token) {
       const err = new Error("Token non trouvé");
       setError(err.message);
@@ -89,7 +98,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const refetchUser = async () => {
-    const token = localStorage.getItem("token");
     if (!token) return;
     try {
       const me = await getMe(token);

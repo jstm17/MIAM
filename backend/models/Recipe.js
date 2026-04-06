@@ -18,10 +18,6 @@ const ingredientSchema = new mongoose.Schema(
 
 const instructionSchema = new mongoose.Schema(
   {
-    step: {
-      type: Number,
-      required: true,
-    },
     content: {
       type: String,
       required: true,

@@ -1,5 +1,20 @@
 const mongoose = require("mongoose");
 
+const savedRecipeSchema = new mongoose.Schema(
+  {
+    recipe: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Recipe",
+      required: true,
+    },
+    savedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false },
+);
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -11,12 +26,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    savedRecipes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Recipe",
-      },
-    ],
+    savedRecipes: [savedRecipeSchema],
   },
   {
     timestamps: true,

@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,10 +14,12 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { toast } from "sonner";
-import type { ApiError } from "@/types/error.types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useDeleteUser } from "@/hooks/users/useDeleteUser";
+import { cn } from "@/lib/utils";
+import type { ApiError } from "@/types/error.types";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type ProfileDeleteAccountDialogProps = {
   open: boolean;
@@ -38,8 +38,8 @@ export function ProfileDeleteAccountDialog({
           <DialogHeader>
             <DialogTitle>Supprimer le compte</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est
-              irréversible.
+              Êtes-vous sûr de vouloir supprimer votre compte ? <br /> Cette
+              action est irréversible.
             </DialogDescription>
           </DialogHeader>
           <ProfileForm onOpenChange={onOpenChange} />
@@ -54,8 +54,8 @@ export function ProfileDeleteAccountDialog({
         <DrawerHeader className="text-left">
           <DrawerTitle>Supprimer le compte</DrawerTitle>
           <DialogDescription>
-            Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est
-            irréversible.
+            Êtes-vous sûr de vouloir supprimer votre compte ? <br /> Cette
+            action est irréversible.
           </DialogDescription>
         </DrawerHeader>
         <ProfileForm className="px-4" onOpenChange={onOpenChange} />
@@ -93,6 +93,7 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
   return (
     <form
       onSubmit={(e) => {
+        e.stopPropagation();
         e.preventDefault();
         onSubmit();
       }}

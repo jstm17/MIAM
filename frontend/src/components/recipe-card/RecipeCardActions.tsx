@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,16 +8,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BookmarkIcon, Ellipsis, Pencil, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 import type { Recipe } from "@/types/recipe.types";
 
-import { useNavigate } from "react-router";
-import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
 import { useAuth } from "@/hooks/useAuth";
-import { useDeleteRecipe } from "@/hooks/recipes/useDeleteRecipe";
-import { toast } from "sonner";
 import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
+import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 
 type RecipeCardActionsProps = {
   recipe: Recipe;
@@ -29,15 +29,14 @@ export const RecipeCardActions = ({
 }: RecipeCardActionsProps) => {
   const navigate = useNavigate();
   const { saveRecipe, unsaveRecipe } = useSaveRecipe();
-  const { deleteRecipe } = useDeleteRecipe();
   const { recipes: savedRecipes } = useGetSavedRecipes();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const { user, refetchUser } = useAuth();
+  const { user } = useAuth();
   const { _id, addedBy } = recipe;
 
   const isSaved = savedRecipes.some((r) => r._id === _id);
-  const isMyRecipe =
-    addedBy._id === user?._id || savedRecipes.some((r) => r._id === _id);
+  const isMyRecipe = addedBy._id === user?._id;
 
   const handleSaveRecipe = (
     e: React.MouseEvent,
@@ -52,18 +51,6 @@ export const RecipeCardActions = ({
     }
   };
 
-  const handleDeleteRecipe = (e: React.MouseEvent, recipeId: string) => {
-    e.preventDefault();
-    deleteRecipe(recipeId)
-      .then((data) => {
-        toast.success(data.message);
-        onRemove?.(recipeId);
-        refetchUser();
-      })
-      .catch((error) => {
-        toast.error(error);
-      });
-  };
   return (
     <div className="absolute top-2 right-2 z-10">
       {isMyRecipe ? (
@@ -73,9 +60,9 @@ export const RecipeCardActions = ({
               variant="outline"
               size="icon"
               aria-label="More Options"
-              className="backdrop-blur-xs bg-transparent dark:bg-transparent hover:bg-muted/10 aria-expanded:bg-muted/10"
+              className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
             >
-              <Ellipsis className="text-white mix-blend-difference drop-shadow-[0_0_3px_rgba(0,0,0,1)]" />
+              <Ellipsis color="white" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-fit">
@@ -110,7 +97,10 @@ export const RecipeCardActions = ({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem
-                onClick={(e) => handleDeleteRecipe(e, _id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setDeleteDialogOpen(true);
+                }}
                 variant="destructive"
               >
                 <Trash />
@@ -124,15 +114,22 @@ export const RecipeCardActions = ({
           size={"icon"}
           variant="outline"
           aria-label="Save Recipe"
-          className="backdrop-blur-sm bg-transparent dark:bg-transparent hover:bg-muted/10 aria-expanded:bg-muted/10"
+          className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
           onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
         >
           <BookmarkIcon
-            fill={isSaved ? "currentColor" : undefined}
+            fill={isSaved ? "currentColor" : "transparent"}
             className="text-white"
           />
         </Button>
       )}
+
+      <DeleteRecipeDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        recipeId={_id}
+        onRemove={onRemove}
+      />
     </div>
   );
 };

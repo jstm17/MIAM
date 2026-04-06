@@ -1,15 +1,16 @@
-import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { CheckboxInput } from "@/components/shared/CheckboxInput";
+import { FieldGroup } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../hooks/useAuth";
-import { TextInput } from "../components/shared/TextInput";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Layout } from "../components/shared/Layout";
+import { TextInput } from "../components/shared/TextInput";
 import { Button } from "../components/ui/button";
+import { useAuth } from "../hooks/useAuth";
 import { loginSchema, type LoginFormData } from "../schemas/loginForm.schemas";
 import type { ApiError } from "../types/error.types";
-import { FieldGroup } from "@/components/ui/field";
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -39,6 +41,7 @@ export const LoginPage: React.FC = () => {
       await login(
         formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
         formData.password,
+        formData.rememberMe ?? false,
       );
       navigate("/");
     } catch (err: unknown) {
@@ -49,7 +52,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <Layout title="Connexion" className="items-center justify-center p-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup>
           <TextInput
             label="Nom"
@@ -62,6 +65,18 @@ export const LoginPage: React.FC = () => {
             type="password"
             error={errors.password?.message}
             {...register("password")}
+          />
+          <Controller
+            name="rememberMe"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <CheckboxInput
+                label="Se souvenir de moi"
+                name={field.name}
+                onChange={field.onChange}
+              />
+            )}
           />
           <Button type="submit">Se connecter</Button>
           <Button

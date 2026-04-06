@@ -1,3 +1,4 @@
+import placeholderImage from "@/assets/placeholder-image.jpg";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -7,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import type { Recipe } from "@/types/recipe.types";
 import { AspectRatio } from "../ui/aspect-ratio";
-import placeholderImage from "@/assets/placeholder-image.jpg";
 import { RecipeCardActions } from "./RecipeCardActions";
 
 type RecipeCardProps = {
@@ -19,7 +19,7 @@ export const RecipeCard = ({ recipe, onRemove }: RecipeCardProps) => {
   const { name, categories, image } = recipe;
   console.log(recipe);
   return (
-    <Card className="relative mx-auto w-full max-w-sm gap-0 rounded-2xl p-0">
+    <Card className="relative mx-auto w-full gap-0 rounded-2xl p-0">
       <RecipeCardActions recipe={recipe} onRemove={onRemove} />
       <AspectRatio ratio={21 / 9} className="bg-muted">
         <img

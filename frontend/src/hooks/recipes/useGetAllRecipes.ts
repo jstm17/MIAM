@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { recipeService } from "../../services/recipeService";
+import type { Recipe } from "../../types/recipe.types";
 
 export const useGetAllRecipes = () => {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [totalRecipes, setTotalRecipes] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     recipeService
-      .getAllByUser()
+      .getAll()
       .then((res) => {
         setRecipes(res.data.data);
         setTotalRecipes(res.data.data.length);
@@ -18,5 +19,5 @@ export const useGetAllRecipes = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  return { recipes, totalRecipes, loading, error };
+  return { recipes, setRecipes, totalRecipes, setTotalRecipes, loading, error };
 };

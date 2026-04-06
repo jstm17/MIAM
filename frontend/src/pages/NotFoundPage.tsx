@@ -1,13 +1,61 @@
-import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { Reply, XCircle } from "lucide-react";
+import { type ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "../components/shared/Layout";
 
 type NotFoundPageProps = {
   children?: ReactNode;
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  buttonLink?: string | -1;
 };
-export const NotFoundPage = ({ children }: NotFoundPageProps) => {
+export const NotFoundPage = ({
+  title,
+  description,
+  buttonText,
+  buttonLink,
+}: NotFoundPageProps) => {
+  const navigate = useNavigate();
   return (
-    <Layout title="Oups..." className="min-h-[50vh] text-xl">
-      {children || "Page non trouvée"}
+    <Layout className="min-h-[50vh] text-xl">
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <XCircle />
+          </EmptyMedia>
+          <EmptyTitle>{title || "Page non trouvée"}</EmptyTitle>
+          <EmptyDescription>
+            {description ||
+              "Désolé, la page que vous recherchez n'existe pas ou a été déplacée."}
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => {
+              if (buttonLink === -1) {
+                navigate(-1);
+              } else {
+                navigate(buttonLink || "/");
+              }
+            }}
+          >
+            <Reply />
+            {buttonText || "Retour à l'accueil"}
+          </Button>
+        </EmptyContent>
+      </Empty>
     </Layout>
   );
 };

@@ -96,7 +96,7 @@ exports.Login = async (req, res) => {
 exports.GetMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate({
-      path: "savedRecipes",
+      path: "savedRecipes.recipe",
       populate: [
         { path: "ingredients.ingredient" },
         { path: "categories" },
@@ -133,10 +133,14 @@ exports.SaveRecipe = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $addToSet: { savedRecipes: req.params.recipeId } },
+      {
+        $push: {
+          savedRecipes: { recipe: req.params.recipeId, savedAt: new Date() },
+        },
+      },
       { new: true },
     ).populate({
-      path: "savedRecipes",
+      path: "savedRecipes.recipe",
       populate: [
         { path: "categories" },
         { path: "ingredients.ingredient" },
@@ -163,7 +167,7 @@ exports.UnsaveRecipe = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $pull: { savedRecipes: req.params.recipeId } },
+      { $pull: { savedRecipes: { recipe: req.params.recipeId } } },
       { new: true },
     );
 

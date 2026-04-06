@@ -1,7 +1,12 @@
+import { HomeContent } from "@/components/home/HomeContent";
+import { HomeHeader } from "@/components/home/HomeHeader";
 import { Layout } from "../components/shared/Layout";
-import { useAuth } from "../hooks/useAuth";
 
 export const HomePage = () => {
-  const { user } = useAuth();
-  return <Layout>{user?.name}</Layout>;
+  return (
+    <Layout>
+      <HomeHeader />
+      <HomeContent />
+    </Layout>
+  );
 };

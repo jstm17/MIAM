@@ -34,7 +34,7 @@ export const Typography = (props: TypographyProps) => {
   };
   const weightClasses = {
     normal: "font-normal",
-    medium: "font-medium",
+    semibold: "font-semibold",
     bold: "font-bold",
   };
   const smallClasses = small ? "text-sm leading-none font-medium" : "";

@@ -1,13 +1,10 @@
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/components/ui/item";
-import { Button } from "../ui/button";
 import type { Recipe } from "@/types/recipe.types";
+import { Frown } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
-import { Link } from "react-router-dom";
+import { RecipesFilters } from "../recipe-card/RecipesFilters";
 
 type ProfileSavedRecipesContentProps = {
   recipes: Recipe[];
@@ -21,25 +18,67 @@ export const ProfileSavedRecipesContent = ({
   setRecipes,
   setTotalRecipes,
 }: ProfileSavedRecipesContentProps) => {
+  const navigate = useNavigate();
+
+  const [sort, setSort] = useState("recent");
+
+  const allCategories = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          recipes
+            .flatMap((r) => r?.categories || [])
+            .map((c) => c?.name)
+            .filter(Boolean),
+        ),
+      ),
+    [recipes],
+  );
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    () => allCategories,
+  );
+
+  const filteredRecipes = useMemo(() => {
+    return recipes
+      .filter((recipe) =>
+        recipe?.categories?.some((c) => selectedCategories.includes(c.name)),
+      )
+      .sort((a, b) =>
+        sort === "recent"
+          ? new Date(b.savedAt || b.createdAt).getTime() -
+            new Date(a.savedAt || a.createdAt).getTime()
+          : new Date(a.savedAt || a.createdAt).getTime() -
+            new Date(b.savedAt || b.createdAt).getTime(),
+      );
+  }, [recipes, selectedCategories, sort]);
+
   if (totalElement === 0) {
     return (
-      <Item variant="default">
-        <ItemContent className="items-center gap-2 mt-2">
-          <ItemTitle>Vous n'avez enregistré aucune recette.</ItemTitle>
-          <ItemDescription>
-            <Link to="/">
-              <Button variant="outline" size="sm">
-                Voir les recettes
-              </Button>
-            </Link>
-          </ItemDescription>
-        </ItemContent>
-      </Item>
+      <EmptyCard
+        icon={<Frown />}
+        description="Vous n'avez enregistré aucune recette."
+        buttonText="Voir les recettes"
+        onButtonClick={() => {
+          navigate("/");
+        }}
+      />
     );
   }
   return (
     <>
-      {recipes.map((recipe) => (
+      <RecipesFilters
+        title={
+          totalElement > 1 ? "recettes enregistrées" : "recette enregistrée"
+        }
+        originalRecipes={recipes}
+        totalElement={filteredRecipes.length}
+        sort={sort}
+        setSort={setSort}
+        selectedCategories={selectedCategories}
+        setSelectedCategories={setSelectedCategories}
+      />
+      {filteredRecipes.map((recipe) => (
         <Link to={`/recipe/${recipe._id}`} key={recipe._id}>
           <RecipeCard
             recipe={recipe}

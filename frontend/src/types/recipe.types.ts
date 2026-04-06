@@ -8,7 +8,6 @@ export type RecipeIngredient = {
 };
 
 export type RecipeInstruction = {
-  step: number;
   content: string;
 };
 
@@ -24,6 +23,7 @@ export type Recipe = {
   image: string;
   createdAt: string;
   updatedAt: string;
+  savedAt?: string; // Optional timestamp for when recipe was saved
 };
 
 export type CreateRecipeDto = {

@@ -1,18 +1,18 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../hooks/useAuth";
-import { toast } from "sonner";
 import { Layout } from "@/components/shared/Layout";
+import { TextInput } from "@/components/shared/TextInput";
 import { Button } from "@/components/ui/button";
+import { FieldGroup } from "@/components/ui/field";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useAuth } from "../hooks/useAuth";
 import {
   registerSchema,
   type RegisterFormData,
 } from "../schemas/registerForm.schemas";
 import type { ApiError } from "../types/error.types";
-import { TextInput } from "@/components/shared/TextInput";
-import { FieldGroup } from "@/components/ui/field";
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <Layout title="Inscription" className="items-center justify-center p-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup>
           <TextInput
             label="Nom"

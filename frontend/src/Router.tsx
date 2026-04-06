@@ -1,14 +1,16 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { ProtectedRoute } from "./components/shared/ProtectedRoute.js";
 import { HomePage } from "./pages/HomePage.js";
-import { RegisterPage } from "./pages/RegisterPage.js";
 import { LoginPage } from "./pages/LoginPage.js";
 import { NotFoundPage } from "./pages/NotFoundPage.js";
-import { ShoppingPage } from "./pages/ShoppingPage.js";
-import { RecipeAddPage } from "./pages/RecipeAddPage.js";
-import { SearchPage } from "./pages/SearchPage.js";
 import { ProfilePage } from "./pages/ProfilePage.js";
-import { ProtectedRoute } from "./components/shared/ProtectedRoute.js";
+import { RecipeAddPage } from "./pages/RecipeAddPage.js";
+import { RecipeDetailsPage } from "./pages/RecipeDetailsPage.js";
+import { RecipeUpdatePage } from "./pages/RecipeUpdatePage.js";
+import { RegisterPage } from "./pages/RegisterPage.js";
+import { SearchPage } from "./pages/SearchPage.js";
+import { ShoppingPage } from "./pages/ShoppingPage.js";
 
 export const Router = () => {
   return (
@@ -34,6 +36,17 @@ export const Router = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/recipe-edit/:id"
+          element={
+            <ProtectedRoute>
+              <RecipeUpdatePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/recipe/:id" element={<RecipeDetailsPage />} />
+
         <Route
           path="/shopping-list"
           element={

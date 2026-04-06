@@ -1,9 +1,9 @@
 import { Typography } from "@/components/shared/Typography";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetAllRecipesByUser } from "@/hooks/recipes/useGetAllRecipesByUser";
+import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { ProfileMyRecipesContent } from "./ProfileMyRecipesContent";
 import { ProfileSavedRecipesContent } from "./ProfileSavedRecipesContent";
-import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { ProfileContentSkeleton } from "./skeletons/ProfileContentSkeleton";
 
 export const ProfileContent = () => {
@@ -28,7 +28,7 @@ export const ProfileContent = () => {
           className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
         >
           <Typography variant="body" weight="semibold">
-            Mes recettes ({totalRecipes})
+            Mes recettes
           </Typography>
         </TabsTrigger>
         <TabsTrigger
@@ -36,7 +36,7 @@ export const ProfileContent = () => {
           className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
         >
           <Typography variant="body" weight="semibold">
-            Recettes enregistrées ({totalSavedRecipes})
+            Recettes enregistrées
           </Typography>
         </TabsTrigger>
       </TabsList>

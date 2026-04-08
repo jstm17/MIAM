@@ -5,5 +5,8 @@ const CATEGORY_URL = "/categories";
 export const categoryService = {
   getAll: () => axiosInstance.get(CATEGORY_URL),
 
+  getBySlug: (slug: string) =>
+    axiosInstance.get(`${CATEGORY_URL}/slug/${slug}`),
+
   create: (data: { name: string }) => axiosInstance.post(CATEGORY_URL, data),
 };

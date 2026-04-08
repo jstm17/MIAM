@@ -1,5 +1,6 @@
 const Ingredient = require("../models/Ingredient");
 const Recipe = require("../models/Recipe");
+const { cloudinary } = require("../config/cloudinary");
 
 exports.GetAllIngredients = async (req, res) => {
   try {
@@ -38,6 +39,32 @@ exports.CreateIngredient = async (req, res) => {
 exports.CleanUnusedIngredients = async () => {
   try {
     const usedIngredientIds = await Recipe.distinct("ingredients.ingredient");
+
+    // Récupérer les ingrédients qui vont être supprimés
+    const ingredientsToDelete = await Ingredient.find({
+      _id: { $nin: usedIngredientIds },
+      url: { $exists: true, $ne: null },
+    });
+
+    // Supprimer les images Cloudinary
+    for (const ingredient of ingredientsToDelete) {
+      if (ingredient.url) {
+        try {
+          // Extraire le public_id de l'URL Cloudinary
+          const urlParts = ingredient.url.split("/");
+          const filename = urlParts[urlParts.length - 1];
+          const publicId = `ingredients/${filename.split(".")[0]}`;
+          await cloudinary.uploader.destroy(publicId);
+        } catch (cloudinaryError) {
+          console.error(
+            "Erreur suppression image ingrédient:",
+            ingredient.name,
+            cloudinaryError,
+          );
+        }
+      }
+    }
+
     await Ingredient.deleteMany({ _id: { $nin: usedIngredientIds } });
   } catch (error) {
     console.error("Erreur nettoyage ingrédients:", error);

@@ -7,6 +7,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Frown } from "lucide-react";
 
 type EmptyCardProps = {
   icon?: React.ReactNode;
@@ -14,16 +15,18 @@ type EmptyCardProps = {
   description?: string;
   buttonText?: string;
   onButtonClick?: () => void;
+  clasName?: string;
 };
 export function EmptyCard({
-  icon,
+  icon = <Frown />,
   title,
   description,
   buttonText,
   onButtonClick,
+  clasName,
 }: EmptyCardProps) {
   return (
-    <Empty>
+    <Empty className={clasName}>
       <EmptyHeader>
         {icon && <EmptyMedia variant="icon">{icon}</EmptyMedia>}
         {title && <EmptyTitle>{title}</EmptyTitle>}

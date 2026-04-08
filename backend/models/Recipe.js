@@ -33,6 +33,11 @@ const recipeSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      trim: true,
+    },
     ingredients: [ingredientSchema],
     time: {
       type: Number,

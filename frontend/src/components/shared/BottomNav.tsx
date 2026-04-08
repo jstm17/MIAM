@@ -1,6 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, Search, Plus, ShoppingBasket, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Home, Plus, Search, ShoppingBasket, UserRound } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
   { to: "/", icon: Home },

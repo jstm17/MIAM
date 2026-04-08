@@ -8,6 +8,8 @@ const ingredientSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+    normalizedName: { type: String, unique: true },
+    englishName: { type: String, trim: true },
     url: {
       type: String,
       trim: true,

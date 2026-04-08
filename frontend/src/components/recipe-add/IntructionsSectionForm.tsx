@@ -34,7 +34,7 @@ export const InstructionsSectionForm = ({
           Préparation
         </Typography>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         {fields.map((field, index) => (
           <div key={field.id} className="flex flex-col gap-2">
             <Label htmlFor={`instructions.${index}.content`}>

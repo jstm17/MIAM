@@ -14,6 +14,7 @@ export type RecipeInstruction = {
 export type Recipe = {
   _id: string;
   name: string;
+  slug: string;
   ingredients: RecipeIngredient[];
   time: number;
   categories: Category[];

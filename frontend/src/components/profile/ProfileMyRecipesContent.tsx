@@ -1,5 +1,4 @@
 import type { Recipe } from "@/types/recipe.types";
-import { Frown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
@@ -43,7 +42,7 @@ export const ProfileMyRecipesContent = ({
   if (totalElement === 0) {
     return (
       <EmptyCard
-        icon={<Frown />}
+        title="0 recette disponible"
         description="Vous n'avez ajouté aucune recette."
         buttonText="Ajouter une recette"
         onButtonClick={() => navigate("/recipe-add")}
@@ -63,7 +62,7 @@ export const ProfileMyRecipesContent = ({
         setSelectedCategories={setSelectedCategories}
       />
       {filteredRecipes.map((recipe) => (
-        <Link to={`/recipe/${recipe._id}`} key={recipe._id}>
+        <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
           <RecipeCard
             recipe={recipe}
             onRemove={(id) => {

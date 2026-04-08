@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Spinner } from "../ui/spinner";
 
 type DeleteRecipeDialogProps = {
   open: boolean;
@@ -107,7 +108,7 @@ function ProfileForm({
   onRemove,
   navigate,
 }: ProfileFormProps) {
-  const { deleteRecipe } = useDeleteRecipe();
+  const { deleteRecipe, loading } = useDeleteRecipe();
   const { refetchUser } = useAuth();
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -127,7 +128,9 @@ function ProfileForm({
 
   return (
     <div className={cn("grid items-start gap-6", className)}>
-      <Button onClick={handleDelete}>Supprimer</Button>
+      <Button onClick={handleDelete} disabled={loading}>
+        {loading ? <Spinner /> : "Supprimer"}
+      </Button>
     </div>
   );
 }

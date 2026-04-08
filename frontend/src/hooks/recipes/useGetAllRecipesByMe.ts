@@ -1,8 +1,8 @@
+import type { Recipe } from "@/types/recipe.types";
 import { useEffect, useState } from "react";
 import { recipeService } from "../../services/recipeService";
-import type { Recipe } from "@/types/recipe.types";
 
-export const useGetAllRecipesByUser = () => {
+export const useGetAllRecipesByMe = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [totalRecipes, setTotalRecipes] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -10,7 +10,7 @@ export const useGetAllRecipesByUser = () => {
 
   useEffect(() => {
     recipeService
-      .getAllByUser()
+      .getAllByMe()
       .then((res) => {
         setRecipes(res.data.data);
         setTotalRecipes(res.data.data.length);

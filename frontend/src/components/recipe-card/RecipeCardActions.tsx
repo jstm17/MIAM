@@ -28,13 +28,12 @@ export const RecipeCardActions = ({
   onRemove,
 }: RecipeCardActionsProps) => {
   const navigate = useNavigate();
-  const { saveRecipe, unsaveRecipe } = useSaveRecipe();
+  const { saveRecipe, unsaveRecipe, loading: saving } = useSaveRecipe();
   const { recipes: savedRecipes } = useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { _id, addedBy } = recipe;
-
   const isSaved = savedRecipes.some((r) => r._id === _id);
   const isMyRecipe = addedBy._id === user?._id;
 
@@ -116,6 +115,7 @@ export const RecipeCardActions = ({
           aria-label="Save Recipe"
           className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
           onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
+          disabled={!user || authLoading || saving}
         >
           <BookmarkIcon
             fill={isSaved ? "currentColor" : "transparent"}

@@ -48,7 +48,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [token]);
 
   const login = async (name: string, password: string, rememberMe: boolean) => {
-    console.log("rememberMe", rememberMe);
     setError("");
     const data = await LoginUser(name, password);
     if (data.error) {

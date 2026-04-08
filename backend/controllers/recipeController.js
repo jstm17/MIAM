@@ -6,7 +6,16 @@ const Ingredient = require("../models/Ingredient");
 const Category = require("../models/Category");
 const User = require("../models/User");
 const { CleanUnusedIngredients } = require("./ingredientController");
+const { CleanUnusedCategories } = require("./categoryController");
 const { cloudinary } = require("../config/cloudinary");
+const {
+  resolveIngredients,
+  resolveIngredientsFast,
+} = require("../utils/resolveIngredients");
+const { translateIngredientCached } = require("../utils/translateFoodName");
+const { hydrateIngredientImages } = require("../utils/hydrateIngredientImage");
+const { hydrateCategoryImages } = require("../utils/hydrateCategoryImage");
+const { slugifyRecipe, baseSlugify } = require("../utils/slugify");
 
 // Create recipe
 exports.CreateRecipe = async (req, res) => {
@@ -33,12 +42,15 @@ exports.CreateRecipe = async (req, res) => {
     let imageUrl = req.file?.path || null;
 
     if (!imageUrl) {
+      const query = await translateIngredientCached(name);
+
       const response = await axios.get("https://pixabay.com/api/", {
         params: {
           key: process.env.PIXABAY_API_KEY,
-          q: name,
+          q: `${query} food`,
           image_type: "photo",
           per_page: 3,
+          safesearch: true,
         },
       });
       const pixabayUrl = response.data.hits[0]?.largeImageURL;
@@ -51,19 +63,20 @@ exports.CreateRecipe = async (req, res) => {
     }
 
     // Résolution des ingrédients
-    const resolvedIngredients = await Promise.all(
-      ingredients.map(async ({ ingredient, quantity }) => {
-        let found = await Ingredient.findOne({ name: ingredient });
-        if (!found) found = await Ingredient.create({ name: ingredient });
-        return { ingredient: found._id, quantity };
-      }),
-    );
+    const resolvedIngredients = await resolveIngredientsFast(ingredients);
 
     // Résolution des catégories
+    const newCategoryIds = [];
     const resolvedCategories = await Promise.all(
       categories.map(async (categoryName) => {
         let found = await Category.findOne({ name: categoryName });
-        if (!found) found = await Category.create({ name: categoryName });
+        if (!found) {
+          found = await Category.create({
+            name: categoryName,
+            slug: baseSlugify(categoryName),
+          });
+          newCategoryIds.push(found._id);
+        }
         return found._id;
       }),
     );
@@ -81,11 +94,20 @@ exports.CreateRecipe = async (req, res) => {
 
     await recipe.save();
 
-    return res.status(201).json({
+    const slug = slugifyRecipe(recipe.name, recipe._id);
+    recipe.slug = slug;
+    await recipe.save();
+
+    res.status(201).json({
       error: false,
       message: "Recette créée avec succès",
       data: recipe,
     });
+
+    // 🚀 puis on lance les jobs en background (sans await)
+    const ingredientIds = resolvedIngredients.map((i) => i.ingredient);
+    hydrateIngredientImages(ingredientIds);
+    hydrateCategoryImages(newCategoryIds);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -101,7 +123,7 @@ exports.GetRecipeById = async (req, res) => {
     const recipe = await Recipe.findById(req.params.id)
       .populate("categories")
       .populate("ingredients.ingredient")
-      .populate("addedBy", "name");
+      .populate("addedBy", "name _id");
 
     if (!recipe) {
       return res.status(404).json({
@@ -124,6 +146,64 @@ exports.GetRecipeById = async (req, res) => {
   }
 };
 
+exports.GetRecipeBySlug = async (req, res) => {
+  try {
+    const recipe = await Recipe.findOne({ slug: req.params.slug })
+      .populate("categories")
+      .populate("ingredients.ingredient")
+      .populate("addedBy", "name _id");
+
+    if (!recipe) {
+      return res.status(404).json({
+        error: true,
+        message: "Recette non trouvée",
+      });
+    }
+
+    return res.status(200).json({
+      error: false,
+      message: "Recette trouvée avec succès",
+      data: recipe,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - La recette n'a pas pu être récupérée",
+    });
+  }
+};
+
+exports.GetRecipeByCategory = async (req, res) => {
+  try {
+    const category = await Category.findOne({ slug: req.params.slug });
+
+    if (!category) {
+      return res.status(404).json({
+        error: true,
+        message: "Catégorie non trouvée",
+      });
+    }
+
+    const recipes = await Recipe.find({ categories: category._id })
+      .populate("categories")
+      .populate("ingredients.ingredient")
+      .populate("addedBy", "name _id");
+
+    return res.status(200).json({
+      error: false,
+      message: "Recettes trouvées avec succès",
+      data: recipes,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - Les recettes n'ont pas pu être récupérées",
+    });
+  }
+};
+
 // Get all recipes
 exports.GetAllRecipes = async (req, res) => {
   try {
@@ -131,7 +211,7 @@ exports.GetAllRecipes = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate("categories")
       .populate("ingredients.ingredient")
-      .populate("addedBy", "name");
+      .populate("addedBy", "name _id");
 
     return res.status(200).json({
       error: false,
@@ -147,14 +227,39 @@ exports.GetAllRecipes = async (req, res) => {
   }
 };
 
-// Get all recipes by user
-exports.GetAllRecipesByUser = async (req, res) => {
+// Get all recipes by me
+exports.GetAllRecipesByMe = async (req, res) => {
   try {
     const recipes = await Recipe.find({ addedBy: req.user.id })
       .sort({ createdAt: -1 })
       .populate("categories")
       .populate("ingredients.ingredient")
-      .populate("addedBy", "name");
+      .populate("addedBy", "name _id");
+
+    return res.status(200).json({
+      error: false,
+      message: "Recettes récupérées avec succès",
+      data: recipes,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - Les recettes n'ont pas pu être récupérées",
+    });
+  }
+};
+
+// Get all recipes by user Id
+exports.GetAllRecipesByUserId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const recipes = await Recipe.find({ addedBy: id })
+      .sort({ createdAt: -1 })
+      .populate("categories")
+      .populate("ingredients.ingredient")
+      .populate("addedBy", "name _id");
 
     return res.status(200).json({
       error: false,
@@ -200,37 +305,46 @@ exports.UpdateRecipe = async (req, res) => {
     if (req.file) {
       imageUrl = req.file.path;
     } else if (!req.body.image) {
-      const response = await axios.get("https://pixabay.com/api/", {
-        params: {
-          key: process.env.PIXABAY_API_KEY,
-          q: name,
-          image_type: "photo",
-          per_page: 3,
-        },
-      });
-      const pixabayUrl = response.data.hits[0]?.largeImageURL;
-      if (pixabayUrl) {
-        const cloudinaryRes = await cloudinary.uploader.upload(pixabayUrl, {
-          folder: "recipes",
+      const query = await translateIngredientCached(name);
+      try {
+        const response = await axios.get("https://pixabay.com/api/", {
+          params: {
+            key: process.env.PIXABAY_API_KEY,
+            lang: "fr",
+            q: `${query} food`,
+            image_type: "photo",
+            per_page: 3,
+            safesearch: true,
+          },
         });
-        imageUrl = cloudinaryRes.secure_url;
+        const pixabayUrl = response.data.hits[0]?.largeImageURL;
+        if (pixabayUrl) {
+          const cloudinaryRes = await cloudinary.uploader.upload(pixabayUrl, {
+            folder: "recipes",
+          });
+          imageUrl = cloudinaryRes.secure_url;
+        }
+      } catch (pixabayError) {
+        console.error("Erreur image recette:", pixabayError);
+        // fallback : garder l'ancienne image ou null
       }
     }
 
     // Résolution des ingrédients
-    const resolvedIngredients = await Promise.all(
-      ingredients.map(async ({ ingredient, quantity }) => {
-        let found = await Ingredient.findOne({ name: ingredient });
-        if (!found) found = await Ingredient.create({ name: ingredient });
-        return { ingredient: found._id, quantity };
-      }),
-    );
+    const resolvedIngredients = await resolveIngredientsFast(ingredients);
 
     // Résolution des catégories
+    const newCategoryIds = [];
     const resolvedCategories = await Promise.all(
       categories.map(async (categoryName) => {
         let found = await Category.findOne({ name: categoryName });
-        if (!found) found = await Category.create({ name: categoryName });
+        if (!found) {
+          found = await Category.create({
+            name: categoryName,
+            slug: baseSlugify(categoryName),
+          });
+          newCategoryIds.push(found._id);
+        }
         return found._id;
       }),
     );
@@ -245,17 +359,26 @@ exports.UpdateRecipe = async (req, res) => {
       image: imageUrl,
     };
 
+    if (name && name !== recipe.name) {
+      updateData.slug = slugifyRecipe(name, recipe._id);
+    }
+
     const updatedRecipe = await Recipe.findByIdAndUpdate(id, updateData, {
       new: true,
     })
       .populate("categories")
       .populate("ingredients.ingredient");
 
-    return res.status(200).json({
+    res.status(200).json({
       error: false,
       message: "Recette mise à jour avec succès",
       data: updatedRecipe,
     });
+    const ingredientIds = resolvedIngredients.map((i) => i.ingredient);
+    hydrateIngredientImages(ingredientIds);
+    hydrateCategoryImages(newCategoryIds);
+    CleanUnusedIngredients();
+    CleanUnusedCategories();
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -286,6 +409,20 @@ exports.DeleteRecipe = async (req, res) => {
       });
     }
 
+    // Supprimer l'image Cloudinary si elle existe
+    if (recipe.image) {
+      try {
+        // Extraire le public_id de l'URL Cloudinary
+        const urlParts = recipe.image.split("/");
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = `recipes/${filename.split(".")[0]}`;
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudinaryError) {
+        console.error("Erreur suppression image recette:", cloudinaryError);
+        // Ne pas bloquer la suppression si l'image ne peut pas être supprimée
+      }
+    }
+
     await Recipe.findByIdAndDelete(id);
 
     await User.updateMany(
@@ -293,7 +430,13 @@ exports.DeleteRecipe = async (req, res) => {
       { $pull: { savedRecipes: { recipe: req.params.id } } },
     );
 
+    await User.updateMany(
+      { "savedIngredients.recipe": req.params.id },
+      { $pull: { savedIngredients: { recipe: req.params.id } } },
+    );
+
     await CleanUnusedIngredients();
+    await CleanUnusedCategories();
 
     return res.status(200).json({
       error: false,

@@ -1,6 +1,6 @@
 import { Typography } from "@/components/shared/Typography";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useGetAllRecipesByUser } from "@/hooks/recipes/useGetAllRecipesByUser";
+import { useGetAllRecipesByMe } from "@/hooks/recipes/useGetAllRecipesByMe";
 import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { ProfileMyRecipesContent } from "./ProfileMyRecipesContent";
 import { ProfileSavedRecipesContent } from "./ProfileSavedRecipesContent";
@@ -8,7 +8,7 @@ import { ProfileContentSkeleton } from "./skeletons/ProfileContentSkeleton";
 
 export const ProfileContent = () => {
   const { recipes, setRecipes, totalRecipes, setTotalRecipes, loading } =
-    useGetAllRecipesByUser();
+    useGetAllRecipesByMe();
   const {
     recipes: savedRecipes,
     totalRecipes: totalSavedRecipes,

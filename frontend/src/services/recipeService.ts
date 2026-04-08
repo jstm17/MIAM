@@ -5,9 +5,16 @@ const RECIPE_URL = "/recipes";
 export const recipeService = {
   getAll: () => axiosInstance.get(`${RECIPE_URL}/all`),
 
-  getAllByUser: () => axiosInstance.get(`${RECIPE_URL}`),
+  getAllByMe: () => axiosInstance.get(`${RECIPE_URL}`),
+
+  getAllByUserId: (id: string) => axiosInstance.get(`${RECIPE_URL}/user/${id}`),
 
   getById: (id: string) => axiosInstance.get(`${RECIPE_URL}/${id}`),
+
+  getBySlug: (slug: string) => axiosInstance.get(`${RECIPE_URL}/slug/${slug}`),
+
+  getAllByCategory: (slug: string) =>
+    axiosInstance.get(`${RECIPE_URL}/category/${slug}`),
 
   create: (data: unknown) => axiosInstance.post(`${RECIPE_URL}/`, data),
 

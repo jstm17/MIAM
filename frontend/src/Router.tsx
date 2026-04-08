@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { ProtectedRoute } from "./components/shared/ProtectedRoute.js";
+import { CategoryPage } from "./pages/CategoryPage.js";
 import { HomePage } from "./pages/HomePage.js";
 import { LoginPage } from "./pages/LoginPage.js";
 import { NotFoundPage } from "./pages/NotFoundPage.js";
@@ -11,6 +12,7 @@ import { RecipeUpdatePage } from "./pages/RecipeUpdatePage.js";
 import { RegisterPage } from "./pages/RegisterPage.js";
 import { SearchPage } from "./pages/SearchPage.js";
 import { ShoppingPage } from "./pages/ShoppingPage.js";
+import { UserPage } from "./pages/UserPage";
 
 export const Router = () => {
   return (
@@ -44,9 +46,6 @@ export const Router = () => {
             </ProtectedRoute>
           }
         />
-
-        <Route path="/recipe/:id" element={<RecipeDetailsPage />} />
-
         <Route
           path="/shopping-list"
           element={
@@ -55,6 +54,10 @@ export const Router = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/recipe/:slug" element={<RecipeDetailsPage />} />
+        <Route path="/category/:slug" element={<CategoryPage />} />
+        <Route path="/chef/:slug" element={<UserPage />} />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { Recipe } from "@/types/recipe.types";
+import { UserRound } from "lucide-react";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { RecipeCardActions } from "./RecipeCardActions";
 
@@ -16,8 +17,8 @@ type RecipeCardProps = {
 };
 
 export const RecipeCard = ({ recipe, onRemove }: RecipeCardProps) => {
-  const { name, categories, image } = recipe;
-  console.log(recipe);
+  const { name, categories, image, addedBy } = recipe;
+
   return (
     <Card className="relative mx-auto w-full gap-0 rounded-2xl p-0">
       <RecipeCardActions recipe={recipe} onRemove={onRemove} />
@@ -32,7 +33,12 @@ export const RecipeCard = ({ recipe, onRemove }: RecipeCardProps) => {
         />
       </AspectRatio>
       <CardHeader className="p-2 bg-white">
-        <CardTitle>{name}</CardTitle>
+        <CardTitle className="flex justify-between items-center gap-4">
+          {name}
+          <Badge variant={"ghost"} className="text-foreground/50 p-0">
+            <UserRound /> {addedBy.name}
+          </Badge>
+        </CardTitle>
         <CardDescription className="flex gap-2">
           {categories.map((category) => (
             <Badge key={category._id} variant="secondary">

@@ -1,4 +1,4 @@
-import { useGetCategories } from "@/hooks/categories/useGetAllCategories";
+import { useGetAllCategories } from "@/hooks/categories/useGetAllCategories";
 import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
 import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
 import { Plus, Tags, X } from "lucide-react";
@@ -27,7 +27,7 @@ export const CategoriesSectionForm = ({
   errors,
   trigger,
 }: CategoriesSectionFormProps) => {
-  const { categories: allCategories } = useGetCategories();
+  const { categories: allCategories } = useGetAllCategories();
 
   const [categoryInput, setCategoryInput] = useState("");
   const categories = useWatch({ control, name: "categories" }) || [];
@@ -101,7 +101,7 @@ export const CategoriesSectionForm = ({
         </div>
         <datalist id="categories-list">
           {allCategories.map((cat) => (
-            <option key={cat} value={cat} />
+            <option key={cat._id} value={cat.name} />
           ))}
         </datalist>
       </div>

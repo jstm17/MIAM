@@ -33,15 +33,26 @@ export function RecipeAddPage() {
   } = useForm<AddRecipeFormData>({
     resolver: zodResolver(addRecipeSchema),
     defaultValues: {
-      ingredients: [{ ingredient: "", quantity: "" }],
-      instructions: [{ content: "" }],
+      name: "Pain",
+      time: 30,
+      personsNumber: 4,
+      ingredients: [
+        { ingredient: "Poulet", quantity: "1" },
+        { ingredient: "Sel", quantity: "1 pincée" },
+        { ingredient: "Eau", quantity: "500 ml" },
+        { ingredient: "Pâte", quantity: "500 ml" },
+        { ingredient: "Pate", quantity: "500 ml" },
+        { ingredient: "Pâte brisée", quantity: "500 ml" },
+      ],
+      instructions: [{ content: "1" }],
+      categories: ["Italienne", "Rapide"],
     },
   });
 
   const onSubmit = async (formData: AddRecipeFormData) => {
     try {
       const res = await addRecipe(formData);
-      navigate("/profile");
+      navigate("/recipe/" + res.data.slug);
       toast.success(res.message);
     } catch (err: unknown) {
       const apiError = err as ApiError;

@@ -29,8 +29,8 @@ export const Typography = (props: TypographyProps) => {
   };
   const sizeClasses = {
     sm: "text-sm",
-    md: "text-base",
-    lg: "text-lg",
+    md: "text-base!",
+    lg: "text-lg!",
   };
   const weightClasses = {
     normal: "font-normal",

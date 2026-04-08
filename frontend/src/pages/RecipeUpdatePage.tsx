@@ -46,8 +46,6 @@ export function RecipeUpdatePage() {
     },
   });
 
-  console.log(recipe);
-
   useEffect(() => {
     if (recipe) {
       reset({
@@ -69,15 +67,18 @@ export function RecipeUpdatePage() {
 
   const onSubmit = async (formData: UpdateRecipeFormData) => {
     try {
-      console.log(formData);
       const res = await updateRecipe(id!, formData);
-      navigate(-1);
+      navigate(`/recipe/${res.data.slug}`);
       toast.success(res.message);
     } catch (err: unknown) {
       const apiError = err as ApiError;
       toast.error(apiError.message);
     }
   };
+
+  if (loading || updateLoading) {
+    return <Loading />;
+  }
 
   if (user!._id !== recipe?.addedBy._id) {
     return (
@@ -99,10 +100,6 @@ export function RecipeUpdatePage() {
         buttonLink={-1}
       />
     );
-  }
-
-  if (loading || updateLoading) {
-    return <Loading />;
   }
 
   return (

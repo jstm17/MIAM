@@ -1,5 +1,4 @@
 import { useGetAllRecipes } from "@/hooks/recipes/useGetAllRecipes";
-import { Frown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
@@ -10,29 +9,36 @@ import { HomeContentSkeleton } from "./skeletons/HomeContentSkeleton";
 export const HomeContent = () => {
   const { recipes, setRecipes, totalRecipes, setTotalRecipes, loading } =
     useGetAllRecipes();
-  console.log(recipes);
   const navigate = useNavigate();
   const [sort, setSort] = useState("recent");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   useEffect(() => {
     const allCategories = Array.from(
       new Set(recipes.flatMap((r) => r.categories).map((c) => c.name)),
     );
     setSelectedCategories(allCategories);
+
+    const allUsers = Array.from(
+      new Set(recipes.map((recipe) => recipe.addedBy?._id).filter(Boolean)),
+    );
+    setSelectedUsers(allUsers as string[]);
   }, [recipes]);
 
   const filteredRecipes = useMemo(() => {
     return recipes
-      .filter((recipe) =>
-        recipe.categories.some((c) => selectedCategories.includes(c.name)),
+      .filter(
+        (recipe) =>
+          recipe.categories.some((c) => selectedCategories.includes(c.name)) &&
+          selectedUsers.includes(recipe.addedBy?._id ?? ""),
       )
       .sort((a, b) =>
         sort === "recent"
           ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       );
-  }, [recipes, selectedCategories, sort]);
+  }, [recipes, selectedCategories, selectedUsers, sort]);
 
   if (loading) {
     return <HomeContentSkeleton />;
@@ -41,8 +47,8 @@ export const HomeContent = () => {
   if (totalRecipes === 0) {
     return (
       <EmptyCard
-        icon={<Frown />}
-        description="Vous n'avez ajouté aucune recette."
+        title="0 recette disponible"
+        description="Personne n'a ajouté de recette."
         buttonText="Ajouter une recette"
         onButtonClick={() => navigate("/recipe-add")}
       />
@@ -59,9 +65,11 @@ export const HomeContent = () => {
         setSort={setSort}
         selectedCategories={selectedCategories}
         setSelectedCategories={setSelectedCategories}
+        selectedUsers={selectedUsers}
+        setSelectedUsers={setSelectedUsers}
       />
       {filteredRecipes.map((recipe) => (
-        <Link to={`/recipe/${recipe._id}`} key={recipe._id}>
+        <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
           <RecipeCard
             recipe={recipe}
             onRemove={(id) => {

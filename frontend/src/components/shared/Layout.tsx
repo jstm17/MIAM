@@ -21,7 +21,9 @@ export const Layout = ({
         className={`w-screen min-h-screen flex flex-col max-w-lg mx-auto ${className}`}
       >
         {title && (
-          <h1 className={`text-${titleSize} font-bold mb-4`}>{title}</h1>
+          <h1 className={`text-${titleSize} font-bold mb-4 text-center`}>
+            {title}
+          </h1>
         )}
         {children}
       </main>

@@ -4,7 +4,7 @@ export const HomeContentSkeleton = () => {
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="justify-between flex items-center">
-        <Skeleton className="h-5 w-2/5" />
+        <Skeleton className="h-5 w-1/2" />
         <Skeleton className="h-8 w-8 rounded-xl" />
       </div>
       {/* Recipe cards */}

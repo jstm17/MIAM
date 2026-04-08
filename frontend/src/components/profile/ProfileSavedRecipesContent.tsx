@@ -1,6 +1,6 @@
 import type { Recipe } from "@/types/recipe.types";
 import { Frown } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
@@ -35,14 +35,29 @@ export const ProfileSavedRecipesContent = ({
     [recipes],
   );
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    () => allCategories,
+  const allChefs = useMemo(
+    () =>
+      Array.from(
+        new Set(recipes.map((recipe) => recipe.addedBy?._id).filter(Boolean)),
+      ),
+    [recipes],
   );
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSelectedCategories(allCategories);
+    setSelectedUsers(allChefs as string[]);
+  }, [allCategories, allChefs]);
 
   const filteredRecipes = useMemo(() => {
     return recipes
-      .filter((recipe) =>
-        recipe?.categories?.some((c) => selectedCategories.includes(c.name)),
+      .filter(
+        (recipe) =>
+          recipe?.categories?.some((c) =>
+            selectedCategories.includes(c.name),
+          ) && selectedUsers.includes(recipe.addedBy?._id ?? ""),
       )
       .sort((a, b) =>
         sort === "recent"
@@ -51,7 +66,7 @@ export const ProfileSavedRecipesContent = ({
           : new Date(a.savedAt || a.createdAt).getTime() -
             new Date(b.savedAt || b.createdAt).getTime(),
       );
-  }, [recipes, selectedCategories, sort]);
+  }, [recipes, selectedCategories, selectedUsers, sort]);
 
   if (totalElement === 0) {
     return (
@@ -77,9 +92,11 @@ export const ProfileSavedRecipesContent = ({
         setSort={setSort}
         selectedCategories={selectedCategories}
         setSelectedCategories={setSelectedCategories}
+        selectedUsers={selectedUsers}
+        setSelectedUsers={setSelectedUsers}
       />
       {filteredRecipes.map((recipe) => (
-        <Link to={`/recipe/${recipe._id}`} key={recipe._id}>
+        <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
           <RecipeCard
             recipe={recipe}
             onRemove={(id) => {

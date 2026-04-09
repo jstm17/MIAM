@@ -12,12 +12,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: "https://miam-recette.vercel.app",
     credentials: true,
   }),
 );
 
-app.options("*", cors());
+app.options("/(.*)", cors());
 
 app.use(cookieParser());
 

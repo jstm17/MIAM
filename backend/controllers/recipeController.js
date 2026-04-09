@@ -2,20 +2,20 @@ require("dotenv").config();
 
 const axios = require("axios");
 const Recipe = require("../models/Recipe");
-const Ingredient = require("../models/Ingredient");
 const Category = require("../models/Category");
 const User = require("../models/User");
 const { CleanUnusedIngredients } = require("./ingredientController");
 const { CleanUnusedCategories } = require("./categoryController");
 const { cloudinary } = require("../config/cloudinary");
-const {
-  resolveIngredients,
-  resolveIngredientsFast,
-} = require("../utils/resolveIngredients");
-const { translateIngredientCached } = require("../utils/translateFoodName");
+const { resolveIngredientsFast } = require("../utils/resolveIngredients");
+const { resolveCategories } = require("../utils/resolveCategories");
 const { hydrateIngredientImages } = require("../utils/hydrateIngredientImage");
 const { hydrateCategoryImages } = require("../utils/hydrateCategoryImage");
-const { slugifyRecipe, baseSlugify } = require("../utils/slugify");
+const { slugifyRecipe } = require("../utils/slugify");
+const { translateToEnglish } = require("../utils/translate");
+const {
+  fetchAndUploadRecipeImage,
+} = require("../utils/fetchAndUploadRecipeImage");
 
 // Create recipe
 exports.CreateRecipe = async (req, res) => {
@@ -39,47 +39,11 @@ exports.CreateRecipe = async (req, res) => {
       });
     }
 
-    let imageUrl = req.file?.path || null;
+    const imageUrl = req.file?.path || (await fetchAndUploadRecipeImage(name));
 
-    if (!imageUrl) {
-      const query = await translateIngredientCached(name);
-
-      const response = await axios.get("https://pixabay.com/api/", {
-        params: {
-          key: process.env.PIXABAY_API_KEY,
-          q: `${query} food`,
-          image_type: "photo",
-          per_page: 3,
-          safesearch: true,
-        },
-      });
-      const pixabayUrl = response.data.hits[0]?.largeImageURL;
-      if (pixabayUrl) {
-        const cloudinaryRes = await cloudinary.uploader.upload(pixabayUrl, {
-          folder: "recipes",
-        });
-        imageUrl = cloudinaryRes.secure_url;
-      }
-    }
-
-    // Résolution des ingrédients
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-
-    // Résolution des catégories
-    const newCategoryIds = [];
-    const resolvedCategories = await Promise.all(
-      categories.map(async (categoryName) => {
-        let found = await Category.findOne({ name: categoryName });
-        if (!found) {
-          found = await Category.create({
-            name: categoryName,
-            slug: baseSlugify(categoryName),
-          });
-          newCategoryIds.push(found._id);
-        }
-        return found._id;
-      }),
-    );
+    const { resolvedCategories, newCategoryIds } =
+      await resolveCategories(categories);
 
     const recipe = new Recipe({
       name,
@@ -94,8 +58,7 @@ exports.CreateRecipe = async (req, res) => {
 
     await recipe.save();
 
-    const slug = slugifyRecipe(recipe.name, recipe._id);
-    recipe.slug = slug;
+    recipe.slug = slugifyRecipe(recipe.name, recipe._id);
     await recipe.save();
 
     res.status(201).json({
@@ -104,7 +67,7 @@ exports.CreateRecipe = async (req, res) => {
       data: recipe,
     });
 
-    // 🚀 puis on lance les jobs en background (sans await)
+    // jobs en background
     const ingredientIds = resolvedIngredients.map((i) => i.ingredient);
     hydrateIngredientImages(ingredientIds);
     hydrateCategoryImages(newCategoryIds);
@@ -278,8 +241,8 @@ exports.GetAllRecipesByUserId = async (req, res) => {
 // Update recipe
 exports.UpdateRecipe = async (req, res) => {
   try {
-    const { id } = req.params; // 👈 manquait
-    const { name, time, personsNumber } = req.body; // 👈 manquait
+    const { id } = req.params;
+    const { name, time, personsNumber } = req.body;
     const categories = JSON.parse(req.body.categories);
     const ingredients = JSON.parse(req.body.ingredients);
     const instructions = JSON.parse(req.body.instructions);
@@ -287,10 +250,9 @@ exports.UpdateRecipe = async (req, res) => {
     const recipe = await Recipe.findById(id);
 
     if (!recipe) {
-      return res.status(404).json({
-        error: true,
-        message: "Recette non trouvée",
-      });
+      return res
+        .status(404)
+        .json({ error: true, message: "Recette non trouvée" });
     }
 
     if (recipe.addedBy.toString() !== req.user.id) {
@@ -301,53 +263,15 @@ exports.UpdateRecipe = async (req, res) => {
     }
 
     let imageUrl = recipe.image;
-
     if (req.file) {
       imageUrl = req.file.path;
     } else if (!req.body.image) {
-      const query = await translateIngredientCached(name);
-      try {
-        const response = await axios.get("https://pixabay.com/api/", {
-          params: {
-            key: process.env.PIXABAY_API_KEY,
-            lang: "fr",
-            q: `${query} food`,
-            image_type: "photo",
-            per_page: 3,
-            safesearch: true,
-          },
-        });
-        const pixabayUrl = response.data.hits[0]?.largeImageURL;
-        if (pixabayUrl) {
-          const cloudinaryRes = await cloudinary.uploader.upload(pixabayUrl, {
-            folder: "recipes",
-          });
-          imageUrl = cloudinaryRes.secure_url;
-        }
-      } catch (pixabayError) {
-        console.error("Erreur image recette:", pixabayError);
-        // fallback : garder l'ancienne image ou null
-      }
+      imageUrl = (await fetchAndUploadRecipeImage(name)) || recipe.image;
     }
 
-    // Résolution des ingrédients
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-
-    // Résolution des catégories
-    const newCategoryIds = [];
-    const resolvedCategories = await Promise.all(
-      categories.map(async (categoryName) => {
-        let found = await Category.findOne({ name: categoryName });
-        if (!found) {
-          found = await Category.create({
-            name: categoryName,
-            slug: baseSlugify(categoryName),
-          });
-          newCategoryIds.push(found._id);
-        }
-        return found._id;
-      }),
-    );
+    const { resolvedCategories, newCategoryIds } =
+      await resolveCategories(categories);
 
     const updateData = {
       name,
@@ -374,6 +298,8 @@ exports.UpdateRecipe = async (req, res) => {
       message: "Recette mise à jour avec succès",
       data: updatedRecipe,
     });
+
+    // jobs en background
     const ingredientIds = resolvedIngredients.map((i) => i.ingredient);
     hydrateIngredientImages(ingredientIds);
     hydrateCategoryImages(newCategoryIds);

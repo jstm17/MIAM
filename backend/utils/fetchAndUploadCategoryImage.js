@@ -1,12 +1,12 @@
 const axios = require("axios");
 const { cloudinary } = require("../config/cloudinary");
-const { translateIngredientCached } = require("./translateFoodName");
+const { translateCategoryCached } = require("./translateCategoryCached");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const fetchAndUploadCategoryImage = async (name, retries = 3) => {
   try {
-    const query = await translateIngredientCached(name);
+    const query = (await translateCategoryCached(name)).englishName || name;
 
     const response = await axios.get("https://pixabay.com/api/", {
       params: {

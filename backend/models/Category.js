@@ -13,6 +13,7 @@ const categorySchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+    englishName: { type: String },
     image: {
       type: String,
     },

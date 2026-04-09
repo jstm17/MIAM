@@ -6,7 +6,7 @@ const {
 } = require("../controllers/ingredientController");
 const { auth } = require("../middlewares/authMiddleware");
 
-router.get("/", auth, GetAllIngredients);
+router.get("/", GetAllIngredients);
 router.post("/", auth, CreateIngredient);
 
 module.exports = router;

@@ -169,6 +169,8 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --spacing-safe-bottom: calc(env(safe-area-inset-bottom) + 16px);
 }
 
 @layer base {

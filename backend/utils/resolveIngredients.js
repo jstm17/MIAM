@@ -2,7 +2,7 @@ const Ingredient = require("../models/Ingredient");
 const {
   fetchAndUploadIngredientImage,
 } = require("./fetchAndUploadIngredientImage");
-const { normalizeIngredientName } = require("./normalizeIngredientName");
+const { translateIngredientCached } = require("./translateIngredientCached");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -16,7 +16,6 @@ const resolveIngredients = async (ingredients) => {
       const url = await fetchAndUploadIngredientImage(ingredient);
       found = await Ingredient.create({
         name: ingredient,
-        normalizedName: normalizeIngredientName(ingredient),
         url,
       });
     } else if (!found.url) {
@@ -36,17 +35,7 @@ const resolveIngredientsFast = async (ingredients) => {
   const resolved = [];
 
   for (const { ingredient, quantity } of ingredients) {
-    let found = await Ingredient.findOne({ name: ingredient });
-
-    if (!found) {
-      // on crée sans image
-      found = await Ingredient.create({
-        name: ingredient,
-        normalizedName: normalizeIngredientName(ingredient),
-        url: null,
-      });
-    }
-
+    const found = await translateIngredientCached(ingredient);
     resolved.push({ ingredient: found._id, quantity });
   }
 

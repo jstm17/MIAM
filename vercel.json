@@ -1,0 +1,15 @@
+{
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "vite"
+    },
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/api",
+      "buildCommand": "npm install",
+      "devCommand": "npm run dev"
+    }
+  }
+}

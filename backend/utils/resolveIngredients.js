@@ -13,7 +13,11 @@ const resolveIngredients = async (ingredients) => {
 
     if (!found) {
       const url = await fetchAndUploadIngredientImage(ingredient);
-      found = await Ingredient.create({ name: ingredient, url });
+      found = await Ingredient.create({
+        name: ingredient,
+        normalizedName: normalizeIngredientName(ingredient),
+        url,
+      });
     } else if (!found.url) {
       const url = await fetchAndUploadIngredientImage(ingredient);
       await Ingredient.findByIdAndUpdate(found._id, { url });
@@ -37,6 +41,7 @@ const resolveIngredientsFast = async (ingredients) => {
       // on crée sans image
       found = await Ingredient.create({
         name: ingredient,
+        normalizedName: normalizeIngredientName(ingredient),
         url: null,
       });
     }

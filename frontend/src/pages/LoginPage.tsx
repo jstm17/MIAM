@@ -1,8 +1,8 @@
-import { CheckboxInput } from "@/components/shared/CheckboxInput";
+import { Typography } from "@/components/shared/Typography";
 import { FieldGroup } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Layout } from "../components/shared/Layout";
@@ -20,7 +20,6 @@ export const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -41,7 +40,7 @@ export const LoginPage: React.FC = () => {
       await login(
         formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
         formData.password,
-        formData.rememberMe ?? false,
+        formData.rememberMe ?? true,
       );
       navigate("/");
     } catch (err: unknown) {
@@ -51,7 +50,10 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <Layout title="Connexion" className="items-center justify-center p-4">
+    <Layout className="p-4 items-center justify-center" header>
+      <Typography variant="h1" weight="bold">
+        Connexion
+      </Typography>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup>
           <TextInput
@@ -66,7 +68,7 @@ export const LoginPage: React.FC = () => {
             error={errors.password?.message}
             {...register("password")}
           />
-          <Controller
+          {/* <Controller
             name="rememberMe"
             control={control}
             defaultValue={false}
@@ -77,7 +79,7 @@ export const LoginPage: React.FC = () => {
                 onChange={field.onChange}
               />
             )}
-          />
+          /> */}
           <Button type="submit">Se connecter</Button>
           <Button
             type="button"

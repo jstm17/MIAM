@@ -1,5 +1,6 @@
 import { Layout } from "@/components/shared/Layout";
 import { TextInput } from "@/components/shared/TextInput";
+import { Typography } from "@/components/shared/Typography";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,7 +46,10 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <Layout title="Inscription" className="items-center justify-center p-4">
+    <Layout className="p-4 items-center justify-center" header>
+      <Typography variant="h1" weight="bold">
+        Inscription
+      </Typography>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup>
           <TextInput

@@ -1,7 +1,7 @@
 import { useGetAllCategories } from "@/hooks/categories/useGetAllCategories";
 import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
 import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
-import { Plus, Tags, X } from "lucide-react";
+import { ChevronsUpDown, Plus, Tags, X } from "lucide-react";
 import { useState } from "react";
 import {
   useWatch,
@@ -10,7 +10,7 @@ import {
   type UseFormSetValue,
   type UseFormTrigger,
 } from "react-hook-form";
-import { TextInput } from "../shared/TextInput";
+import { GroupInput } from "../shared/GroupInput";
 import { Typography } from "../shared/Typography";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -75,7 +75,7 @@ export const CategoriesSectionForm = ({
           </div>
         )}
         <div className="flex gap-2">
-          <TextInput
+          <GroupInput
             capitalize
             type="text"
             list="categories-list"
@@ -89,6 +89,8 @@ export const CategoriesSectionForm = ({
             }}
             error={errors.categories?.message}
             placeholder="Ex. Dessert"
+            inputGroupAddon={<ChevronsUpDown />}
+            inputGroupAddonClassName={"absolute right-0"}
           />
           <Button
             type="button"

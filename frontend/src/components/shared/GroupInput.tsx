@@ -17,6 +17,10 @@ type GroupInputProps = {
   children?: ReactNode;
   placeholder?: string;
   inputGroupAddon?: string | ReactNode;
+  capitalize?: boolean;
+  list?: string;
+  inputGroupAddonClassName?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const GroupInput = forwardRef<HTMLInputElement, GroupInputProps>(
@@ -26,12 +30,16 @@ export const GroupInput = forwardRef<HTMLInputElement, GroupInputProps>(
       name,
       value,
       onChange,
+      onKeyDown,
       type = "text",
       error,
       className = "",
       children,
       placeholder = "",
       inputGroupAddon = "",
+      capitalize = false,
+      inputGroupAddonClassName = "",
+      list,
       ...props
     },
     ref,
@@ -47,14 +55,29 @@ export const GroupInput = forwardRef<HTMLInputElement, GroupInputProps>(
             type={type}
             value={value}
             placeholder={placeholder}
-            onChange={onChange}
+            onChange={
+              capitalize
+                ? (e) => {
+                    const target = e.target as HTMLInputElement;
+                    target.value =
+                      target.value.charAt(0).toUpperCase() +
+                      target.value.slice(1);
+                    onChange?.(e);
+                  }
+                : onChange
+            }
             aria-invalid={!!error}
             className={className}
+            list={list}
+            onKeyDown={onKeyDown}
             {...props}
           />
 
           {inputGroupAddon && (
-            <InputGroupAddon align="inline-end" className="text-foreground/50">
+            <InputGroupAddon
+              align="inline-end"
+              className={`text-foreground/50 ${inputGroupAddonClassName}`}
+            >
               {inputGroupAddon}
             </InputGroupAddon>
           )}

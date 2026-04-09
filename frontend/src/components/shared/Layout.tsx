@@ -22,7 +22,7 @@ export const Layout = ({
   return (
     <>
       {header && (
-        <header className="flex justify-center p-4 pt-6">
+        <header className="flex justify-center px-4 pt-6">
           <img src={miamLogo} alt="Miam logo" className="h-6" />
         </header>
       )}
@@ -30,7 +30,7 @@ export const Layout = ({
       <main
         className={`w-screen flex flex-col max-w-lg mx-auto ${className} gap-4`}
         style={{
-          minHeight: `calc(100dvh - 58px - env(safe-area-inset-bottom)${header ? " - 70px" : ""})`,
+          minHeight: `calc(100dvh - 58px - env(safe-area-inset-bottom)${header ? " - 54px" : ""})`,
         }}
       >
         {title && (

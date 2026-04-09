@@ -53,13 +53,13 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
         </TabsList>
         <TabsContent
           value="ingredients"
-          className="p-4 pb-[calc(74px-env(safe-area-inset-bottom))]"
+          className="p-4 pb-[calc(74px+env(safe-area-inset-bottom))]"
         >
           <IngredientsSection recipe={recipe} />
         </TabsContent>
         <TabsContent
           value="preparation"
-          className="p-4 pb-[calc(74px-env(safe-area-inset-bottom))]"
+          className="p-4 pb-[calc(74px+env(safe-area-inset-bottom))]"
         >
           <PreparationSection recipe={recipe} />
         </TabsContent>

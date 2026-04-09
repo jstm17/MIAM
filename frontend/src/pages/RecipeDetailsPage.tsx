@@ -40,7 +40,6 @@ export const RecipeDetailsPage = () => {
         <RecipeDetailsImage recipe={recipe} offsetY={offsetY} />
         <RecipeDetailsContent recipe={recipe} />
       </div>
-      ;
     </Layout>
   );
 };

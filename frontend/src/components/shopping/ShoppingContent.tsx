@@ -9,9 +9,8 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 export const ShoppingContent = () => {
-  const { user, loading: authLoading } = useAuth();
-  const { removeIngredientFromCart, loading: removing } =
-    useRemoveIngredientFromCart();
+  const { user, isLoading: isLoadingAuth } = useAuth();
+  const { removeIngredientFromCart, isPending } = useRemoveIngredientFromCart();
   const { savedIngredients } = user || {};
 
   if (!savedIngredients || savedIngredients.length === 0) {
@@ -100,7 +99,7 @@ export const ShoppingContent = () => {
                 quantity={quantity}
                 icon={<Minus color="white" />}
                 isSaved={true}
-                disabled={removing || authLoading || !user}
+                disabled={isPending || isLoadingAuth || !user}
                 onToggleCart={() =>
                   handleRemoveIngredientFromCart(recipe._id, ingredient._id)
                 }

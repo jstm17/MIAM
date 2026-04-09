@@ -7,15 +7,14 @@ import { ProfileSavedRecipesContent } from "./ProfileSavedRecipesContent";
 import { ProfileContentSkeleton } from "./skeletons/ProfileContentSkeleton";
 
 export const ProfileContent = () => {
-  const { recipes, setRecipes, totalRecipes, setTotalRecipes, loading } =
-    useGetAllRecipesByMe();
+  const { recipes, totalRecipes, isLoading } = useGetAllRecipesByMe();
   const {
     recipes: savedRecipes,
     totalRecipes: totalSavedRecipes,
-    loading: savedRecipesLoading,
+    isLoading: savedRecipesIsLoading,
   } = useGetSavedRecipes();
 
-  if (loading || savedRecipesLoading) return <ProfileContentSkeleton />;
+  if (isLoading || savedRecipesIsLoading) return <ProfileContentSkeleton />;
 
   return (
     <Tabs
@@ -44,16 +43,16 @@ export const ProfileContent = () => {
         <ProfileMyRecipesContent
           recipes={recipes}
           totalElement={totalRecipes}
-          setRecipes={setRecipes}
-          setTotalRecipes={setTotalRecipes}
+          // setRecipes={setRecipes}
+          // setTotalRecipes={setTotalRecipes}
         />
       </TabsContent>
       <TabsContent value="saved-recipes" className="p-4">
         <ProfileSavedRecipesContent
           recipes={savedRecipes}
           totalElement={totalSavedRecipes}
-          setRecipes={setRecipes}
-          setTotalRecipes={setTotalRecipes}
+          // setRecipes={setRecipes}
+          // setTotalRecipes={setTotalRecipes}
         />
       </TabsContent>
     </Tabs>

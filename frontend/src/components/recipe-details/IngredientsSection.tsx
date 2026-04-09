@@ -8,7 +8,7 @@ import { useAddIngredientToCart } from "../../hooks/users/useAddIngredientToCart
 
 export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
   const { ingredients } = recipe;
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const { addIngredientToCart } = useAddIngredientToCart();
   const { removeIngredientFromCart } = useRemoveIngredientFromCart();
@@ -55,7 +55,7 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
             quantity={ingredient.quantity}
             isSaved={Boolean(isSaved)}
             disabled={
-              loadingId === ingredient.ingredient._id || authLoading || !user
+              loadingId === ingredient.ingredient._id || isLoading || !user
             }
             onToggleCart={() =>
               handleToggleCart(ingredient.ingredient._id, Boolean(isSaved))

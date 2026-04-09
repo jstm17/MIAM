@@ -11,8 +11,9 @@ type UserContentProps = {
 };
 
 export const UserContent = ({ user }: UserContentProps) => {
-  const { recipes, setRecipes, totalRecipes, setTotalRecipes, loading } =
-    useGetAllRecipesByUserId(user._id);
+  const { recipes, totalRecipes, isLoading } = useGetAllRecipesByUserId(
+    user._id,
+  );
   const [sort, setSort] = useState("recent");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
@@ -35,7 +36,7 @@ export const UserContent = ({ user }: UserContentProps) => {
       );
   }, [recipes, selectedCategories, sort]);
 
-  if (loading) {
+  if (isLoading) {
     return <HomeContentSkeleton />;
   }
 
@@ -54,10 +55,10 @@ export const UserContent = ({ user }: UserContentProps) => {
         <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
           <RecipeCard
             recipe={recipe}
-            onRemove={(id) => {
-              setRecipes((prev) => prev.filter((r) => r._id !== id));
-              setTotalRecipes((prev) => prev - 1);
-            }}
+            // onRemove={(id) => {
+            //   setRecipes((prev) => prev.filter((r) => r._id !== id));
+            //   setTotalRecipes((prev) => prev - 1);
+            // }}
           />
         </Link>
       ))}

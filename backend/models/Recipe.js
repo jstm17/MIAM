@@ -68,4 +68,9 @@ const recipeSchema = new mongoose.Schema(
   },
 );
 
+recipeSchema.index({ slug: 1 });
+recipeSchema.index({ addedBy: 1 });
+recipeSchema.index({ categories: 1 });
+recipeSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Recipe", recipeSchema);

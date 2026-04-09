@@ -11,14 +11,14 @@ import { NotFoundPage } from "./NotFoundPage";
 
 export const RecipeDetailsPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { recipe, loading } = useGetRecipeBySlug(slug!);
+  const { recipe, isLoading } = useGetRecipeBySlug(slug!);
   const [offsetY, setOffsetY] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const handleScroll = () => {
     setOffsetY(containerRef.current?.scrollTop ?? 0);
   };
 
-  if (loading) return <RecipeDetailsSkeleton offsetY={offsetY} />;
+  if (isLoading) return <RecipeDetailsSkeleton offsetY={offsetY} />;
 
   if (!recipe)
     return (

@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { userService } from "../../services/userService";
 import type { User } from "../../types/user.types";
 
 export const useGetAllUsers = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["users"],
+    queryFn: () =>
+      userService.getAllUsers().then((res) => res.data.data as User[]),
+  });
 
-  useEffect(() => {
-    userService
-      .getAllUsers()
-      .then((res) => {
-        setUsers(res.data.data);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const users = useMemo(() => data ?? [], [data]);
 
-  return { users, loading, error };
+  return {
+    users,
+    totalUsers: data?.length ?? 0,
+    isLoading,
+    error,
+  };
 };

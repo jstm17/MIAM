@@ -58,6 +58,9 @@ const userSchema = new mongoose.Schema(
   },
 );
 
+userSchema.index({ slug: 1 });
+userSchema.index({ name: 1 });
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

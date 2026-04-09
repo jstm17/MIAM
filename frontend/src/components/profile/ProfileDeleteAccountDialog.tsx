@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import type { ApiError } from "@/types/error.types";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loading } from "../shared/Loading";
 
 type ProfileDeleteAccountDialogProps = {
   open: boolean;
@@ -75,7 +76,7 @@ type ProfileFormProps = {
 };
 
 function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
-  const { deleteUser } = useDeleteUser();
+  const { deleteUser, isPending } = useDeleteUser();
   const navigate = useNavigate();
 
   const onSubmit = async () => {
@@ -89,6 +90,10 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
       toast.error(apiError.message);
     }
   };
+
+  if (isPending) {
+    return <Loading />;
+  }
 
   return (
     <form

@@ -1,24 +1,20 @@
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { recipeService } from "../../services/recipeService";
 
 export const useDeleteRecipe = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const deleteRecipe = async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await recipeService.delete(id);
-      return res.data;
-    } catch (err: unknown) {
-      const message = (err as { message: string }).message;
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { mutateAsync, isPending, error } = useMutation({
+    mutationFn: (id: string) =>
+      recipeService.delete(id).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      throw new Error(err.response?.data?.message || err.message);
+    },
+  });
 
-  return { deleteRecipe, loading, error };
+  return { deleteRecipe: mutateAsync, isPending, error };
 };

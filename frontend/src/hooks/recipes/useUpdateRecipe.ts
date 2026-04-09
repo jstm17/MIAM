@@ -1,16 +1,19 @@
 import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { useState } from "react";
 import { recipeService } from "../../services/recipeService";
 
 export const useUpdateRecipe = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const updateRecipe = async (id: string, data: UpdateRecipeFormData) => {
-    setLoading(true);
-    setError(null);
-    try {
+  const { mutateAsync, isPending, error } = useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateRecipeFormData;
+    }) => {
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("time", data.time.toString());
@@ -25,15 +28,19 @@ export const useUpdateRecipe = () => {
       }
       const res = await recipeService.update(id, formData);
       return res.data;
-    } catch (err: unknown) {
-      const apiError = err as AxiosError<{ message: string }>;
-      const message = apiError.response?.data?.message || apiError.message;
-      setError(message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+      queryClient.invalidateQueries({ queryKey: ["recipe"] });
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      const message = err.response?.data?.message || err.message;
       throw new Error(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
-  return { updateRecipe, loading, error };
+  const updateRecipe = (id: string, data: UpdateRecipeFormData) =>
+    mutateAsync({ id, data });
+
+  return { updateRecipe, isPending, error };
 };

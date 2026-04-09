@@ -1,22 +1,20 @@
 import { ingredientService } from "@/services/ingredientService";
-import { useEffect, useState } from "react";
-
+import type { Ingredient } from "@/types/ingredient.types";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 export const useGetAllIngredients = () => {
-  const [ingredients, setIngredients] = useState<string[]>([]);
-  const [totalIngredients, setTotalIngredients] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["ingredients"],
+    queryFn: () =>
+      ingredientService.getAll().then((res) => res.data.data as Ingredient[]),
+  });
 
-  useEffect(() => {
-    ingredientService
-      .getAll()
-      .then((res) => {
-        setIngredients(res.data.data.map((i: { name: string }) => i.name));
-        setTotalIngredients(res.data.data.length);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const ingredients = useMemo(() => data ?? [], [data]);
 
-  return { ingredients, totalIngredients, loading, error };
+  return {
+    ingredients,
+    totalIngredients: data?.length ?? 0,
+    isLoading,
+    error,
+  };
 };

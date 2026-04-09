@@ -14,6 +14,7 @@ import type { Recipe } from "@/types/recipe.types";
 import { useAuth } from "@/hooks/useAuth";
 import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
+import { useUnsaveRecipe } from "@/hooks/users/useUnsaveRecipe";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
@@ -28,11 +29,12 @@ export const RecipeCardActions = ({
   onRemove,
 }: RecipeCardActionsProps) => {
   const navigate = useNavigate();
-  const { saveRecipe, unsaveRecipe, loading: saving } = useSaveRecipe();
+  const { saveRecipe, isPending: isSaving } = useSaveRecipe();
+  const { unsaveRecipe, isPending: isUnsaving } = useUnsaveRecipe();
   const { recipes: savedRecipes } = useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { _id, addedBy } = recipe;
   const isSaved = savedRecipes.some((r) => r._id === _id);
   const isMyRecipe = addedBy._id === user?._id;
@@ -115,7 +117,7 @@ export const RecipeCardActions = ({
           aria-label="Save Recipe"
           className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
           onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
-          disabled={!user || authLoading || saving}
+          disabled={!user || authLoading || isSaving || isUnsaving}
         >
           <BookmarkIcon
             fill={isSaved ? "currentColor" : "transparent"}

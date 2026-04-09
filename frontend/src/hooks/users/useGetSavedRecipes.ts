@@ -1,25 +1,25 @@
 import type { Recipe } from "@/types/recipe.types";
+import type { SavedRecipe } from "@/types/user.types";
 import { useMemo } from "react";
 import { useAuth } from "../useAuth";
 
-export const useGetSavedRecipes = () => {
-  const { user, loading } = useAuth();
+type RecipeWithSavedAt = Recipe & { savedAt: string };
 
-  const recipes = useMemo<Recipe[]>(() => {
+export const useGetSavedRecipes = () => {
+  const { user, isLoading } = useAuth();
+
+  const recipes = useMemo<RecipeWithSavedAt[]>(() => {
     if (!user?.savedRecipes) return [];
     return user.savedRecipes
-      .map((item: any) => {
-        const recipe = item.recipe || item;
-        if (!recipe) return null;
+      .map((item: SavedRecipe) => {
+        if (!item.recipe) return null;
         return {
-          ...recipe,
-          savedAt: item.savedAt || item.createdAt,
-        };
+          ...item.recipe,
+          savedAt: item.savedAt,
+        } as RecipeWithSavedAt;
       })
-      .filter((recipe): recipe is Recipe => recipe !== null);
+      .filter((recipe): recipe is RecipeWithSavedAt => recipe !== null);
   }, [user]);
 
-  const totalRecipes = recipes.length;
-
-  return { recipes, totalRecipes, loading };
+  return { recipes, totalRecipes: recipes.length, isLoading };
 };

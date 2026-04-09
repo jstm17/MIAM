@@ -1,23 +1,21 @@
 import { categoryService } from "@/services/categoryService";
 import type { Category } from "@/types/category.types";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export const useGetAllCategories = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [totalCategories, setTotalCategories] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () =>
+      categoryService.getAll().then((res) => res.data.data as Category[]),
+  });
 
-  useEffect(() => {
-    categoryService
-      .getAll()
-      .then((res) => {
-        setCategories(res.data.data);
-        setTotalCategories(res.data.data.length);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const categories = useMemo(() => data ?? [], [data]);
 
-  return { categories, totalCategories, loading, error };
+  return {
+    categories,
+    totalCategories: data?.length ?? 0,
+    isLoading,
+    error,
+  };
 };

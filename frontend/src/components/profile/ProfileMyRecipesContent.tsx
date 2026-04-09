@@ -9,8 +9,8 @@ import { useMemo, useState } from "react";
 type ProfileMyRecipeContentProps = {
   recipes: Recipe[];
   totalElement: number;
-  setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
-  setTotalRecipes: React.Dispatch<React.SetStateAction<number>>;
+  setRecipes?: React.Dispatch<React.SetStateAction<Recipe[]>>;
+  setTotalRecipes?: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export const ProfileMyRecipesContent = ({
@@ -65,10 +65,10 @@ export const ProfileMyRecipesContent = ({
         <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
           <RecipeCard
             recipe={recipe}
-            onRemove={(id) => {
-              setRecipes((prev) => prev.filter((r) => r._id !== id));
-              setTotalRecipes((prev) => prev - 1);
-            }}
+            // onRemove={(id) => {
+            //   setRecipes((prev) => prev.filter((r) => r._id !== id));
+            //   setTotalRecipes((prev) => prev - 1);
+            // }}
           />
         </Link>
       ))}

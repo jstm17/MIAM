@@ -26,8 +26,8 @@ import { NotFoundPage } from "./NotFoundPage";
 export function RecipeUpdatePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { recipe, loading } = useGetRecipeById(id!);
-  const { updateRecipe, loading: updateLoading } = useUpdateRecipe();
+  const { recipe, isLoading } = useGetRecipeById(id!);
+  const { updateRecipe, isPending } = useUpdateRecipe();
   const { user } = useAuth();
 
   const {
@@ -76,7 +76,7 @@ export function RecipeUpdatePage() {
     }
   };
 
-  if (loading || updateLoading) {
+  if (isLoading || isPending) {
     return <Loading />;
   }
 

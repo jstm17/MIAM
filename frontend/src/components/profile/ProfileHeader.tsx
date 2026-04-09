@@ -19,7 +19,7 @@ import { ProfileHeaderSkeleton } from "./skeletons/ProfileHeaderSkeleton";
 
 export const ProfileHeader = () => {
   const navigate = useNavigate();
-  const { user, logout, loading } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
@@ -29,7 +29,7 @@ export const ProfileHeader = () => {
     navigate("/login");
   };
 
-  if (loading) return <ProfileHeaderSkeleton />;
+  if (isLoading) return <ProfileHeaderSkeleton />;
 
   return (
     <div className="flex items-center justify-between w-full p-4">

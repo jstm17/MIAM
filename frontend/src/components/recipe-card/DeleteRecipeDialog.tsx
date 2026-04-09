@@ -55,6 +55,7 @@ export function DeleteRecipeDialog({
             onOpenChange={onOpenChange}
             recipeId={recipeId}
             onRemove={onRemove}
+            navigate={navigate}
           />
         </DialogContent>
       </Dialog>
@@ -108,7 +109,7 @@ function ProfileForm({
   onRemove,
   navigate,
 }: ProfileFormProps) {
-  const { deleteRecipe, loading } = useDeleteRecipe();
+  const { deleteRecipe, isPending } = useDeleteRecipe();
   const { refetchUser } = useAuth();
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -128,8 +129,8 @@ function ProfileForm({
 
   return (
     <div className={cn("grid items-start gap-6", className)}>
-      <Button onClick={handleDelete} disabled={loading}>
-        {loading ? <Spinner /> : "Supprimer"}
+      <Button onClick={handleDelete} disabled={isPending}>
+        {isPending ? <Spinner /> : "Supprimer"}
       </Button>
     </div>
   );

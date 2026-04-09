@@ -1,26 +1,20 @@
 import { ingredientService } from "@/services/ingredientService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { useState } from "react";
 
 export const useAddIngredient = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const addIngredient = async (name: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await ingredientService.create({ name });
-      return res.data;
-    } catch (err: unknown) {
-      const apiError = err as AxiosError<{ message: string }>;
-      const message = apiError.response?.data?.message || apiError.message;
-      setError(message);
-      throw new Error(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { mutateAsync, isPending, error } = useMutation({
+    mutationFn: (name: string) =>
+      ingredientService.create({ name }).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      throw new Error(err.response?.data?.message || err.message);
+    },
+  });
 
-  return { addIngredient, loading, error };
+  return { addIngredient: mutateAsync, loading: isPending, error };
 };

@@ -74,7 +74,7 @@ type ProfileFormProps = {
 };
 
 function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
-  const { clearShoppingList, loading } = useClearShoppingList();
+  const { clearShoppingList, isPending } = useClearShoppingList();
 
   const onSubmit = async () => {
     try {
@@ -95,8 +95,8 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
       }}
       className={cn("grid items-start gap-6", className)}
     >
-      <Button type="submit" disabled={loading}>
-        {loading ? <Spinner /> : "Vider"}
+      <Button type="submit" disabled={isPending}>
+        {isPending ? <Spinner /> : "Vider"}
       </Button>
     </form>
   );

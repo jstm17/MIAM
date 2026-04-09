@@ -77,7 +77,7 @@ export const IngredientsSectionForm = ({
             />
             <datalist id={`ingredients-list-${index}`}>
               {ingredients.map((ingredient) => (
-                <option key={ingredient} value={ingredient} />
+                <option key={ingredient._id} value={ingredient.name} />
               ))}
             </datalist>
             <Button

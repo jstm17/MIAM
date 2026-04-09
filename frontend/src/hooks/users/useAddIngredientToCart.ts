@@ -1,26 +1,28 @@
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userService } from "../../services/userService";
-import { useAuth } from "../useAuth";
 
 export const useAddIngredientToCart = () => {
-  const [loading, setLoading] = useState(false);
-  const { refetchUser } = useAuth();
+  const queryClient = useQueryClient();
 
-  const addIngredientToCart = async (
-    recipeId: string,
-    ingredientId: string,
-  ) => {
-    setLoading(true);
-    try {
-      await userService.addIngredientToCart(recipeId, ingredientId);
-      await refetchUser();
-    } catch (error) {
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: ({
+      recipeId,
+      ingredientId,
+    }: {
+      recipeId: string;
+      ingredientId: string;
+    }) => userService.addIngredientToCart(recipeId, ingredientId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
+    onError: (error) => {
       console.error("Error adding ingredient to cart:", error);
       throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
-  return { addIngredientToCart, loading };
+  const addIngredientToCart = (recipeId: string, ingredientId: string) =>
+    mutateAsync({ recipeId, ingredientId });
+
+  return { addIngredientToCart, isPending };
 };

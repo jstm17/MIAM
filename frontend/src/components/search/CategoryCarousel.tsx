@@ -23,12 +23,12 @@ const CategoryCarouselHeader = () => (
 
 export function CategoryCarousel() {
   const navigate = useNavigate();
-  const { categories, loading } = useGetAllCategories();
+  const { categories, isLoading } = useGetAllCategories();
 
   const sortedCategories = (categories ?? []).sort((a, b) =>
     a.name.localeCompare(b.name),
   );
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <CategoryCarouselHeader />

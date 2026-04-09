@@ -8,10 +8,10 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const UserPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { user, loading } = useGetUserBySlug(slug!);
+  const { user, isLoading } = useGetUserBySlug(slug!);
   const navigate = useNavigate();
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   if (!user) {
     return (

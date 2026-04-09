@@ -11,8 +11,9 @@ type CategoryContentProps = {
 };
 
 export const CategoryContent = ({ category }: CategoryContentProps) => {
-  const { recipes, setRecipes, totalRecipes, setTotalRecipes, loading } =
-    useGetAllRecipesByCategory(category.slug);
+  const { recipes, totalRecipes, isLoading } = useGetAllRecipesByCategory(
+    category.slug,
+  );
   const [sort, setSort] = useState("recent");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -43,7 +44,7 @@ export const CategoryContent = ({ category }: CategoryContentProps) => {
       );
   }, [recipes, selectedCategories, selectedUsers, sort]);
 
-  if (loading) {
+  if (isLoading) {
     return <HomeContentSkeleton />;
   }
 
@@ -60,13 +61,7 @@ export const CategoryContent = ({ category }: CategoryContentProps) => {
       />
       {filteredRecipes.map((recipe) => (
         <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
-          <RecipeCard
-            recipe={recipe}
-            onRemove={(id) => {
-              setRecipes((prev) => prev.filter((r) => r._id !== id));
-              setTotalRecipes((prev) => prev - 1);
-            }}
-          />
+          <RecipeCard recipe={recipe} />
         </Link>
       ))}
     </div>

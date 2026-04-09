@@ -8,10 +8,10 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { category, loading } = useGetCategoryBySlug(slug!);
+  const { category, isLoading } = useGetCategoryBySlug(slug!);
   const navigate = useNavigate();
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   if (!category) {
     return (

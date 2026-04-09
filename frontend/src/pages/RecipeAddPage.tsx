@@ -21,7 +21,7 @@ import { toast } from "sonner";
 
 export function RecipeAddPage() {
   const navigate = useNavigate();
-  const { addRecipe, loading } = useAddRecipe();
+  const { addRecipe, isPending } = useAddRecipe();
 
   const {
     register,
@@ -60,7 +60,7 @@ export function RecipeAddPage() {
     }
   };
 
-  if (loading) {
+  if (isPending) {
     return <Loading />;
   }
 

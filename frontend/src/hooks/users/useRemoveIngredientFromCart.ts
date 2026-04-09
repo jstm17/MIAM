@@ -1,26 +1,28 @@
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userService } from "../../services/userService";
-import { useAuth } from "../useAuth";
 
 export const useRemoveIngredientFromCart = () => {
-  const [loading, setLoading] = useState(false);
-  const { refetchUser } = useAuth();
+  const queryClient = useQueryClient();
 
-  const removeIngredientFromCart = async (
-    recipeId: string,
-    ingredientId: string,
-  ) => {
-    setLoading(true);
-    try {
-      await userService.removeIngredientFromCart(recipeId, ingredientId);
-      await refetchUser();
-    } catch (error) {
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: ({
+      recipeId,
+      ingredientId,
+    }: {
+      recipeId: string;
+      ingredientId: string;
+    }) => userService.removeIngredientFromCart(recipeId, ingredientId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
+    onError: (error) => {
       console.error("Error removing ingredient from cart:", error);
       throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
-  return { removeIngredientFromCart, loading };
+  const removeIngredientFromCart = (recipeId: string, ingredientId: string) =>
+    mutateAsync({ recipeId, ingredientId });
+
+  return { removeIngredientFromCart, isPending };
 };

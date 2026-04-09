@@ -7,8 +7,7 @@ import { RecipesFilters } from "../recipe-card/RecipesFilters";
 import { HomeContentSkeleton } from "./skeletons/HomeContentSkeleton";
 
 export const HomeContent = () => {
-  const { recipes, setRecipes, totalRecipes, setTotalRecipes, loading } =
-    useGetAllRecipes();
+  const { recipes, totalRecipes, isLoading } = useGetAllRecipes();
   const navigate = useNavigate();
   const [sort, setSort] = useState("recent");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -40,7 +39,7 @@ export const HomeContent = () => {
       );
   }, [recipes, selectedCategories, selectedUsers, sort]);
 
-  if (loading) {
+  if (isLoading) {
     return <HomeContentSkeleton />;
   }
 
@@ -72,10 +71,10 @@ export const HomeContent = () => {
         <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
           <RecipeCard
             recipe={recipe}
-            onRemove={(id) => {
-              setRecipes((prev) => prev.filter((r) => r._id !== id));
-              setTotalRecipes((prev) => prev - 1);
-            }}
+            // onRemove={(id) => {
+            //   setRecipes((prev) => prev.filter((r) => r._id !== id));
+            //   setTotalRecipes((prev) => prev - 1);
+            // }}
           />
         </Link>
       ))}

@@ -1,23 +1,21 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { recipeService } from "../../services/recipeService";
 import type { Recipe } from "../../types/recipe.types";
 
 export const useGetAllRecipes = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [totalRecipes, setTotalRecipes] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["recipes"],
+    queryFn: () =>
+      recipeService.getAll().then((res) => res.data.data as Recipe[]),
+  });
 
-  useEffect(() => {
-    recipeService
-      .getAll()
-      .then((res) => {
-        setRecipes(res.data.data);
-        setTotalRecipes(res.data.data.length);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const recipes = useMemo(() => data ?? [], [data]);
 
-  return { recipes, setRecipes, totalRecipes, setTotalRecipes, loading, error };
+  return {
+    recipes,
+    totalRecipes: data?.length ?? 0,
+    isLoading,
+    error,
+  };
 };

@@ -1,11 +1,12 @@
 import { useGetStoredToken } from "@/hooks/useGetStoredToken";
-import { createContext, useEffect, useState, type ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createContext, useState, type ReactNode } from "react";
 import { LoginUser, RegisterUser, getMe } from "../services/authService";
 import type { User } from "../types/user.types";
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
+  isLoading: boolean;
   error: string;
   login: (
     name: string,
@@ -26,26 +27,15 @@ interface AuthProviderProps {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { token } = useGetStoredToken();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    getMe(token)
-      .then((data) => setUser(data.data))
-      .catch((err: { message?: string }) => {
-        setError(err.message || "Utilisateur déconnecté");
-        localStorage.removeItem("token");
-        sessionStorage.removeItem("token");
-      })
-      .finally(() => setLoading(false));
-  }, [token]);
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => getMe(token!).then((data) => data.data as User),
+    enabled: !!token,
+  });
 
   const login = async (name: string, password: string, rememberMe: boolean) => {
     setError("");
@@ -58,22 +48,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const token = data.data?.token as string | undefined;
     if (!token) throw new Error("Token manquant");
 
-    const me = await getMe(token); // 👈 plus d'erreur string | undefined
-
     if (rememberMe) {
       localStorage.setItem("token", token);
     } else {
       sessionStorage.setItem("token", token);
     }
-    setUser(me.data);
 
+    await queryClient.invalidateQueries({ queryKey: ["me"] });
     return data;
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    setUser(null);
+    queryClient.removeQueries({ queryKey: ["me"] });
     setError("");
   };
 
@@ -97,23 +85,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const refetchUser = async () => {
-    if (!token) return;
-    try {
-      const me = await getMe(token);
-      setUser(me.data);
-    } catch (err: unknown) {
-      setError(
-        (err as { message?: string }).message ||
-          "Erreur lors de la récupération de l'utilisateur",
-      );
-    }
+    await queryClient.invalidateQueries({ queryKey: ["me"] });
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user,
-        loading,
+        user: user ?? null,
+        isLoading,
         login,
         logout,
         register,

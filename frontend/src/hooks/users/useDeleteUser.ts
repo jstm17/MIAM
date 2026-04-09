@@ -1,24 +1,20 @@
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { userService } from "../../services/userService";
 
 export const useDeleteUser = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const deleteUser = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await userService.deleteUser();
-      return res.data;
-    } catch (err: unknown) {
-      const message = (err as { message: string }).message;
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { mutateAsync, isPending, error } = useMutation({
+    mutationFn: () => userService.deleteUser().then((res) => res.data),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["me"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      throw new Error(err.response?.data?.message || err.message);
+    },
+  });
 
-  return { deleteUser, loading, error };
+  return { deleteUser: mutateAsync, isPending, error };
 };

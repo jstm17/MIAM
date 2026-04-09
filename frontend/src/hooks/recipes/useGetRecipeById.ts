@@ -1,19 +1,14 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { recipeService } from "../../services/recipeService";
 import type { Recipe } from "../../types/recipe.types";
 
 export const useGetRecipeById = (id: string) => {
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["recipe", "id", id],
+    queryFn: () =>
+      recipeService.getById(id).then((res) => res.data.data as Recipe),
+    enabled: !!id,
+  });
 
-  useEffect(() => {
-    recipeService
-      .getById(id)
-      .then((res) => setRecipe(res.data.data as Recipe))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  return { recipe, loading, error };
+  return { recipe: data ?? null, isLoading, error };
 };

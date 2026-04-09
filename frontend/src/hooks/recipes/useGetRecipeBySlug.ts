@@ -1,19 +1,14 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { recipeService } from "../../services/recipeService";
 import type { Recipe } from "../../types/recipe.types";
 
 export const useGetRecipeBySlug = (slug: string) => {
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["recipe", "slug", slug],
+    queryFn: () =>
+      recipeService.getBySlug(slug).then((res) => res.data.data as Recipe),
+    enabled: !!slug,
+  });
 
-  useEffect(() => {
-    recipeService
-      .getBySlug(slug)
-      .then((res) => setRecipe(res.data.data as Recipe))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [slug]);
-
-  return { recipe, loading, error };
+  return { recipe: data ?? null, isLoading, error };
 };

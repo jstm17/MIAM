@@ -23,9 +23,9 @@ const UserCarouselHeader = () => (
 );
 
 export function UserCarousel() {
-  const { user, loading: loadingAuth } = useAuth();
-  const { users, loading: loadingUsers } = useGetAllUsers();
-  const { recipes, loading: loadingRecipes } = useGetAllRecipes();
+  const { user, isLoading: isLoadingAuth } = useAuth();
+  const { users, isLoading: isLoadingUsers } = useGetAllUsers();
+  const { recipes, isLoading: isLoadingRecipes } = useGetAllRecipes();
 
   const recipesCountByUser = (recipes ?? []).reduce<Record<string, number>>(
     (acc, recipe) => {
@@ -43,7 +43,7 @@ export function UserCarousel() {
     .filter((u) => u.recipesCount > 0)
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  if (loadingAuth || loadingUsers || loadingRecipes) {
+  if (isLoadingAuth || isLoadingUsers || isLoadingRecipes) {
     return (
       <div>
         <UserCarouselHeader />

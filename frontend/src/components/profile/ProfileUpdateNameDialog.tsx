@@ -26,6 +26,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { TextInput } from "../shared/TextInput";
 import { FieldGroup } from "../ui/field";
+import { Spinner } from "../ui/spinner";
 
 type ProfileUpdateNameDialogProps = {
   open: boolean;
@@ -73,7 +74,7 @@ type ProfileFormProps = {
 };
 
 function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
-  const { updateUserName } = useUpdateUserName();
+  const { updateUserName, isPending } = useUpdateUserName();
   const {
     register,
     handleSubmit,
@@ -108,7 +109,9 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
           {...register("name")}
         />
 
-        <Button type="submit">Modifier</Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? <Spinner /> : "Modifier"}
+        </Button>
       </FieldGroup>
     </form>
   );

@@ -10,7 +10,7 @@ export const ShoppingHeader = ({ empty }: { empty?: boolean }) => {
   return (
     <div className="relative flex items-center justify-between w-full mb-6">
       <span className="w-[34.55px] h-[34.55px]"></span>
-      <Typography variant="h1" weight="semibold" className="self-center">
+      <Typography variant="h1" weight="bold" className="self-center">
         Liste de courses
       </Typography>
 

@@ -59,7 +59,7 @@ export const CategoriesSectionForm = ({
       <div className="flex flex-col gap-2">
         <Label>Catégories *</Label>
         {categories.length > 0 && (
-          <div className="flex flex-wrap my-1">
+          <div className="flex flex-wrap my-1 gap-1">
             {categories.map((cat) => (
               <span
                 key={cat}

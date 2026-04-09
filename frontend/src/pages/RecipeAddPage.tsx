@@ -122,7 +122,7 @@ export function RecipeAddPage() {
             <ImageSectionForm register={register} setValue={setValue} />
           </div>
 
-          <Field className="fixed bottom-13 inset-x-0 p-4 bg-background border-t max-w-lg m-auto flex-row gap-4">
+          <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 p-4 bg-background border-t max-w-lg m-auto flex-row gap-4">
             <Button
               type="button"
               variant="outline"

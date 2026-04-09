@@ -12,6 +12,7 @@ const connectToDB = async () => {
 };
 
 module.exports = async (req, res) => {
+  console.log("CLIENT_URL:", process.env.CLIENT_URL);
   await connectToDB();
   return serverless(app)(req, res);
 };

@@ -16,5 +16,5 @@ export const useAddIngredient = () => {
     },
   });
 
-  return { addIngredient: mutateAsync, loading: isPending, error };
+  return { addIngredient: mutateAsync, isPending, error };
 };

@@ -13,15 +13,14 @@ import { RecipeCardActions } from "./RecipeCardActions";
 
 type RecipeCardProps = {
   recipe: Recipe;
-  onRemove?: (id: string) => void;
 };
 
-export const RecipeCard = ({ recipe, onRemove }: RecipeCardProps) => {
+export const RecipeCard = ({ recipe }: RecipeCardProps) => {
   const { name, categories, image, addedBy } = recipe;
 
   return (
     <Card className="relative mx-auto w-full gap-0 rounded-2xl p-0">
-      <RecipeCardActions recipe={recipe} onRemove={onRemove} />
+      <RecipeCardActions recipe={recipe} />
       <AspectRatio ratio={21 / 9} className="bg-muted">
         <img
           src={image || placeholderImage}

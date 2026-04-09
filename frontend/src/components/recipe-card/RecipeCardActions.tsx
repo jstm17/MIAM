@@ -30,7 +30,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   const { recipes: savedRecipes } = useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const { _id, addedBy } = recipe;
   const isSaved = savedRecipes.some((r) => r._id === _id);
   const isMyRecipe = addedBy._id === user?._id;
@@ -50,7 +50,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
 
   return (
     <div className="absolute top-2 right-2 z-10">
-      {!authLoading && isMyRecipe ? (
+      {!isLoading && isMyRecipe ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -113,7 +113,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
           aria-label="Save Recipe"
           className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
           onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
-          disabled={!user || authLoading || isSaving || isUnsaving}
+          disabled={!user || isLoading || isSaving || isUnsaving}
         >
           <BookmarkIcon
             fill={isSaved ? "currentColor" : "transparent"}

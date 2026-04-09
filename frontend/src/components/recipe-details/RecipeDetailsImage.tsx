@@ -31,11 +31,11 @@ export const RecipeDetailsImage = ({
 
   const { saveRecipe, isPending: isSaving } = useSaveRecipe();
   const { unsaveRecipe, isPending: isUnsaving } = useUnsaveRecipe();
-  const { recipes: savedRecipes, isLoading: savedRecipesIsLoading } =
+  const { recipes: savedRecipes, isLoading: isLoadingSavedRecipes } =
     useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: isLoadingAuth } = useAuth();
   const { _id, addedBy } = recipe;
 
   const isSaved = savedRecipes.some((r) => r._id === _id);
@@ -76,10 +76,10 @@ export const RecipeDetailsImage = ({
             onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
             disabled={
               !user ||
-              authLoading ||
+              isLoadingAuth ||
               isSaving ||
               isUnsaving ||
-              savedRecipesIsLoading
+              isLoadingSavedRecipes
             }
           >
             <BookmarkIcon

@@ -8,11 +8,11 @@ import { ShoppingBasket } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const ShoppingPage = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const { savedIngredients } = user || {};
   const navigate = useNavigate();
 
-  if (authLoading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   if (!savedIngredients || savedIngredients.length === 0) {
     return (

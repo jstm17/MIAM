@@ -15,7 +15,6 @@ interface AuthContextType {
   ) => Promise<unknown>;
   logout: () => void;
   register: (name: string, password: string) => Promise<unknown>;
-  getToken: () => Promise<string>;
   refetchUser: () => Promise<void>;
 }
 
@@ -23,12 +22,11 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Sépare le contexte dans ce fichier uniquement, pas de double export component+context
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [error, setError] = useState("");
-  const { token } = useGetStoredToken();
+  const { token, updateToken } = useGetStoredToken();
   const queryClient = useQueryClient();
 
   const { data: user, isLoading } = useQuery({
@@ -45,24 +43,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       throw new Error(data.message);
     }
 
-    const token = data.data?.token as string | undefined;
-    if (!token) throw new Error("Token manquant");
+    const jwtToken = data.data?.token as string | undefined;
+    if (!jwtToken) throw new Error("Token manquant");
 
-    if (rememberMe) {
-      localStorage.setItem("token", token);
-    } else {
-      sessionStorage.setItem("token", token);
-    }
-
+    updateToken(jwtToken, rememberMe);
     await queryClient.invalidateQueries({ queryKey: ["me"] });
     return data;
   };
-
   const logout = () => {
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
+    updateToken(null);
     queryClient.removeQueries({ queryKey: ["me"] });
-    setError("");
   };
 
   const register = async (name: string, password: string) => {
@@ -73,15 +63,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       throw new Error(data.message);
     }
     return data;
-  };
-
-  const getToken = async (): Promise<string> => {
-    if (!token) {
-      const err = new Error("Token non trouvé");
-      setError(err.message);
-      throw err;
-    }
-    return token;
   };
 
   const refetchUser = async () => {
@@ -96,7 +77,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         logout,
         register,
-        getToken,
         refetchUser,
         error,
       }}

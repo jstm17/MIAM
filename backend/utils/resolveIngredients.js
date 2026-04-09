@@ -2,6 +2,7 @@ const Ingredient = require("../models/Ingredient");
 const {
   fetchAndUploadIngredientImage,
 } = require("./fetchAndUploadIngredientImage");
+const { normalizeIngredientName } = require("./normalizeIngredientName");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

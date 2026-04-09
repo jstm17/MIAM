@@ -30,7 +30,7 @@ export const Layout = ({
       <main
         className={`w-screen flex flex-col max-w-lg mx-auto ${className} gap-4`}
         style={{
-          minHeight: `calc(100dvh - 58px - env(safe-area-inset-bottom)${header ? " - 60px" : ""})`,
+          minHeight: `calc(100dvh - 58px - env(safe-area-inset-bottom)${header ? " - 70px" : ""})`,
         }}
       >
         {title && (

@@ -1,6 +1,7 @@
 import { IngredientCard } from "@/components/ingredient/IngredientCard";
 import { useRemoveIngredientFromCart } from "@/hooks/users/useRemoveIngredientFromCart";
 import type { Recipe } from "@/types/recipe.types";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../../hooks/useAuth";
 import { useAddIngredientToCart } from "../../hooks/users/useAddIngredientToCart";
@@ -8,9 +9,9 @@ import { useAddIngredientToCart } from "../../hooks/users/useAddIngredientToCart
 export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
   const { ingredients } = recipe;
   const { user, loading: authLoading } = useAuth();
-  const { addIngredientToCart, loading: adding } = useAddIngredientToCart();
-  const { removeIngredientFromCart, loading: removing } =
-    useRemoveIngredientFromCart();
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const { addIngredientToCart } = useAddIngredientToCart();
+  const { removeIngredientFromCart } = useRemoveIngredientFromCart();
 
   const handleToggleCart = async (ingredientId: string, isSaved: boolean) => {
     if (!user) {
@@ -18,6 +19,7 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
       return;
     }
 
+    setLoadingId(ingredientId);
     try {
       if (isSaved) {
         await removeIngredientFromCart(recipe._id, ingredientId);
@@ -28,6 +30,8 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
       }
     } catch {
       toast.error("Impossible de mettre à jour le panier");
+    } finally {
+      setLoadingId(null);
     }
   };
 
@@ -50,7 +54,9 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
             ingredient={ingredient.ingredient}
             quantity={ingredient.quantity}
             isSaved={Boolean(isSaved)}
-            disabled={adding || removing || authLoading || !user}
+            disabled={
+              loadingId === ingredient.ingredient._id || authLoading || !user
+            }
             onToggleCart={() =>
               handleToggleCart(ingredient.ingredient._id, Boolean(isSaved))
             }

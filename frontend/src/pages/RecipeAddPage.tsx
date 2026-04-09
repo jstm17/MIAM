@@ -68,7 +68,7 @@ export function RecipeAddPage() {
     <Layout
       title="Ajouter une recette"
       titleSize="xl"
-      className="items-center p-4 pb-14"
+      className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+56px)]"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup className="relative">

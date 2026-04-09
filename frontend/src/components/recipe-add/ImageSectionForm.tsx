@@ -42,11 +42,11 @@ export const ImageSectionForm = ({
       <div className="flex flex-col gap-2">
         {preview && (
           <div className="relative">
-            <AspectRatio ratio={21 / 9} className="bg-muted mb-2">
+            <AspectRatio ratio={21 / 9} className="bg-muted mb-2 rounded-xl">
               <img
                 src={preview}
                 alt="Aperçu"
-                className="w-full h-full object-cover rounded-xl dark:brightness-20"
+                className="w-full h-full object-cover dark:brightness-20 rounded-xl"
               />
             </AspectRatio>
             <Button

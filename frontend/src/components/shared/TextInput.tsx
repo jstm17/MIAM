@@ -16,6 +16,7 @@ type TextInputProps = {
   list?: string;
   accept?: string;
   description?: string | null;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
@@ -36,6 +37,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       onKeyDown,
       accept = "",
       description = "",
+      onBlur,
       ...props
     },
     ref,
@@ -64,6 +66,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                 }
               : onChange
           }
+          onBlur={onBlur}
           aria-invalid={!!error}
           className={className}
           {...props}

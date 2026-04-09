@@ -27,7 +27,7 @@ export const NotFoundPage = ({
 }: NotFoundPageProps) => {
   const navigate = useNavigate();
   return (
-    <Layout className="min-h-[50vh] text-xl">
+    <Layout className="min-h-[50dvh] text-xl">
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">

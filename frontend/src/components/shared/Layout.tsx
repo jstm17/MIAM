@@ -18,7 +18,7 @@ export const Layout = ({
   return (
     <>
       <main
-        className={`w-screen min-h-screen flex flex-col max-w-lg mx-auto ${className}`}
+        className={`w-screen min-h-dvh flex flex-col max-w-lg mx-auto ${className}`}
       >
         {title && (
           <h1 className={`text-${titleSize} font-bold mb-4 text-center`}>

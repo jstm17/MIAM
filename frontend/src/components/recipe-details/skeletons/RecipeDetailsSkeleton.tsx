@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const RecipeDetailsSkeleton = ({ offsetY }: { offsetY: number }) => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <AspectRatio ratio={14 / 9} className="relative overflow-hidden">
         <Skeleton
           className="absolute inset-0 w-full h-full"

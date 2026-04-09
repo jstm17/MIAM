@@ -38,7 +38,7 @@ export const ProfileHeader = () => {
           <Plus />
         </Link>
       </Button>
-      <Typography variant="body" weight="bold">
+      <Typography variant="h1" weight="bold">
         {user?.name}
       </Typography>
 

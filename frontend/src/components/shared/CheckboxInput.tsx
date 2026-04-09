@@ -10,11 +10,21 @@ type CheckboxInputProps = {
   error?: string;
   className?: string;
   children?: ReactNode;
+  checked?: boolean;
 };
 
 export const CheckboxInput = forwardRef<HTMLButtonElement, CheckboxInputProps>(
   (
-    { label, name, onChange, error, className = "", children, ...props },
+    {
+      label,
+      name,
+      onChange,
+      error,
+      checked,
+      className = "",
+      children,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -23,6 +33,7 @@ export const CheckboxInput = forwardRef<HTMLButtonElement, CheckboxInputProps>(
           ref={ref}
           id={name}
           name={name}
+          checked={checked}
           onCheckedChange={onChange}
           aria-invalid={!!error}
           className={className}

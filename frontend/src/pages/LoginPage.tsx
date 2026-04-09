@@ -1,8 +1,9 @@
+import { CheckboxInput } from "@/components/shared/CheckboxInput";
 import { Typography } from "@/components/shared/Typography";
 import { FieldGroup } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Layout } from "../components/shared/Layout";
@@ -20,9 +21,13 @@ export const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      rememberMe: true,
+    },
   });
 
   const sessionExpired =
@@ -40,7 +45,7 @@ export const LoginPage: React.FC = () => {
       await login(
         formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
         formData.password,
-        formData.rememberMe ?? true,
+        formData.rememberMe ?? false,
       );
       navigate("/");
     } catch (err: unknown) {
@@ -68,18 +73,19 @@ export const LoginPage: React.FC = () => {
             error={errors.password?.message}
             {...register("password")}
           />
-          {/* <Controller
+          <Controller
             name="rememberMe"
             control={control}
-            defaultValue={false}
+            defaultValue={true}
             render={({ field }) => (
               <CheckboxInput
                 label="Se souvenir de moi"
                 name={field.name}
                 onChange={field.onChange}
+                checked={field.value}
               />
             )}
-          /> */}
+          />
           <Button type="submit">Se connecter</Button>
           <Button
             type="button"

@@ -25,14 +25,12 @@ type DeleteRecipeDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   recipeId: string;
-  onRemove?: (id: string) => void;
   navigate?: () => void;
 };
 export function DeleteRecipeDialog({
   open,
   onOpenChange,
   recipeId,
-  onRemove,
   navigate,
 }: DeleteRecipeDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -54,7 +52,6 @@ export function DeleteRecipeDialog({
           <ProfileForm
             onOpenChange={onOpenChange}
             recipeId={recipeId}
-            onRemove={onRemove}
             navigate={navigate}
           />
         </DialogContent>
@@ -81,7 +78,6 @@ export function DeleteRecipeDialog({
           className="px-4"
           onOpenChange={onOpenChange}
           recipeId={recipeId}
-          onRemove={onRemove}
           navigate={navigate}
         />
         <DrawerFooter className="pt-2">
@@ -98,7 +94,6 @@ type ProfileFormProps = {
   className?: string;
   onOpenChange: (open: boolean) => void;
   recipeId: string;
-  onRemove?: (id: string) => void;
   navigate?: () => void;
 };
 
@@ -106,7 +101,6 @@ function ProfileForm({
   className,
   onOpenChange,
   recipeId,
-  onRemove,
   navigate,
 }: ProfileFormProps) {
   const { deleteRecipe, isPending } = useDeleteRecipe();
@@ -117,7 +111,6 @@ function ProfileForm({
     deleteRecipe(recipeId)
       .then((data) => {
         toast.success(data.message);
-        onRemove?.(recipeId);
         onOpenChange(false);
         refetchUser();
         navigate?.();

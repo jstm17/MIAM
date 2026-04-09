@@ -21,13 +21,9 @@ import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 
 type RecipeCardActionsProps = {
   recipe: Recipe;
-  onRemove?: (id: string) => void;
 };
 
-export const RecipeCardActions = ({
-  recipe,
-  onRemove,
-}: RecipeCardActionsProps) => {
+export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   const navigate = useNavigate();
   const { saveRecipe, isPending: isSaving } = useSaveRecipe();
   const { unsaveRecipe, isPending: isUnsaving } = useUnsaveRecipe();
@@ -130,7 +126,6 @@ export const RecipeCardActions = ({
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         recipeId={_id}
-        onRemove={onRemove}
       />
     </div>
   );

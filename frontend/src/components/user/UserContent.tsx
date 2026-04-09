@@ -53,13 +53,7 @@ export const UserContent = ({ user }: UserContentProps) => {
       />
       {filteredRecipes.map((recipe) => (
         <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
-          <RecipeCard
-            recipe={recipe}
-            // onRemove={(id) => {
-            //   setRecipes((prev) => prev.filter((r) => r._id !== id));
-            //   setTotalRecipes((prev) => prev - 1);
-            // }}
-          />
+          <RecipeCard recipe={recipe} />
         </Link>
       ))}
     </div>

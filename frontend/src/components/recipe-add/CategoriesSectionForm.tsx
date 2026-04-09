@@ -90,7 +90,7 @@ export const CategoriesSectionForm = ({
             error={errors.categories?.message}
             placeholder="Ex. Dessert"
             inputGroupAddon={<ChevronsUpDown />}
-            inputGroupAddonClassName={"absolute right-0"}
+            inputGroupAddonClassName={"absolute right-0 -z-10"}
           />
           <Button
             type="button"

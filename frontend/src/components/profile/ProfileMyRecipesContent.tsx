@@ -22,18 +22,25 @@ export const ProfileMyRecipesContent = ({
       new Set(recipes.flatMap((r) => r.categories).map((c) => c.name)),
     ),
   );
+  const [selectedVisibility, setSelectedVisibility] = useState<string[]>([
+    "visible",
+    "hidden",
+  ]);
 
   const filteredRecipes = useMemo(() => {
     return recipes
       .filter((recipe) =>
         recipe.categories.some((c) => selectedCategories.includes(c.name)),
       )
+      .filter((recipe) =>
+        selectedVisibility.includes(recipe.visible ? "visible" : "hidden"),
+      )
       .sort((a, b) =>
         sort === "recent"
           ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       );
-  }, [recipes, selectedCategories, sort]);
+  }, [recipes, selectedCategories, selectedVisibility, sort]);
 
   if (totalElement === 0) {
     return (
@@ -56,6 +63,8 @@ export const ProfileMyRecipesContent = ({
         setSort={setSort}
         selectedCategories={selectedCategories}
         setSelectedCategories={setSelectedCategories}
+        selectedVisibility={selectedVisibility}
+        setSelectedVisibility={setSelectedVisibility}
       />
       {filteredRecipes.map((recipe) => (
         <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>

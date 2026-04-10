@@ -19,6 +19,34 @@ exports.GetAllCategories = async (req, res) => {
   }
 };
 
+exports.GetAllCategoriesVisibles = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
+      : { visible: true };
+
+    const categoryIds = await Recipe.distinct("categories", filter);
+    const categories = await Category.find({
+      _id: { $in: categoryIds },
+    }).sort({ name: 1 });
+
+    return res.status(200).json({
+      error: false,
+      message: "Catégories récupérées avec succès",
+      data: categories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
 exports.CreateCategory = async (req, res) => {
   try {
     const { name } = req.body;

@@ -82,7 +82,7 @@ export const RecipeDetailsImage = ({
           size="icon"
           variant="outline"
           aria-label="Retour"
-          className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
+          className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
           onClick={() => navigate(-1)}
         >
           <Reply color="white" />
@@ -92,7 +92,7 @@ export const RecipeDetailsImage = ({
             size={"icon"}
             variant="outline"
             aria-label="Save Recipe"
-            className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
+            className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
             onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
             disabled={
               !user ||
@@ -115,7 +115,7 @@ export const RecipeDetailsImage = ({
                   variant="outline"
                   size="icon"
                   aria-label="More Options"
-                  className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
+                  className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
                 >
                   <Ellipsis color="white" />
                 </Button>

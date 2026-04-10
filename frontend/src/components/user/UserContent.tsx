@@ -1,4 +1,4 @@
-import { useGetAllRecipesByUserId } from "@/hooks/recipes/useGetAllRecipesByUserId";
+import { useGetAllRecipesVisiblesByUserId } from "@/hooks/recipes/useGetAllRecipesVisiblesByUserId";
 import type { User } from "@/types/user.types";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ type UserContentProps = {
 };
 
 export const UserContent = ({ user }: UserContentProps) => {
-  const { recipes, totalRecipes, isLoading } = useGetAllRecipesByUserId(
+  const { recipes, totalRecipes, isLoading } = useGetAllRecipesVisiblesByUserId(
     user._id,
   );
   const [sort, setSort] = useState("recent");

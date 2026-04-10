@@ -111,7 +111,15 @@ exports.GetRecipeById = async (req, res) => {
 
 exports.GetRecipeBySlug = async (req, res) => {
   try {
-    const recipe = await Recipe.findOne({ slug: req.params.slug })
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          slug: req.params.slug,
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
+      : { slug: req.params.slug, visible: true };
+
+    const recipe = await Recipe.findOne(filter)
       .populate("categories")
       .populate("ingredients.ingredient")
       .populate("addedBy", "name _id");
@@ -137,7 +145,7 @@ exports.GetRecipeBySlug = async (req, res) => {
   }
 };
 
-exports.GetRecipeByCategory = async (req, res) => {
+exports.GetAllRecipesByCategory = async (req, res) => {
   try {
     const category = await Category.findOne({ slug: req.params.slug });
 
@@ -149,6 +157,47 @@ exports.GetRecipeByCategory = async (req, res) => {
     }
 
     const recipes = await Recipe.find({ categories: category._id })
+      .populate("categories")
+      .populate("ingredients.ingredient")
+      .populate("addedBy", "name _id");
+
+    return res.status(200).json({
+      error: false,
+      message: "Recettes trouvées avec succès",
+      data: recipes,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - Les recettes n'ont pas pu être récupérées",
+    });
+  }
+};
+
+exports.GetAllRecipesVisiblesByCategory = async (req, res) => {
+  try {
+    const category = await Category.findOne({ slug: req.params.slug });
+
+    if (!category) {
+      return res.status(404).json({
+        error: true,
+        message: "Catégorie non trouvée",
+      });
+    }
+
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          categories: category._id,
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
+      : {
+          categories: category._id,
+          visible: true,
+        };
+
+    const recipes = await Recipe.find(filter)
       .populate("categories")
       .populate("ingredients.ingredient")
       .populate("addedBy", "name _id");
@@ -194,6 +243,39 @@ exports.GetAllRecipes = async (req, res) => {
 exports.GetAllRecipesByMe = async (req, res) => {
   try {
     const recipes = await Recipe.find({ addedBy: req.user.id })
+      .sort({ createdAt: -1 })
+      .populate("categories")
+      .populate("ingredients.ingredient")
+      .populate("addedBy", "name _id");
+
+    return res.status(200).json({
+      error: false,
+      message: "Recettes récupérées avec succès",
+      data: recipes,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - Les recettes n'ont pas pu être récupérées",
+    });
+  }
+};
+
+// Get visible recipes from others and all recipes from the authenticated user
+exports.GetAllRecipesVisibles = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          $or: [
+            { visible: true, addedBy: { $ne: userId } },
+            { addedBy: userId },
+          ],
+        }
+      : { visible: true };
+
+    const recipes = await Recipe.find(filter)
       .sort({ createdAt: -1 })
       .populate("categories")
       .populate("ingredients.ingredient")

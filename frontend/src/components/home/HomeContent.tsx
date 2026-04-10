@@ -1,4 +1,4 @@
-import { useGetAllRecipes } from "@/hooks/recipes/useGetAllRecipes";
+import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
@@ -7,7 +7,7 @@ import { RecipesFilters } from "../recipe-card/RecipesFilters";
 import { HomeContentSkeleton } from "./skeletons/HomeContentSkeleton";
 
 export const HomeContent = () => {
-  const { recipes, totalRecipes, isLoading } = useGetAllRecipes();
+  const { recipes, totalRecipes, isLoading } = useGetAllRecipesVisibles();
   const navigate = useNavigate();
   const [sort, setSort] = useState("recent");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);

@@ -10,6 +10,7 @@ export const useGetSavedRecipes = () => {
 
   const recipes = useMemo<RecipeWithSavedAt[]>(() => {
     if (!user?.savedRecipes) return [];
+
     return user.savedRecipes
       .map((item: SavedRecipe) => {
         if (!item.recipe) return null;
@@ -18,7 +19,12 @@ export const useGetSavedRecipes = () => {
           savedAt: item.savedAt,
         } as RecipeWithSavedAt;
       })
-      .filter((recipe): recipe is RecipeWithSavedAt => recipe !== null);
+      .filter((recipe): recipe is RecipeWithSavedAt => {
+        if (!recipe) return false;
+
+        const isOwner = recipe.addedBy?._id === user._id;
+        return isOwner || recipe.visible;
+      });
   }, [user]);
 
   return { recipes, totalRecipes: recipes.length, isLoading };

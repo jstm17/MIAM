@@ -34,6 +34,9 @@ export const useUpdateRecipe = () => {
       queryClient.invalidateQueries({ queryKey: ["recipe"] });
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       queryClient.invalidateQueries({ queryKey: ["recipes", "category"] });
+      queryClient.invalidateQueries({
+        queryKey: ["recipes", "category", "visibles"],
+      });
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },

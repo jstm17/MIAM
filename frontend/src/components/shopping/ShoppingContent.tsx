@@ -82,11 +82,8 @@ export const ShoppingContent = () => {
                 {recipe.name}
               </Typography>
             </div>
-            <Link
-              to={`/recipe/${recipe.slug}`}
-              className="text-sm text-primary hover:underline"
-            >
-              <Button size="icon" className="">
+            <Link to={`/recipe/${recipe.slug}`}>
+              <Button size="icon">
                 <Eye />
               </Button>
             </Link>

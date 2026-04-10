@@ -23,6 +23,7 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { RecipeFiltersCategory } from "./RecipeFiltersCategory";
 import { RecipeFiltersUser } from "./RecipeFiltersUser";
+import { RecipeFiltersVisibility } from "./RecipeFiltersVisibility";
 
 type RecipesFiltersProps = {
   title: string;
@@ -34,6 +35,8 @@ type RecipesFiltersProps = {
   setSelectedCategories?: React.Dispatch<React.SetStateAction<string[]>>;
   selectedUsers?: string[];
   setSelectedUsers?: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedVisibility?: string[];
+  setSelectedVisibility?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export const RecipesFilters = ({
@@ -46,6 +49,8 @@ export const RecipesFilters = ({
   setSelectedCategories,
   selectedUsers,
   setSelectedUsers,
+  selectedVisibility,
+  setSelectedVisibility,
 }: RecipesFiltersProps) => {
   return (
     <Drawer direction="right">
@@ -98,6 +103,13 @@ export const RecipesFilters = ({
               selectedUsers={selectedUsers}
               originalRecipes={originalRecipes}
               setSelectedUsers={setSelectedUsers}
+            />
+          )}
+          {selectedVisibility && setSelectedVisibility && (
+            <RecipeFiltersVisibility
+              selectedVisibility={selectedVisibility}
+              originalRecipes={originalRecipes}
+              setSelectedVisibility={setSelectedVisibility}
             />
           )}
         </div>

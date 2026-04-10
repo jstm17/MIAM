@@ -4,7 +4,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { useGetAllCategories } from "@/hooks/categories/useGetAllCategories";
+import { useGetAllCategoriesVisibles } from "@/hooks/categories/useGetAllCategoriesVisibles";
 import { Tags } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
@@ -23,14 +23,14 @@ const CategoryCarouselHeader = () => (
 
 export function CategoryCarousel() {
   const navigate = useNavigate();
-  const { categories, isLoading } = useGetAllCategories();
+  const { categories, isLoading } = useGetAllCategoriesVisibles();
 
   const sortedCategories = (categories ?? []).sort((a, b) =>
     a.name.localeCompare(b.name),
   );
   if (isLoading) {
     return (
-      <div>
+      <>
         <CategoryCarouselHeader />
         <Carousel opts={{ align: "start" }} className="w-[110%]">
           <CarouselContent>
@@ -48,7 +48,7 @@ export function CategoryCarousel() {
             ))}
           </CarouselContent>
         </Carousel>
-      </div>
+      </>
     );
   }
 
@@ -76,7 +76,7 @@ export function CategoryCarousel() {
             <CarouselItem key={cat._id} className="basis-1/3">
               <Link to={`/category/${cat.slug}`}>
                 <div className="py-2">
-                  <Card className="p-0">
+                  <Card className="p-0 active:brightness-95">
                     <AspectRatio ratio={1}>
                       {cat.image ? (
                         <img

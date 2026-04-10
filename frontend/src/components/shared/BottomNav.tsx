@@ -20,7 +20,7 @@ export const BottomNav = () => {
           {Icon == Plus ? (
             <div
               className={cn(
-                "bg-primary rounded-[min(var(--radius-2xl),10px)] p-2 text-white",
+                "bg-primary rounded-[min(var(--radius-2xl),10px)] p-2 text-white active:brightness-95",
               )}
             >
               <Plus />
@@ -28,7 +28,7 @@ export const BottomNav = () => {
           ) : (
             <Icon
               className={cn(
-                "text-muted-foreground",
+                "text-muted-foreground active:text-foreground",
                 pathname === to && "text-primary",
               )}
             />

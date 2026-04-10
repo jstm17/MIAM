@@ -19,7 +19,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
   const { name, categories, image, addedBy, visible } = recipe;
 
   return (
-    <Card className="relative mx-auto w-full gap-0 rounded-2xl p-0">
+    <Card className="relative mx-auto w-full gap-0 rounded-2xl p-0 active:brightness-95">
       {!visible && (
         <div className="absolute top-2 left-2 z-20">
           <EyeOff color="white" className="drop-shadow-sm" />

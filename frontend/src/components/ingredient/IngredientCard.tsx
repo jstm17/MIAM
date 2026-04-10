@@ -37,7 +37,7 @@ export const IngredientCard = ({
           size="icon"
           disabled={disabled}
           onClick={onToggleCart}
-          className="absolute top-2 right-2 z-10 backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 aria-expanded:bg-muted/10"
+          className="absolute top-2 right-2 z-10 backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
         >
           {icon}
         </Button>

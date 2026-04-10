@@ -19,6 +19,37 @@ exports.GetAllIngredients = async (req, res) => {
   }
 };
 
+exports.GetAllIngredientsVisibles = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
+      : { visible: true };
+
+    const ingredientIds = await Recipe.distinct(
+      "ingredients.ingredient",
+      filter,
+    );
+    const ingredients = await Ingredient.find({
+      _id: { $in: ingredientIds },
+    }).sort({ name: 1 });
+
+    return res.status(200).json({
+      error: false,
+      message: "Ingrédients récupérés avec succès",
+      data: ingredients,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
 exports.CreateIngredient = async (req, res) => {
   try {
     const { name } = req.body;

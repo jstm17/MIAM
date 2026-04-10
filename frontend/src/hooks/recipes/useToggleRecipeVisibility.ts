@@ -11,6 +11,7 @@ export const useToggleRecipeVisibility = () => {
         ? recipeService.hide(id).then((res) => res.data)
         : recipeService.show(id).then((res) => res.data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["recipes", "visibles"] });
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
       queryClient.invalidateQueries({ queryKey: ["recipe"] });
     },

@@ -4,7 +4,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { useGetAllRecipes } from "@/hooks/recipes/useGetAllRecipes";
+import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import { useAuth } from "@/hooks/useAuth";
 import { useGetAllUsers } from "@/hooks/users/useGetAllUsers";
 import { UserRound, UsersRound } from "lucide-react";
@@ -25,7 +25,7 @@ const UserCarouselHeader = () => (
 export function UserCarousel() {
   const { user, isLoading: isLoadingAuth } = useAuth();
   const { users, isLoading: isLoadingUsers } = useGetAllUsers();
-  const { recipes, isLoading: isLoadingRecipes } = useGetAllRecipes();
+  const { recipes, isLoading: isLoadingRecipes } = useGetAllRecipesVisibles();
 
   const recipesCountByUser = (recipes ?? []).reduce<Record<string, number>>(
     (acc, recipe) => {
@@ -86,7 +86,7 @@ export function UserCarousel() {
             <CarouselItem key={u._id} className="basis-1/3">
               <Link to={`/chef/${u.slug}`}>
                 <div className="py-2">
-                  <Card className="p-0 bg-secondary ring-0">
+                  <Card className="p-0 bg-secondary ring-0 active:brightness-95">
                     <CardContent className="items-center flex flex-col p-2 gap-2">
                       <UserRound />
                       <p className="text-center">

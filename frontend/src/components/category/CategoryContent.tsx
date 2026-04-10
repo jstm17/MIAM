@@ -1,4 +1,4 @@
-import { useGetAllRecipesByCategory } from "@/hooks/recipes/useGetAllRecipesByCategory";
+import { useGetAllVisiblesByCategory } from "@/hooks/recipes/useGetAllRecipesVibsiblesByCategory";
 import type { Category } from "@/types/category.types";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ type CategoryContentProps = {
 };
 
 export const CategoryContent = ({ category }: CategoryContentProps) => {
-  const { recipes, totalRecipes, isLoading } = useGetAllRecipesByCategory(
+  const { recipes, totalRecipes, isLoading } = useGetAllVisiblesByCategory(
     category.slug,
   );
   const [sort, setSort] = useState("recent");

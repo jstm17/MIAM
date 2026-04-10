@@ -242,10 +242,6 @@ exports.AddIngredientToCart = async (req, res) => {
       );
     });
 
-    if (!hasSavedRecipe) {
-      user.savedRecipes.push({ recipe: recipeId, savedAt: new Date() });
-    }
-
     if (!hasSavedIngredient) {
       user.savedIngredients.push({
         ingredient: ingredientId,
@@ -256,14 +252,7 @@ exports.AddIngredientToCart = async (req, res) => {
 
     await user.save();
     await user.populate({ path: "savedIngredients.ingredient" });
-    await user.populate({
-      path: "savedIngredients.recipe",
-      populate: [
-        { path: "ingredients.ingredient" },
-        { path: "categories" },
-        { path: "addedBy", select: "name" },
-      ],
-    });
+
     await user.populate({
       path: "savedRecipes.recipe",
       populate: [
@@ -326,14 +315,6 @@ exports.RemoveIngredientFromCart = async (req, res) => {
     await user.populate({ path: "savedIngredients.ingredient" });
     await user.populate({
       path: "savedIngredients.recipe",
-      populate: [
-        { path: "ingredients.ingredient" },
-        { path: "categories" },
-        { path: "addedBy", select: "name" },
-      ],
-    });
-    await user.populate({
-      path: "savedRecipes.recipe",
       populate: [
         { path: "ingredients.ingredient" },
         { path: "categories" },

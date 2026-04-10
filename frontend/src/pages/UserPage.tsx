@@ -15,7 +15,7 @@ export const UserPage = () => {
 
   if (!user) {
     return (
-      <Layout>
+      <Layout header>
         <EmptyCard
           title="Utilisateur non trouvé"
           description="Cet utilisateur n'existe pas."

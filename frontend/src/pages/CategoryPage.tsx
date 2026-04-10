@@ -8,14 +8,14 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { category, isLoading } = useGetCategoryBySlug(slug!);
+  const { category, isLoading, isFetching } = useGetCategoryBySlug(slug!);
   const navigate = useNavigate();
 
-  if (isLoading) return <Loading />;
+  if (isLoading || isFetching) return <Loading />;
 
   if (!category) {
     return (
-      <Layout>
+      <Layout header>
         <EmptyCard
           title="Catégorie non trouvée"
           description="Cette catégorie n'existe pas."

@@ -16,7 +16,7 @@ export const ShoppingPage = () => {
 
   if (!savedIngredients || savedIngredients.length === 0) {
     return (
-      <Layout>
+      <Layout header>
         <ShoppingHeader empty={true} />
 
         <EmptyCard

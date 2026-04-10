@@ -8,6 +8,7 @@ export const useGetAllCategories = () => {
     queryKey: ["categories"],
     queryFn: () =>
       categoryService.getAll().then((res) => res.data.data as Category[]),
+    staleTime: 0,
   });
 
   const categories = useMemo(() => data ?? [], [data]);

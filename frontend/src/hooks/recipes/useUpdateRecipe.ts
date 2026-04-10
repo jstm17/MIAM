@@ -32,6 +32,10 @@ export const useUpdateRecipe = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
       queryClient.invalidateQueries({ queryKey: ["recipe"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["recipes", "category"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },
     onError: (err: AxiosError<{ message: string }>) => {
       const message = err.response?.data?.message || err.message;

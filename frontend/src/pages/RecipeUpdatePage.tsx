@@ -17,6 +17,7 @@ import {
 } from "@/schemas/updateRecipeForm.schemas";
 import type { ApiError } from "@/types/error.types";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -65,10 +66,14 @@ export function RecipeUpdatePage() {
     }
   }, [recipe, reset]);
 
+  const queryClient = useQueryClient();
+
   const onSubmit = async (formData: UpdateRecipeFormData) => {
     try {
       const res = await updateRecipe(id!, formData);
-      navigate(`/recipe/${res.data.slug}`);
+      await queryClient.refetchQueries({ queryKey: ["recipe"] });
+      // navigate(`/recipe/${res.data.slug}`);
+      navigate(-1);
       toast.success(res.message);
     } catch (err: unknown) {
       const apiError = err as ApiError;

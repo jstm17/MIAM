@@ -78,10 +78,14 @@ export function CategoryCarousel() {
                 <div className="py-2">
                   <Card className="p-0">
                     <AspectRatio ratio={1}>
-                      <img
-                        src={cat.image}
-                        className="w-full h-full object-cover"
-                      />
+                      {cat.image ? (
+                        <img
+                          src={cat.image}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Skeleton className="h-full w-full" />
+                      )}
                     </AspectRatio>
                   </Card>
                   <Typography

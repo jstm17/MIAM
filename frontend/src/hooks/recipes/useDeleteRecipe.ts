@@ -10,6 +10,13 @@ export const useDeleteRecipe = () => {
       recipeService.delete(id).then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({
+        queryKey: ["recipes", "category"],
+        exact: false,
+      });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },
     onError: (err: AxiosError<{ message: string }>) => {
       throw new Error(err.response?.data?.message || err.message);

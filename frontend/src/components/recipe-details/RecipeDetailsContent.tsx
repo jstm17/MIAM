@@ -33,7 +33,7 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
         defaultValue="ingredients"
         className="relative mr-auto w-full flex flex-col"
       >
-        <TabsList className="w-full justify-start rounded-none border-b p-0 sticky top-6 z-40 bg-background">
+        <TabsList className="w-full justify-start rounded-none border-b p-0 sticky -top-px z-40 bg-background">
           <TabsTrigger
             value="ingredients"
             className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "

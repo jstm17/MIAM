@@ -7,10 +7,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BookmarkIcon, Ellipsis, Pencil, Trash } from "lucide-react";
+import {
+  BookmarkIcon,
+  Ellipsis,
+  Eye,
+  EyeOff,
+  Pencil,
+  Trash,
+} from "lucide-react";
 
 import type { Recipe } from "@/types/recipe.types";
 
+import { useToggleRecipeVisibility } from "@/hooks/recipes/useToggleRecipeVisibility";
 import { useAuth } from "@/hooks/useAuth";
 import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
@@ -29,9 +37,10 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   const { unsaveRecipe, isPending: isUnsaving } = useUnsaveRecipe();
   const { recipes: savedRecipes } = useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
+  const { toggleVisibility, isPending: isPendingVisibility } =
+    useToggleRecipeVisibility();
   const { user, isLoading } = useAuth();
-  const { _id, addedBy } = recipe;
+  const { _id, addedBy, visible } = recipe;
   const isSaved = savedRecipes.some((r) => r._id === _id);
   const isMyRecipe = addedBy._id === user?._id;
 
@@ -46,6 +55,15 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
     } else {
       saveRecipe(recipeId);
     }
+  };
+
+  const handleToggleRecipeVisibility = (
+    e: React.MouseEvent,
+    recipeId: string,
+    visible: boolean,
+  ) => {
+    e.preventDefault();
+    toggleVisibility(recipeId, visible);
   };
 
   return (
@@ -65,6 +83,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
           <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuGroup>
               <DropdownMenuItem
+                disabled={isSaving || isUnsaving}
                 onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
               >
                 {isSaved ? (
@@ -89,6 +108,22 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
               >
                 <Pencil />
                 Modifier la recette
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={isPendingVisibility}
+                onClick={(e) => handleToggleRecipeVisibility(e, _id, visible)}
+              >
+                {visible ? (
+                  <>
+                    <EyeOff />
+                    Masquer la recette
+                  </>
+                ) : (
+                  <>
+                    <Eye />
+                    Exposer la recette
+                  </>
+                )}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

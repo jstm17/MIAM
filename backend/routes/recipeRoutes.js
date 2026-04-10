@@ -13,5 +13,7 @@ router.get("/:id", recipeController.GetRecipeById);
 router.post("/", auth, upload.single("image"), recipeController.CreateRecipe);
 router.put("/:id", auth, upload.single("image"), recipeController.UpdateRecipe);
 router.delete("/:id", auth, recipeController.DeleteRecipe);
+router.patch("/:id/show", auth, recipeController.ShowRecipe);
+router.patch("/:id/hide", auth, recipeController.HideRecipe);
 
 module.exports = router;

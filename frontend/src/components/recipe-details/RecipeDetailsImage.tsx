@@ -10,12 +10,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToggleRecipeVisibility } from "@/hooks/recipes/useToggleRecipeVisibility";
 import { useAuth } from "@/hooks/useAuth";
 import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
 import { useUnsaveRecipe } from "@/hooks/users/useUnsaveRecipe";
 import type { Recipe } from "@/types/recipe.types";
-import { BookmarkIcon, Ellipsis, Pencil, Reply, Trash } from "lucide-react";
+import {
+  BookmarkIcon,
+  Ellipsis,
+  Eye,
+  EyeOff,
+  Pencil,
+  Reply,
+  Trash,
+} from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -34,9 +43,11 @@ export const RecipeDetailsImage = ({
   const { recipes: savedRecipes, isLoading: isLoadingSavedRecipes } =
     useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { toggleVisibility, isPending: isPendingVisibility } =
+    useToggleRecipeVisibility();
 
   const { user, isLoading: isLoadingAuth } = useAuth();
-  const { _id, addedBy } = recipe;
+  const { _id, addedBy, visible } = recipe;
 
   const isSaved = savedRecipes.some((r) => r._id === _id);
 
@@ -53,6 +64,15 @@ export const RecipeDetailsImage = ({
     } else {
       saveRecipe(recipeId);
     }
+  };
+
+  const handleToggleRecipeVisibility = (
+    e: React.MouseEvent,
+    recipeId: string,
+    visible: boolean,
+  ) => {
+    e.preventDefault();
+    toggleVisibility(recipeId, visible);
   };
 
   return (
@@ -111,6 +131,24 @@ export const RecipeDetailsImage = ({
                     <Pencil />
                     Modifier la recette
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isPendingVisibility}
+                    onClick={(e) =>
+                      handleToggleRecipeVisibility(e, _id, visible)
+                    }
+                  >
+                    {visible ? (
+                      <>
+                        <EyeOff />
+                        Masquer la recette
+                      </>
+                    ) : (
+                      <>
+                        <Eye />
+                        Exposer la recette
+                      </>
+                    )}
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -130,12 +168,20 @@ export const RecipeDetailsImage = ({
           )}
         </div>
       </div>
-      <AspectRatio ratio={14 / 9} className="relative overflow-hidden">
+      <AspectRatio
+        ratio={14 / 9}
+        className="relative overflow-hidden"
+        style={{ marginTop: "calc(-1 * env(safe-area-inset-top))" }}
+      >
         <img
           src={recipe?.image || placeholederImage}
           alt="Recipe"
           className="absolute inset-0 object-cover w-full h-full"
-          style={{ transform: `translateY(${offsetY * 0.4}px)` }}
+          style={{
+            transform: `translateY(${offsetY * 0.4}px)`,
+            marginTop: "calc(-1 * env(safe-area-inset-top))",
+            paddingTop: "env(safe-area-inset-top)",
+          }}
         />
       </AspectRatio>
 

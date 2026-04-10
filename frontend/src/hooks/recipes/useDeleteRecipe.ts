@@ -11,10 +11,6 @@ export const useDeleteRecipe = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      queryClient.invalidateQueries({
-        queryKey: ["recipes", "category"],
-        exact: false,
-      });
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },

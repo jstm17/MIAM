@@ -376,3 +376,43 @@ exports.DeleteRecipe = async (req, res) => {
     });
   }
 };
+
+exports.ShowRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      { visible: true },
+      { new: true },
+    );
+    if (!recipe)
+      return res
+        .status(404)
+        .json({ error: true, message: "Recette non trouvée" });
+    return res
+      .status(200)
+      .json({ error: false, message: "Recette visible", data: recipe });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
+exports.HideRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      { visible: false },
+      { new: true },
+    );
+    if (!recipe)
+      return res
+        .status(404)
+        .json({ error: true, message: "Recette non trouvée" });
+    return res
+      .status(200)
+      .json({ error: false, message: "Recette masquée", data: recipe });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};

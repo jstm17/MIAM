@@ -49,7 +49,7 @@ export function RecipeFiltersUser({
       onOpenChange={setIsOpen}
       className="flex w-full flex-col gap-2 border p-2 rounded-xl"
     >
-      <div className="flex items-center justify-between gap-4 w-full">
+      <div className="flex items-center justify-between gap-2 w-full">
         <CollapsibleTrigger className="flex items-center gap-2">
           <ChevronsUpDown size={20} />
           <span className="text-start">Par chefs</span>

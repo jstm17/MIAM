@@ -8,6 +8,7 @@ export const useGetAllRecipes = () => {
     queryKey: ["recipes"],
     queryFn: () =>
       recipeService.getAll().then((res) => res.data.data as Recipe[]),
+    staleTime: 0,
   });
 
   const recipes = useMemo(() => data ?? [], [data]);

@@ -8,6 +8,7 @@ export const useGetAllUsers = () => {
     queryKey: ["users"],
     queryFn: () =>
       userService.getAllUsers().then((res) => res.data.data as User[]),
+    staleTime: 0,
   });
 
   const users = useMemo(() => data ?? [], [data]);

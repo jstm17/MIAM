@@ -22,6 +22,7 @@ export type Recipe = {
   personsNumber: number;
   addedBy: User;
   image: string;
+  visible: boolean;
   createdAt: string;
   updatedAt: string;
   savedAt?: string; // Optional timestamp for when recipe was saved

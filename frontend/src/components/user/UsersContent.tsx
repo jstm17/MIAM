@@ -1,7 +1,7 @@
 import { useGetAllUsersVisibles } from "@/hooks/users/useGetAllUsersVisibles";
 import { UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { Card, CardContent } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
@@ -10,7 +10,6 @@ import { UserFilters } from "./UserFilters";
 export const UsersContent = () => {
   const { users, totalUsers, isLoading } = useGetAllUsersVisibles();
   const [sort, setSort] = useState("name");
-  const navigate = useNavigate();
 
   const sortedUsers = useMemo(() => {
     const items = [...users].filter((user) => (user.recipeCount ?? 0) > 0);

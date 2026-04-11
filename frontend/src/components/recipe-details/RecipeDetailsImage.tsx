@@ -1,4 +1,4 @@
-import placeholederImage from "@/assets/placeholder-image.jpg";
+import placeholderImage from "@/assets/placeholder-image.jpg";
 import { DeleteRecipeDialog } from "@/components/recipe-card/DeleteRecipeDialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
 import { useUnsaveRecipe } from "@/hooks/users/useUnsaveRecipe";
 import type { Recipe } from "@/types/recipe.types";
+import { motion, MotionValue } from "framer-motion";
 import {
   BookmarkIcon,
   Ellipsis,
@@ -30,12 +31,9 @@ import { useNavigate } from "react-router";
 
 type RecipeDetailsImageProps = {
   recipe: Recipe;
-  offsetY: number;
+  y: MotionValue<string>;
 };
-export const RecipeDetailsImage = ({
-  recipe,
-  offsetY,
-}: RecipeDetailsImageProps) => {
+export const RecipeDetailsImage = ({ recipe, y }: RecipeDetailsImageProps) => {
   const navigate = useNavigate();
 
   const { saveRecipe, isPending: isSaving } = useSaveRecipe();
@@ -79,7 +77,7 @@ export const RecipeDetailsImage = ({
     <div className="relative">
       <div className="absolute p-4 top-0 z-10 flex justify-between w-full">
         <Button
-          size="icon"
+          size="icon-lg"
           variant="outline"
           aria-label="Retour"
           className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
@@ -89,7 +87,7 @@ export const RecipeDetailsImage = ({
         </Button>
         <div className="flex gap-2">
           <Button
-            size={"icon"}
+            size="icon-lg"
             variant="outline"
             aria-label="Save Recipe"
             className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
@@ -113,7 +111,7 @@ export const RecipeDetailsImage = ({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  size="icon"
+                  size="icon-lg"
                   aria-label="More Options"
                   className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
                 >
@@ -168,19 +166,13 @@ export const RecipeDetailsImage = ({
           )}
         </div>
       </div>
-      <AspectRatio
-        ratio={14 / 9}
-        className="relative overflow-hidden"
-        style={{ marginTop: "calc(-1 * env(safe-area-inset-top))" }}
-      >
-        <img
-          src={recipe?.image || placeholederImage}
+      <AspectRatio ratio={1} className=" overflow-hidden">
+        <motion.img
+          src={recipe?.image || placeholderImage}
           alt="Recipe"
-          className="absolute inset-0 object-cover w-full h-full"
+          className="absolute inset-0 object-cover w-full h-full "
           style={{
-            transform: `translateY(${offsetY * 0.4}px)`,
-            marginTop: "calc(-1 * env(safe-area-inset-top))",
-            paddingTop: "env(safe-area-inset-top)",
+            y,
           }}
         />
       </AspectRatio>

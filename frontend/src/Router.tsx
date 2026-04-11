@@ -1,8 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { ProtectedRoute } from "./components/shared/ProtectedRoute.js";
+import { CategoriesPage } from "./pages/CategoriesPage.js";
 import { CategoryPage } from "./pages/CategoryPage.js";
 import { HomePage } from "./pages/HomePage.js";
+import IngredientsPage from "./pages/IngredientsPage.js";
 import { LoginPage } from "./pages/LoginPage.js";
 import { NotFoundPage } from "./pages/NotFoundPage.js";
 import { ProfilePage } from "./pages/ProfilePage.js";
@@ -13,6 +15,7 @@ import { RegisterPage } from "./pages/RegisterPage.js";
 import { SearchPage } from "./pages/SearchPage.js";
 import { ShoppingPage } from "./pages/ShoppingPage.js";
 import { UserPage } from "./pages/UserPage";
+import { UsersPage } from "./pages/UsersPage.js";
 
 export const Router = () => {
   return (
@@ -57,7 +60,9 @@ export const Router = () => {
         <Route path="/recipe/:slug" element={<RecipeDetailsPage />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/chef/:slug" element={<UserPage />} />
-
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/chefs" element={<UsersPage />} />
+        <Route path="/ingredients" element={<IngredientsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

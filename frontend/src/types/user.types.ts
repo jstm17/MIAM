@@ -20,4 +20,5 @@ export type User = {
   savedIngredients?: SavedIngredient[];
   createdAt?: string;
   updatedAt?: string;
+  recipeCount?: number;
 };

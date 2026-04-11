@@ -9,7 +9,7 @@ import { PreparationSection } from "./PreparationSection";
 
 export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
   return (
-    <div className="bg-background rounded-t-4xl -mt-6 relative z-10 min-h-[calc(100dvh-42px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center">
+    <div className="bg-background rounded-t-4xl -mt-12 relative z-10 min-h-[calc(100dvh-42px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center">
       <span className="bg-muted w-25 h-1 block rounded-full mt-4"></span>
       <Typography variant="h1" size="lg" weight="semibold">
         {recipe.name}

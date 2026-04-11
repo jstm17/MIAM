@@ -45,7 +45,7 @@ export const IngredientsSectionForm = ({
           Ingrédients
         </Typography>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 max-w-lg">
         <div className="grid grid-cols-[1fr_2fr_36px] gap-4">
           <Label>Quantité *</Label>
           <Label>Ingrédient *</Label>
@@ -83,7 +83,7 @@ export const IngredientsSectionForm = ({
             <Button
               type="button"
               variant="outline"
-              size="icon"
+              size="icon-lg"
               onClick={() => remove(index)}
               disabled={fields.length === 1}
             >

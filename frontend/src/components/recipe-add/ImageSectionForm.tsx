@@ -53,7 +53,7 @@ export const ImageSectionForm = ({
               type="button"
               onClick={handleRemoveImage}
               variant={"outline"}
-              size={"icon"}
+              size="icon-lg"
               className="absolute top-2 right-2"
               aria-label="Supprimer l'image"
             >

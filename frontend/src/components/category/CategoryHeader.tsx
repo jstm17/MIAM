@@ -13,7 +13,7 @@ export const CategoryHeader = ({ category }: CategoryHeaderProps) => {
   return (
     <div className="flex items-center justify-between w-full mb-4">
       <Button
-        size="icon"
+        size="icon-lg"
         variant="outline"
         aria-label="Retour"
         onClick={() => navigate(-1)}
@@ -21,10 +21,10 @@ export const CategoryHeader = ({ category }: CategoryHeaderProps) => {
         <Reply />
       </Button>
 
-      <Typography variant="body" weight="bold">
+      <Typography variant="body" weight="bold" size="lg">
         {category?.name}
       </Typography>
-      <span className="w-[34.55px] h-[34.55px]"></span>
+      <span className="w-[38.88px] h-[38.88px]"></span>
     </div>
   );
 };

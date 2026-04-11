@@ -4,8 +4,8 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { useGetAllCategoriesVisibles } from "@/hooks/categories/useGetAllCategoriesVisibles";
-import { Tags } from "lucide-react";
+import { useGetTopCategoriesVisibles } from "@/hooks/categories/useGetTopCategoriesVisibles";
+import { ChevronRight, Tags } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { Typography } from "../shared/Typography";
@@ -13,21 +13,30 @@ import { AspectRatio } from "../ui/aspect-ratio";
 import { Skeleton } from "../ui/skeleton";
 
 const CategoryCarouselHeader = () => (
-  <div className="flex gap-2 px-4 items-center">
-    <Tags />
-    <Typography size="md" weight="semibold">
-      Catégories
-    </Typography>
+  <div className="flex gap-2 px-4 items-center justify-between mb-1">
+    <div className="flex gap-2 items-center">
+      <Tags />
+      <Typography size="md" weight="bold">
+        Catégories
+      </Typography>
+    </div>
+    <Link to="/categories" className="flex gap-1 items-center">
+      <Typography
+        size="sm"
+        variant="body"
+        className="text-secondary-foreground/80"
+      >
+        Tout voir
+      </Typography>
+      <ChevronRight size={16} className="text-secondary-foreground/80" />
+    </Link>
   </div>
 );
 
 export function CategoryCarousel() {
   const navigate = useNavigate();
-  const { categories, isLoading } = useGetAllCategoriesVisibles();
+  const { categories, isLoading } = useGetTopCategoriesVisibles();
 
-  const sortedCategories = (categories ?? []).sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
   if (isLoading) {
     return (
       <>
@@ -52,7 +61,7 @@ export function CategoryCarousel() {
     );
   }
 
-  if (sortedCategories.length === 0) {
+  if (categories.length === 0) {
     return (
       <div>
         <CategoryCarouselHeader />
@@ -72,10 +81,10 @@ export function CategoryCarousel() {
       <CategoryCarouselHeader />
       <Carousel opts={{ align: "start" }} className="w-[110%]">
         <CarouselContent>
-          {sortedCategories.map((cat) => (
+          {categories.map((cat) => (
             <CarouselItem key={cat._id} className="basis-1/3">
               <Link to={`/category/${cat.slug}`}>
-                <div className="py-2">
+                <div className="py-2 ">
                   <Card className="p-0 active:brightness-95">
                     <AspectRatio ratio={1}>
                       {cat.image ? (

@@ -59,7 +59,7 @@ export const RecipesFilters = ({
           <Typography variant="body" className="text-muted-foreground">
             {totalElement} {title}
           </Typography>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon-lg">
             <ListFilter />
           </Button>
         </div>
@@ -73,7 +73,7 @@ export const RecipesFilters = ({
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent position="item-aligned">
+            <SelectContent>
               <SelectGroup>
                 <SelectItem value="recent">
                   Du plus récent au plus ancien

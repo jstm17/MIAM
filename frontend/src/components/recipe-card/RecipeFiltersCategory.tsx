@@ -46,12 +46,12 @@ export function RecipeFiltersCategory({
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className="flex w-full flex-col gap-2 border p-2 rounded-xl"
+      className="flex w-full flex-col gap-2 border p-2 rounded-xl min-h-10"
     >
       <div className="flex items-center justify-between gap-2 w-full">
-        <CollapsibleTrigger className="flex items-center gap-2">
+        <CollapsibleTrigger className="flex items-center gap-2 w-full">
           <ChevronsUpDown size={20} />
-          <span className="text-start">Par catégories</span>
+          <span className="text-start text-base">Par catégories</span>
         </CollapsibleTrigger>
         <div className="flex items-center space-x-2">
           <Checkbox checked={false} />
@@ -76,7 +76,7 @@ export function RecipeFiltersCategory({
               checked={selectedCategories.includes(category)}
               onCheckedChange={() => toggleCategory(category)}
             />
-            <FieldLabel htmlFor={category} className="font-normal">
+            <FieldLabel htmlFor={category} className="font-normal text-md">
               {category}
               <span className="text-muted-foreground text-xs ml-1">
                 (

@@ -13,7 +13,7 @@ export const UserHeader = ({ user }: UserHeaderProps) => {
   return (
     <div className="flex items-center justify-between w-full mb-4">
       <Button
-        size="icon"
+        size="icon-lg"
         variant="outline"
         aria-label="Retour"
         onClick={() => navigate(-1)}
@@ -24,7 +24,7 @@ export const UserHeader = ({ user }: UserHeaderProps) => {
       <Typography variant="body" weight="bold">
         {user?.name}
       </Typography>
-      <span className="w-[34.55px] h-[34.55px]"></span>
+      <span className="w-[38.88px] h-[38.88px]"></span>
     </div>
   );
 };

@@ -3,7 +3,11 @@ import axiosInstance from "../lib/axiosInstance";
 const USER_URL = "/users";
 
 export const userService = {
+  getTopAllUsers: () => axiosInstance.get(`${USER_URL}/top`),
+
   getAllUsers: () => axiosInstance.get(`${USER_URL}/all`),
+
+  getAllUsersVisibles: () => axiosInstance.get(`${USER_URL}/visible`),
 
   getUserBySlug: (slug: string) => axiosInstance.get(`${USER_URL}/${slug}`),
 

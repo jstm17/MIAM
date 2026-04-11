@@ -3,7 +3,7 @@ import React from "react";
 type TypographyProps = {
   children: React.ReactNode;
   variant?: "h1" | "h2" | "h3" | "body";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   weight?: "normal" | "semibold" | "bold";
   small?: boolean;
   muted?: boolean;
@@ -31,6 +31,7 @@ export const Typography = (props: TypographyProps) => {
     sm: "text-sm",
     md: "text-base!",
     lg: "text-lg!",
+    xl: "text-xl!",
   };
   const weightClasses = {
     normal: "font-normal",

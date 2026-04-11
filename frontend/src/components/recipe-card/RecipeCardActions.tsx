@@ -73,7 +73,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              size="icon"
+              size="icon-lg"
               aria-label="More Options"
               className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
             >
@@ -143,7 +143,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
         </DropdownMenu>
       ) : (
         <Button
-          size={"icon"}
+          size="icon-lg"
           variant="outline"
           aria-label="Save Recipe"
           className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"

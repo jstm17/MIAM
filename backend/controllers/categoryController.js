@@ -28,10 +28,84 @@ exports.GetAllCategoriesVisibles = async (req, res) => {
         }
       : { visible: true };
 
-    const categoryIds = await Recipe.distinct("categories", filter);
-    const categories = await Category.find({
-      _id: { $in: categoryIds },
-    }).sort({ name: 1 });
+    const categories = await Recipe.aggregate([
+      { $match: filter },
+      { $unwind: "$categories" },
+      {
+        $group: {
+          _id: "$categories",
+          recipeCount: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ["$category", { recipeCount: "$recipeCount" }],
+          },
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      message: "Catégories récupérées avec succès",
+      data: categories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
+exports.GetTopCategoriesVisibles = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
+      : { visible: true };
+
+    const categories = await Recipe.aggregate([
+      { $match: filter },
+      { $unwind: "$categories" },
+      {
+        $group: {
+          _id: "$categories",
+          recipeCount: { $sum: 1 },
+        },
+      },
+      { $sort: { recipeCount: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ["$category", { recipeCount: "$recipeCount" }],
+          },
+        },
+      },
+    ]);
 
     return res.status(200).json({
       error: false,

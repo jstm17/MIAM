@@ -1,4 +1,4 @@
-import { Carrot, Search } from "lucide-react";
+import { Carrot, ChevronRight, Search } from "lucide-react";
 import { Typography } from "../shared/Typography";
 
 import {
@@ -17,14 +17,27 @@ import {
 import { useGetAllIngredientsVisibles } from "@/hooks/ingredients/useGetAllIngredientsVisibles";
 import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { IngredientCarousel } from "./IngredientCarousel";
 
 const IngredientSectionHeader = () => (
-  <div className="px-4 flex gap-2 items-center mb-2">
-    <Carrot />
-    <Typography size="md" weight="semibold">
-      Ingrédients
-    </Typography>
+  <div className="flex gap-2 px-4 items-center justify-between mb-1">
+    <div className="flex gap-2 items-center">
+      <Carrot />
+      <Typography size="md" weight="bold">
+        Ingrédients
+      </Typography>
+    </div>
+    <Link to="/ingredients" className="flex gap-1 items-center">
+      <Typography
+        size="sm"
+        variant="body"
+        className="text-secondary-foreground/80"
+      >
+        Tout voir
+      </Typography>
+      <ChevronRight size={16} className="text-secondary-foreground/80" />
+    </Link>
   </div>
 );
 
@@ -57,7 +70,7 @@ export const IngredientSection = () => {
     <div className="min-h-68">
       <IngredientSectionHeader />
 
-      <div className="px-4">
+      <div className="px-4 py-2">
         <Combobox
           multiple
           autoHighlight
@@ -68,7 +81,7 @@ export const IngredientSection = () => {
           <div className="flex gap-2 items-center w-full relative">
             <Search
               size={20}
-              className="size-4 shrink-0 opacity-50 absolute left-2"
+              className="size-4 shrink-0 text-foreground absolute left-2"
             />
             <ComboboxChips ref={anchor} className="w-full pl-8!">
               <ComboboxValue>

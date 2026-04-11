@@ -33,19 +33,21 @@ export function RecipeAddPage() {
   } = useForm<AddRecipeFormData>({
     resolver: zodResolver(addRecipeSchema),
     defaultValues: {
-      name: "Pain",
-      time: 30,
-      personsNumber: 4,
-      ingredients: [
-        { ingredient: "Poulet", quantity: "1" },
-        { ingredient: "Sel", quantity: "1 pincée" },
-        { ingredient: "Eau", quantity: "500 ml" },
-        { ingredient: "Pâte", quantity: "500 ml" },
-        { ingredient: "Pate", quantity: "500 ml" },
-        { ingredient: "Pâte brisée", quantity: "500 ml" },
-      ],
-      instructions: [{ content: "1" }],
-      categories: ["Italienne", "Rapide"],
+      ingredients: [{ ingredient: "", quantity: "" }],
+      instructions: [{ content: "" }],
+      // name: "Pain",
+      // time: 30,
+      // personsNumber: 4,
+      // ingredients: [
+      //   { ingredient: "Poulet", quantity: "1" },
+      //   { ingredient: "Sel", quantity: "1 pincée" },
+      //   { ingredient: "Eau", quantity: "500 ml" },
+      //   { ingredient: "Pâte", quantity: "500 ml" },
+      //   { ingredient: "Pate", quantity: "500 ml" },
+      //   { ingredient: "Pâte brisée", quantity: "500 ml" },
+      // ],
+      // instructions: [{ content: "1" }],
+      // categories: ["Italienne", "Rapide"],
     },
   });
 
@@ -67,12 +69,12 @@ export function RecipeAddPage() {
   return (
     <Layout
       title="Ajouter une recette"
-      titleSize="md"
-      className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+56px)]"
+      titleSize="lg"
+      className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup className="relative">
-          <div className="no-scrollbar overflow-y-auto pb-20 flex flex-col gap-8">
+          <div className="pb-20 flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               <TextInput
                 capitalize
@@ -122,8 +124,9 @@ export function RecipeAddPage() {
             <ImageSectionForm register={register} setValue={setValue} />
           </div>
 
-          <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 p-4 bg-background border-t max-w-lg m-auto flex-row gap-4">
+          <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4">
             <Button
+              size="lg"
               type="button"
               variant="outline"
               className="flex-1"
@@ -131,7 +134,7 @@ export function RecipeAddPage() {
             >
               Retour
             </Button>
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="flex-1" size="lg">
               Ajouter
             </Button>
           </Field>

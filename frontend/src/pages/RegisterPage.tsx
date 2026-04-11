@@ -47,7 +47,7 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <Layout className="p-4 items-center justify-center" header>
-      <Typography variant="h1" weight="bold">
+      <Typography variant="h1" weight="bold" size="xl">
         Inscription
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
@@ -63,7 +63,9 @@ export const RegisterPage: React.FC = () => {
             error={errors.password?.message}
             {...register("password")}
           />
-          <Button type="submit">S'inscrire</Button>
+          <Button type="submit" size="lg">
+            S'inscrire
+          </Button>
           <Button
             type="button"
             onClick={() => navigate("/login")}

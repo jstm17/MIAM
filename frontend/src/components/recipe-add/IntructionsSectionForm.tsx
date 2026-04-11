@@ -50,7 +50,7 @@ export const InstructionsSectionForm = ({
               <Button
                 type="button"
                 variant="outline"
-                size="icon"
+                size="icon-lg"
                 onClick={() => remove(index)}
                 disabled={fields.length === 1}
               >

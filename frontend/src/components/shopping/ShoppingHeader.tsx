@@ -9,16 +9,16 @@ export const ShoppingHeader = ({ empty }: { empty?: boolean }) => {
 
   return (
     <div className="relative flex items-center justify-between w-full mb-6">
-      <span className="w-[34.55px] h-[34.55px]"></span>
-      <Typography variant="h1" weight="bold" className="self-center">
+      <span className="w-[38.88px] h-[38.88px]"></span>
+      <Typography variant="h1" weight="bold" size="lg" className="self-center">
         Liste de courses
       </Typography>
 
-      <div className="w-[34.55px]">
+      <div className="w-[38.88px]">
         {!empty && (
           <Button
             variant="destructive"
-            size={"icon"}
+            size="icon-lg"
             onClick={() => setClearDialogOpen(true)}
             className=""
           >

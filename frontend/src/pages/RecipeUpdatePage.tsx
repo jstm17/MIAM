@@ -111,11 +111,11 @@ export function RecipeUpdatePage() {
     <Layout
       title="Modifier une recette"
       titleSize="md"
-      className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+56px)]"
+      className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup className="relative">
-          <div className="no-scrollbar overflow-y-auto pb-20 flex flex-col gap-8">
+          <div className="pb-20 flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               <TextInput
                 capitalize
@@ -171,6 +171,7 @@ export function RecipeUpdatePage() {
 
           <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 p-4 bg-background border-t max-w-lg m-auto flex-row gap-4">
             <Button
+              size="lg"
               type="button"
               variant="outline"
               className="flex-1"
@@ -178,7 +179,7 @@ export function RecipeUpdatePage() {
             >
               Retour
             </Button>
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="flex-1" size="lg">
               Modifier
             </Button>
           </Field>

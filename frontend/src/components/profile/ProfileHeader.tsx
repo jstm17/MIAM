@@ -33,7 +33,7 @@ export const ProfileHeader = () => {
 
   return (
     <div className="flex items-center justify-between w-full p-4">
-      <Button variant="outline" size="icon">
+      <Button variant="outline" size="icon-lg">
         <Link to="/recipe-add">
           <Plus />
         </Link>
@@ -44,7 +44,7 @@ export const ProfileHeader = () => {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" aria-label="More Options">
+          <Button variant="outline" size="icon-lg" aria-label="More Options">
             <Ellipsis />
           </Button>
         </DropdownMenuTrigger>

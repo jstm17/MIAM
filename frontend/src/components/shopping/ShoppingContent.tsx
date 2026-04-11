@@ -83,7 +83,7 @@ export const ShoppingContent = () => {
               </Typography>
             </div>
             <Link to={`/recipe/${recipe.slug}`}>
-              <Button size="icon">
+              <Button size="icon-lg">
                 <Eye />
               </Button>
             </Link>

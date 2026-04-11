@@ -20,7 +20,7 @@ export const BottomNav = () => {
           {Icon == Plus ? (
             <div
               className={cn(
-                "bg-primary rounded-[min(var(--radius-2xl),10px)] p-2 text-white active:brightness-95",
+                "bg-primary rounded-[min(var(--radius-2xl),12px)] p-2 text-white active:brightness-95",
               )}
             >
               <Plus />

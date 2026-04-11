@@ -485,6 +485,100 @@ exports.GetAllUsers = async (req, res) => {
   }
 };
 
+exports.GetAllUsersVisibles = async (req, res) => {
+  try {
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "recipes",
+          let: { userId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$addedBy", "$$userId"] },
+                    { $eq: ["$visible", true] },
+                  ],
+                },
+              },
+            },
+            { $count: "count" },
+          ],
+          as: "recipeCountData",
+        },
+      },
+      {
+        $addFields: {
+          recipeCount: {
+            $ifNull: [{ $arrayElemAt: ["$recipeCountData.count", 0] }, 0],
+          },
+        },
+      },
+      { $project: { password: 0, recipeCountData: 0 } },
+      { $sort: { name: 1 } },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      message: "Utilisateurs récupérés avec succès",
+      data: users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
+// Get top users by visible recipe count
+exports.GetTopAllUsers = async (req, res) => {
+  try {
+    const topUsers = await Recipe.aggregate([
+      { $match: { visible: true, addedBy: { $exists: true, $ne: null } } },
+      {
+        $group: {
+          _id: "$addedBy",
+          recipeCount: { $sum: 1 },
+        },
+      },
+      { $sort: { recipeCount: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ["$user", { recipeCount: "$recipeCount" }],
+          },
+        },
+      },
+      { $project: { password: 0 } },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      message: "Top utilisateurs récupérés avec succès",
+      data: topUsers,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
 // Get user by slug
 exports.GetUserBySlug = async (req, res) => {
   try {
@@ -534,5 +628,7 @@ module.exports = {
   UpdateUserName: exports.UpdateUserName,
   DeleteUser: exports.DeleteUser,
   GetAllUsers: exports.GetAllUsers,
+  GetAllUsersVisibles: exports.GetAllUsersVisibles,
+  GetTopAllUsers: exports.GetTopAllUsers,
   GetUserBySlug: exports.GetUserBySlug,
 };

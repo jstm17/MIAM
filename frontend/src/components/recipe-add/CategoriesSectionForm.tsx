@@ -94,7 +94,7 @@ export const CategoriesSectionForm = ({
           />
           <Button
             type="button"
-            size="icon"
+            size="icon-lg"
             variant="outline"
             onClick={() => addCategory(categoryInput)}
           >

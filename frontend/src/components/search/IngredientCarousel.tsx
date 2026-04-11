@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { Typography } from "../shared/Typography";
-import { Card } from "../ui/card";
+import { AspectRatio } from "../ui/aspect-ratio";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { Skeleton } from "../ui/skeleton";
 
@@ -20,19 +20,20 @@ export const IngredientCarousel = ({
 }: IngredientCarouselProps) => {
   if (isLoading) {
     return (
-      <Carousel opts={{ align: "start" }} className="w-[110%]">
-        <CarouselContent>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <CarouselItem key={i} className="basis-1/3">
-              <div className="py-2">
-                <Card className="p-0 bg-secondary ring-0">
-                  <Skeleton className="h-21" />
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      <div>
+        <Skeleton className="h-4 w-2/3 mb-4 mx-4" />
+        <Carousel opts={{ align: "start" }} className="w-[110%]">
+          <CarouselContent>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <CarouselItem key={i} className="basis-2/3">
+                <AspectRatio ratio={16 / 9} className="w-full rounded-4xl">
+                  <Skeleton className="w-full h-full rounded-2xl" />
+                </AspectRatio>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
     );
   }
   if (selectedIngredients.length === 0) {

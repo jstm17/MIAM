@@ -56,7 +56,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <Layout className="p-4 items-center justify-center" header>
-      <Typography variant="h1" weight="bold">
+      <Typography variant="h1" weight="bold" size="xl">
         Connexion
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
@@ -86,7 +86,9 @@ export const LoginPage: React.FC = () => {
               />
             )}
           />
-          <Button type="submit">Se connecter</Button>
+          <Button type="submit" size="lg">
+            Se connecter
+          </Button>
           <Button
             type="button"
             variant="link"

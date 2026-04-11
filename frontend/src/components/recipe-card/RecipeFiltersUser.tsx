@@ -47,12 +47,12 @@ export function RecipeFiltersUser({
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className="flex w-full flex-col gap-2 border p-2 rounded-xl"
+      className="flex w-full flex-col gap-2 border p-2 rounded-xl min-h-10"
     >
       <div className="flex items-center justify-between gap-2 w-full">
-        <CollapsibleTrigger className="flex items-center gap-2">
+        <CollapsibleTrigger className="flex items-center gap-2 w-full">
           <ChevronsUpDown size={20} />
-          <span className="text-start">Par chefs</span>
+          <span className="text-start text-base">Par chefs</span>
         </CollapsibleTrigger>
         <div className="flex items-center space-x-2">
           <Checkbox checked={false} />
@@ -79,7 +79,7 @@ export function RecipeFiltersUser({
               checked={selectedUsers.includes(user.id)}
               onCheckedChange={() => toggleUser(user.id)}
             />
-            <FieldLabel htmlFor={user.id} className="font-normal">
+            <FieldLabel htmlFor={user.id} className="font-normal text-md">
               {user.name}
               <span className="text-muted-foreground text-xs ml-1">
                 (

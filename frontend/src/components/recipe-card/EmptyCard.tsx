@@ -15,7 +15,8 @@ type EmptyCardProps = {
   description?: string;
   buttonText?: string;
   onButtonClick?: () => void;
-  clasName?: string;
+  className?: string;
+  iconClassName?: string;
 };
 export function EmptyCard({
   icon = <Frown />,
@@ -23,18 +24,23 @@ export function EmptyCard({
   description,
   buttonText,
   onButtonClick,
-  clasName,
+  className = "",
+  iconClassName = "",
 }: EmptyCardProps) {
   return (
-    <Empty className={clasName}>
+    <Empty className={className}>
       <EmptyHeader>
-        {icon && <EmptyMedia variant="icon">{icon}</EmptyMedia>}
+        {icon && (
+          <EmptyMedia variant="icon" className={iconClassName}>
+            {icon}
+          </EmptyMedia>
+        )}
         {title && <EmptyTitle>{title}</EmptyTitle>}
         {description && <EmptyDescription>{description}</EmptyDescription>}
       </EmptyHeader>
       <EmptyContent>
         {buttonText && (
-          <Button variant="outline" size="sm" onClick={onButtonClick}>
+          <Button variant="outline" size="lg" onClick={onButtonClick}>
             {buttonText}
           </Button>
         )}

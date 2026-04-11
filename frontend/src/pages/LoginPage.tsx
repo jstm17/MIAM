@@ -93,6 +93,7 @@ export const LoginPage: React.FC = () => {
             type="button"
             variant="link"
             onClick={() => navigate("/register")}
+            size="lg"
           >
             S'inscrire
           </Button>

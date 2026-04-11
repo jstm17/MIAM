@@ -92,6 +92,8 @@ export const IngredientsSectionForm = ({
           </div>
         ))}
         <Button
+          className="mt-2"
+          size="lg"
           type="button"
           variant="outline"
           onClick={() => append({ ingredient: "", quantity: "" })}

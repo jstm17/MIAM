@@ -169,7 +169,7 @@ export function RecipeUpdatePage() {
             />
           </div>
 
-          <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 p-4 bg-background border-t max-w-lg m-auto flex-row gap-4">
+          <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4">
             <Button
               size="lg"
               type="button"

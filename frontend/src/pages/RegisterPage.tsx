@@ -70,6 +70,7 @@ export const RegisterPage: React.FC = () => {
             type="button"
             onClick={() => navigate("/login")}
             variant={"link"}
+            size="lg"
           >
             Se connecter
           </Button>

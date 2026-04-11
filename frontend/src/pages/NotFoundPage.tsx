@@ -43,6 +43,7 @@ export const NotFoundPage = ({
           <Button
             variant="outline"
             type="button"
+            size="lg"
             onClick={() => {
               if (buttonLink === -1) {
                 navigate(-1);

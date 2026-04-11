@@ -82,7 +82,9 @@ export function DeleteRecipeDialog({
         />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline">Annuler</Button>
+            <Button variant="outline" size="lg">
+              Annuler
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -122,7 +124,7 @@ function ProfileForm({
 
   return (
     <div className={cn("grid items-start gap-6", className)}>
-      <Button onClick={handleDelete} disabled={isPending}>
+      <Button onClick={handleDelete} disabled={isPending} size="lg">
         {isPending ? <Spinner /> : "Supprimer"}
       </Button>
     </div>

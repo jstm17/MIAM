@@ -40,10 +40,11 @@ export const IngredientCarousel = ({
     return (
       <div className="mt-4">
         <EmptyCard
-          clasName="p-0"
           title="Aucun ingrédient sélectionné"
           description="Sélectionnez au moins un ingrédient pour afficher les recettes."
           icon={<Carrot size={48} />}
+          className="bg-muted m-4 p-0 pt-4 w-[100wh]"
+          iconClassName="bg-muted-foreground/10"
         />
       </div>
     );
@@ -52,9 +53,10 @@ export const IngredientCarousel = ({
     return (
       <div className="mt-4">
         <EmptyCard
-          clasName="p-0"
           title="0 recette trouvée"
           description="Aucune recette trouvée avec ces ingrédients"
+          className="bg-muted m-4 p-0 pt-4 w-[100wh]"
+          iconClassName="bg-muted-foreground/10"
         />
       </div>
     );
@@ -67,27 +69,18 @@ export const IngredientCarousel = ({
         {selectedIngredients.length > 1 ? "ces ingrédients" : "cet ingrédient"}{" "}
         :
       </Typography>
-      {selectedIngredients.length === 0 ? (
-        <Typography size="sm" className="text-muted-foreground">
-          Sélectionnez au moins un ingrédient pour afficher les recettes.
-        </Typography>
-      ) : filteredRecipes.length === 0 ? (
-        <Typography size="sm" className="text-muted-foreground">
-          Aucune recette ne correspond à ces ingrédients.
-        </Typography>
-      ) : (
-        <Carousel opts={{ align: "start" }} className="w-[110%]">
-          <CarouselContent>
-            {filteredRecipes.map((recipe) => (
-              <CarouselItem key={recipe._id} className="basis-2/3">
-                <Link to={`/recipe/${recipe.slug}`} key={recipe._id}>
-                  <RecipeCard recipe={recipe} />
-                </Link>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
-      )}
+
+      <Carousel opts={{ align: "start" }} className="w-[110%]">
+        <CarouselContent>
+          {filteredRecipes.map((recipe) => (
+            <CarouselItem key={recipe._id} className="basis-2/3">
+              <Link to={`/recipe/${recipe.slug}`} key={recipe._id}>
+                <RecipeCard recipe={recipe} />
+              </Link>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
     </div>
   );
 };

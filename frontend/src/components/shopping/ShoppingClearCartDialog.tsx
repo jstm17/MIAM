@@ -60,7 +60,9 @@ export function ShoppingClearCartDialog({
         <ProfileForm className="px-4" onOpenChange={onOpenChange} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline">Annuler</Button>
+            <Button variant="outline" size="lg">
+              Annuler
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -95,7 +97,7 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
       }}
       className={cn("grid items-start gap-6", className)}
     >
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" disabled={isPending} size="lg">
         {isPending ? <Spinner /> : "Vider"}
       </Button>
     </form>

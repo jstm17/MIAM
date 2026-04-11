@@ -11,7 +11,7 @@ export const ProfileContentSkeleton = () => {
 
       <div className="justify-between flex items-center p-4 pb-0">
         <Skeleton className="h-5 w-2/5" />
-        <Skeleton className="h-8 w-8 rounded-lg" />
+        <Skeleton className="h-9 w-9 rounded-lg" />
       </div>
 
       {/* Recipe cards */}

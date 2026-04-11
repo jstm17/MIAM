@@ -80,6 +80,7 @@ export function RecipeAddPage() {
                 capitalize
                 label="Nom *"
                 type="text"
+                placeholder="Ex. Pâtes carbonara"
                 error={errors.name?.message}
                 {...register("name")}
               />
@@ -88,6 +89,7 @@ export function RecipeAddPage() {
                   label="Durée *"
                   type="number"
                   inputGroupAddon="min."
+                  placeholder="Ex. 30"
                   error={errors.time?.message}
                   {...register("time", { valueAsNumber: true })}
                 />
@@ -95,6 +97,7 @@ export function RecipeAddPage() {
                   label="Nombre de personnes *"
                   type="number"
                   inputGroupAddon="pers."
+                  placeholder="Ex. 4"
                   error={errors.personsNumber?.message}
                   {...register("personsNumber", { valueAsNumber: true })}
                 />

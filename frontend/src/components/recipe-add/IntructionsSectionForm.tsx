@@ -62,6 +62,7 @@ export const InstructionsSectionForm = ({
 
         <Button
           type="button"
+          size="lg"
           variant="outline"
           onClick={() => append({ content: "" })}
         >

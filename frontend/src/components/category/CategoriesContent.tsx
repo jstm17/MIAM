@@ -30,7 +30,7 @@ export const CategoriesContent = () => {
       <div className="w-full flex flex-col gap-4">
         <div className="justify-between flex items-center">
           <Skeleton className="h-5 w-1/2" />
-          <Skeleton className="h-8 w-8 rounded-lg" />
+          <Skeleton className="h-9 w-9 rounded-lg" />
         </div>
         <div className="grid grid-cols-3 gap-2">
           {Array.from({ length: 9 }).map((_, i) => (
@@ -47,7 +47,7 @@ export const CategoriesContent = () => {
     return (
       <div>
         <EmptyCard
-          clasName="p-0"
+          className="p-0"
           title="0 catégorie disponible"
           description="Personne n'a ajouté de recette."
           buttonText="Ajouter une recette"

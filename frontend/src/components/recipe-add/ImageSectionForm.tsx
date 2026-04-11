@@ -46,7 +46,7 @@ export const ImageSectionForm = ({
               <img
                 src={preview}
                 alt="Aperçu"
-                className="w-full h-full object-cover dark:brightness-20 rounded-xl"
+                className="w-full h-full object-cover rounded-xl"
               />
             </AspectRatio>
             <Button
@@ -54,10 +54,10 @@ export const ImageSectionForm = ({
               onClick={handleRemoveImage}
               variant={"outline"}
               size="icon-lg"
-              className="absolute top-2 right-2"
+              className="absolute top-2 right-2 backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
               aria-label="Supprimer l'image"
             >
-              <X size={16} />
+              <X size={16} color="white" />
             </Button>
           </div>
         )}

@@ -83,9 +83,10 @@ export function UserCarousel() {
       <div>
         <UserCarouselHeader />
         <EmptyCard
-          clasName="p-0"
           title="0 chef disponible"
           description="Les autres chefs n'ont pas ajouté de recette."
+          className="bg-muted m-4 p-0 pt-4 w-[100wh]"
+          iconClassName="bg-muted-foreground/10"
         />
       </div>
     );

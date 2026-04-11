@@ -66,7 +66,8 @@ export function CategoryCarousel() {
       <div>
         <CategoryCarouselHeader />
         <EmptyCard
-          clasName="p-0"
+          className="bg-muted m-4 p-2 py-4 w-[100wh]"
+          iconClassName="bg-muted-foreground/10"
           title="0 catégorie disponible"
           description="Personne n'a ajouté de recette."
           buttonText="Ajouter une recette"

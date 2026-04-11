@@ -14,7 +14,7 @@ export const BottomNav = () => {
   const { pathname } = useLocation();
 
   return (
-    <nav className="w-full bg-white z-30 border-t px-6 pt-2 flex justify-between fixed bottom-0 items-center max-w-lg inset-x-0 mx-auto pb-[calc(env(safe-area-inset-bottom)+8px)]">
+    <nav className="w-full bg-background z-30 border-t px-6 pt-2 flex justify-between fixed bottom-0 items-center max-w-lg inset-x-0 mx-auto pb-[calc(env(safe-area-inset-bottom)+8px)]">
       {navLinks.map(({ to, icon: Icon }) => (
         <Link key={to} to={to}>
           {Icon == Plus ? (

@@ -115,7 +115,9 @@ export const RecipesFilters = ({
         </div>
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button variant="outline">Fermer</Button>
+            <Button variant="outline" size="lg">
+              Fermer
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

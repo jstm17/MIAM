@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import type { ApiError } from "@/types/error.types";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Loading } from "../shared/Loading";
+import { Spinner } from "../ui/spinner";
 
 type ProfileDeleteAccountDialogProps = {
   open: boolean;
@@ -62,7 +62,9 @@ export function ProfileDeleteAccountDialog({
         <ProfileForm className="px-4" onOpenChange={onOpenChange} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline">Annuler</Button>
+            <Button variant="outline" size="lg">
+              Annuler
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -91,10 +93,6 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
     }
   };
 
-  if (isPending) {
-    return <Loading />;
-  }
-
   return (
     <form
       onSubmit={(e) => {
@@ -104,7 +102,9 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
       }}
       className={cn("grid items-start gap-6", className)}
     >
-      <Button type="submit">Supprimer</Button>
+      <Button type="submit" size="lg" disabled={isPending}>
+        {isPending ? <Spinner /> : "Supprimer"}
+      </Button>
     </form>
   );
 }

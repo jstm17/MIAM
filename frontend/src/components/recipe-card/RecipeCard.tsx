@@ -31,13 +31,13 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
         <img
           src={image || placeholderImage}
           alt="Photo"
-          className="w-full h-full object-cover dark:brightness-20"
+          className="w-full h-full object-cover"
           onError={(e) => {
             e.currentTarget.src = placeholderImage;
           }}
         />
       </AspectRatio>
-      <CardHeader className="p-2 bg-white">
+      <CardHeader className="p-2 bg-background rounded-none">
         <CardTitle className="flex justify-between items-center gap-4">
           {name}
           <Badge variant={"ghost"} className="text-foreground/50 p-0">

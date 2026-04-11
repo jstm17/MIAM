@@ -60,7 +60,9 @@ export function ProfileUpdateNameDialog({
         <ProfileForm className="px-4" onOpenChange={onOpenChange} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline">Annuler</Button>
+            <Button variant="outline" size="lg">
+              Annuler
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -109,7 +111,7 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
           {...register("name")}
         />
 
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending} size="lg">
           {isPending ? <Spinner /> : "Modifier"}
         </Button>
       </FieldGroup>

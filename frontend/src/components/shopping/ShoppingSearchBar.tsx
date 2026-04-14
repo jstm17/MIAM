@@ -22,7 +22,7 @@ export const ShoppingSearchBar = () => {
 
     // empêche ajout si vide / espaces
     if (!formattedName) {
-      toast.error("Ajoute un produit");
+      toast.error("Écrivez un produit");
       return;
     }
 

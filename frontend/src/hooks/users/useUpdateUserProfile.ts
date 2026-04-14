@@ -10,8 +10,14 @@ export const useUpdateUserProfile = () => {
     mutationFn: (payload: UserUpdate) => {
       const formData = new FormData();
       if (payload.name) formData.append("name", payload.name);
-      if (payload.avatar instanceof File) {
-        formData.append("image", payload.avatar);
+      if (
+        payload.avatar instanceof File ||
+        payload.avatar instanceof Blob ||
+        (typeof payload.avatar === "object" &&
+          payload.avatar !== null &&
+          "size" in payload.avatar)
+      ) {
+        formData.append("image", payload.avatar as Blob);
       } else if (payload.avatar === "remove") {
         formData.append("removeAvatar", "true");
       }

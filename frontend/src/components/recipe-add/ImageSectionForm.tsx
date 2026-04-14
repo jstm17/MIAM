@@ -4,6 +4,7 @@ import { Image, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { toast } from "sonner";
+import imageCompression from "browser-image-compression";
 import { TextInput } from "../shared/TextInput";
 import { Typography } from "../shared/Typography";
 import { AspectRatio } from "../ui/aspect-ratio";
@@ -13,11 +14,13 @@ type ImageSectionFormProps = {
   register: UseFormRegister<AddRecipeFormData | UpdateRecipeFormData>;
   setValue: UseFormSetValue<AddRecipeFormData | UpdateRecipeFormData>;
   existingImage?: string;
+  error?: string;
 };
 export const ImageSectionForm = ({
   register,
   setValue,
   existingImage,
+  error,
 }: ImageSectionFormProps) => {
   const [fileSize, setFileSize] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(existingImage ?? null);
@@ -69,25 +72,30 @@ export const ImageSectionForm = ({
         <TextInput
           key={inputKey}
           ref={inputRef}
+          name="image"
           type="file"
           className="hidden"
           accept="image/jpeg,image/png,image/webp"
+          error={error}
           description={`Formats acceptés : jpg, png, webp \n ${
             fileSize ? `Taille : ${fileSize}` : "Taille : 5Mo max"
           }`}
-          onChange={(e) => {
+          onChange={async (e) => {
             const file = e.target.files?.[0];
-            if (file) {
-              if (file.size > 5 * 1024 * 1024) {
-                e.target.value = "";
-                setFileSize(null);
-                toast.error("L'image ne doit pas dépasser 5Mo");
-                setValue("image", undefined);
-              } else {
-                setFileSize((file.size / 1024).toFixed(1) + " Ko");
-                setPreview(URL.createObjectURL(file));
-                setValue("image", file);
-              }
+            if (!file) return;
+
+            try {
+              const compressed = await imageCompression(file, {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1024,
+                useWebWorker: true,
+              });
+
+              setFileSize((compressed.size / 1024).toFixed(1) + " Ko");
+              setPreview(URL.createObjectURL(compressed));
+              setValue("image", compressed);
+            } catch {
+              toast.error("Erreur lors de la compression de l'image");
             }
           }}
         >

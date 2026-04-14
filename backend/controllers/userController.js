@@ -8,6 +8,8 @@ const Category = require("../models/Category");
 const { baseSlugify } = require("../utils/slugify");
 const cloudinary = require("cloudinary").v2;
 const { CleanUsersOrphanData } = require("../utils/cleanupUsers");
+const { compressAndUploadImage } = require("../utils/imageUpload");
+const { deleteImageFromCloudinary } = require("../utils/cloudinaryUtils");
 
 const sanitizeSavedLists = (user) => {
   if (!Array.isArray(user.savedRecipes)) {
@@ -421,18 +423,15 @@ exports.UpdateUserProfile = async (req, res) => {
     }
 
     if (req.body.removeAvatar === "true" && currentUser.avatar) {
-      const publicId = currentUser.avatar
-        .split("/")
-        .slice(-2)
-        .join("/")
-        .split(".")[0];
-
-      await cloudinary.uploader.destroy(publicId);
+      await deleteImageFromCloudinary(currentUser.avatar);
       updateData.avatar = null;
     }
 
     if (req.file) {
-      updateData.avatar = req.file.path;
+      if (currentUser.avatar) {
+        await deleteImageFromCloudinary(currentUser.avatar);
+      }
+      updateData.avatar = await compressAndUploadImage(req.file.buffer, "avatars");
     }
     const user = await User.findByIdAndUpdate(req.user.id, updateData, {
       returnDocument: "after",

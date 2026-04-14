@@ -7,12 +7,17 @@ import { ShoppingProductsContent } from "@/components/shopping/ShoppingProductsC
 import { ShoppingSearchBar } from "@/components/shopping/ShoppingSearchBar";
 import { useAuth } from "@/hooks/useAuth";
 import { ShoppingBasket } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const ShoppingPage = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, refetchUser } = useAuth();
   const { savedIngredients, savedProducts } = user || {};
   const navigate = useNavigate();
+
+  useEffect(() => {
+    refetchUser();
+  }, [refetchUser]);
 
   if (isLoading) return <Loading />;
 

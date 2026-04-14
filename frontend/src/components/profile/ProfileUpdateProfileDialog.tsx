@@ -23,8 +23,9 @@ import {
 } from "@/schemas/updateUserProfileForm.schemas";
 import type { ApiError } from "@/types/error.types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import imageCompression from "browser-image-compression";
 import { X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { TextInput } from "../shared/TextInput";
@@ -124,6 +125,10 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
     if (inputRef.current) inputRef.current.value = "";
   };
 
+  useEffect(() => {
+    register("avatar");
+  }, [register]);
+
   if (isLoading) {
     return (
       <div className="w-full h-48 flex items-center justify-center">
@@ -134,7 +139,9 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors) => {
+        console.log(errors);
+      })}
       className={cn("grid items-center gap-4", className)}
     >
       <FieldGroup>
@@ -161,26 +168,33 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
             </div>
           )}
           <TextInput
+            ref={inputRef}
+            name="avatar"
             type="file"
-            className="hidden"
-            key={inputKey}
             accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            error={typeof errors.avatar?.message === "string" ? errors.avatar.message : undefined}
             description={`Formats acceptés : jpg, png, webp \n ${
               fileSize ? `Taille : ${fileSize}` : "Taille : 5Mo max"
             }`}
-            {...register("avatar")}
-            onChange={(e) => {
+            onChange={async (e) => {
               const file = e.target.files?.[0];
-              if (file) {
-                if (file.size > 5 * 1024 * 1024) {
-                  setFileSize(null);
-                  toast.error("L'image ne doit pas dépasser 5Mo");
-                  setValue("avatar", undefined);
-                } else {
-                  setFileSize((file.size / 1024).toFixed(1) + " Ko");
-                  setPreview(URL.createObjectURL(file));
-                  setValue("avatar", file);
-                }
+
+              console.log(file);
+              if (!file) return;
+
+              try {
+                const compressed = await imageCompression(file, {
+                  maxSizeMB: 1, // cible 1Mo max
+                  maxWidthOrHeight: 1024, // redimensionne si trop grand
+                  useWebWorker: true, // ne bloque pas le thread UI
+                });
+
+                setFileSize((compressed.size / 1024).toFixed(1) + " Ko");
+                setPreview(URL.createObjectURL(compressed));
+                setValue("avatar", compressed);
+              } catch {
+                toast.error("Erreur lors de la compression de l'image");
               }
             }}
           >

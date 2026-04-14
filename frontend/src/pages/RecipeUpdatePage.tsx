@@ -166,6 +166,7 @@ export function RecipeUpdatePage() {
               register={register}
               setValue={setValue}
               existingImage={recipe.image}
+              error={typeof errors.image?.message === "string" ? errors.image.message : undefined}
             />
           </div>
 

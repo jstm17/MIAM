@@ -1,4 +1,5 @@
 require("dotenv").config();
+const mongoose = require("mongoose");
 
 const axios = require("axios");
 const Recipe = require("../models/Recipe");
@@ -16,6 +17,8 @@ const { slugifyRecipe } = require("../utils/slugify");
 const {
   fetchAndUploadRecipeImage,
 } = require("../utils/fetchAndUploadRecipeImage");
+const { compressAndUploadImage } = require("../utils/imageUpload");
+const { deleteImageFromCloudinary } = require("../utils/cloudinaryUtils");
 
 // Create recipe
 exports.CreateRecipe = async (req, res) => {
@@ -39,7 +42,9 @@ exports.CreateRecipe = async (req, res) => {
       });
     }
 
-    const imageUrl = req.file?.path || (await fetchAndUploadRecipeImage(name));
+    const imageUrl = req.file
+      ? await compressAndUploadImage(req.file.buffer, "recipes")
+      : await fetchAndUploadRecipeImage(name);
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
     const { resolvedCategories, newCategoryIds } =
@@ -342,9 +347,18 @@ exports.UpdateRecipe = async (req, res) => {
 
     let imageUrl = recipe.image;
     if (req.file) {
-      imageUrl = req.file.path;
+      if (recipe.image) {
+        await deleteImageFromCloudinary(recipe.image);
+      }
+      imageUrl = await compressAndUploadImage(req.file.buffer, "recipes");
     } else if (!req.body.image) {
-      imageUrl = (await fetchAndUploadRecipeImage(name)) || recipe.image;
+      const fetchedUrl = await fetchAndUploadRecipeImage(name);
+      if (fetchedUrl) {
+        if (recipe.image) {
+          await deleteImageFromCloudinary(recipe.image);
+        }
+        imageUrl = fetchedUrl;
+      }
     }
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
@@ -380,13 +394,16 @@ exports.UpdateRecipe = async (req, res) => {
       .populate("ingredients.ingredient");
 
     if (removedIngredientIds.length > 0) {
+      const removedIngredientObjectIds = removedIngredientIds.map(
+        (id) => new mongoose.Types.ObjectId(id),
+      );
       await User.updateMany(
         {},
         {
           $pull: {
             savedIngredients: {
               recipe: recipe._id,
-              ingredient: { $in: removedIngredientIds },
+              ingredient: { $in: removedIngredientObjectIds },
             },
           },
         },
@@ -437,28 +454,20 @@ exports.DeleteRecipe = async (req, res) => {
 
     // Supprimer l'image Cloudinary si elle existe
     if (recipe.image) {
-      try {
-        // Extraire le public_id de l'URL Cloudinary
-        const urlParts = recipe.image.split("/");
-        const filename = urlParts[urlParts.length - 1];
-        const publicId = `recipes/${filename.split(".")[0]}`;
-        await cloudinary.uploader.destroy(publicId);
-      } catch (cloudinaryError) {
-        console.error("Erreur suppression image recette:", cloudinaryError);
-        // Ne pas bloquer la suppression si l'image ne peut pas être supprimée
-      }
+      await deleteImageFromCloudinary(recipe.image);
     }
 
+    const recipeObjectId = new mongoose.Types.ObjectId(req.params.id);
     await Recipe.findByIdAndDelete(id);
 
     await User.updateMany(
-      { "savedRecipes.recipe": req.params.id },
-      { $pull: { savedRecipes: { recipe: req.params.id } } },
+      { "savedRecipes.recipe": recipeObjectId },
+      { $pull: { savedRecipes: { recipe: recipeObjectId } } },
     );
 
     await User.updateMany(
-      { "savedIngredients.recipe": req.params.id },
-      { $pull: { savedIngredients: { recipe: req.params.id } } },
+      { "savedIngredients.recipe": recipeObjectId },
+      { $pull: { savedIngredients: { recipe: recipeObjectId } } },
     );
 
     await CleanUnusedIngredients();

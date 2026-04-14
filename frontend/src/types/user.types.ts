@@ -28,5 +28,5 @@ export type User = {
 
 export type UserUpdate = {
   name?: string;
-  avatar?: File | string;
+  avatar?: File | Blob | string;
 };

@@ -15,15 +15,28 @@ export const updateUserProfileSchema = z.object({
       return val;
     })
     .refine(
-      (val) => !val || val instanceof File || val === "remove",
+      (val) =>
+        !val ||
+        val instanceof File ||
+        val instanceof Blob ||
+        val === "remove" ||
+        (typeof val === "object" && val !== null && "size" in val),
       "Format invalide",
     )
     .refine(
-      (val) => !(val instanceof File) || val.size <= MAX_FILE_SIZE,
+      (val) =>
+        !val ||
+        val === "remove" ||
+        !("size" in (val as object)) ||
+        (val as { size: number }).size <= MAX_FILE_SIZE,
       "L'image ne doit pas dépasser 5Mo",
     )
     .refine(
-      (val) => !(val instanceof File) || ACCEPTED_TYPES.includes(val.type),
+      (val) =>
+        !val ||
+        val === "remove" ||
+        !("type" in (val as object)) ||
+        ACCEPTED_TYPES.includes((val as { type: string }).type),
       "Format accepté : jpg, png, webp",
     )
     .optional(),

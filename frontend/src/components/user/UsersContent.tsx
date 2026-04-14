@@ -71,7 +71,7 @@ export const UsersContent = () => {
       />
       <div className="grid grid-cols-2 gap-2">
         {sortedUsers.map((u) => (
-          <Link to={`/chef/${u.slug}`}>
+          <Link to={`/chef/${u.slug}`} key={u._id}>
             <UserCard user={u} />
           </Link>
         ))}

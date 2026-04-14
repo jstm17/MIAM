@@ -30,17 +30,37 @@ export const addRecipeSchema = z.object({
     )
     .min(1, "Au moins une instruction est requise"),
   image: z
-    .union([z.instanceof(File), z.string()])
-    .optional()
-    .refine((file) => !(file instanceof File) || file.size <= MAX_FILE_SIZE, {
-      message: "L'image ne doit pas dépasser 5Mo",
+    .any()
+    .transform((val) => {
+      if (val instanceof FileList) return val[0];
+      return val;
     })
     .refine(
-      (file) => !(file instanceof File) || ACCEPTED_TYPES.includes(file.type),
-      {
-        message: "Format accepté : jpg, png, webp",
-      },
-    ),
+      (val) =>
+        !val ||
+        val instanceof File ||
+        val instanceof Blob ||
+        typeof val === "string" ||
+        (typeof val === "object" && val !== null && "size" in val),
+      "Format invalide",
+    )
+    .refine(
+      (val) =>
+        !val ||
+        typeof val === "string" ||
+        !("size" in (val as object)) ||
+        (val as { size: number }).size <= MAX_FILE_SIZE,
+      "L'image ne doit pas dépasser 5Mo",
+    )
+    .refine(
+      (val) =>
+        !val ||
+        typeof val === "string" ||
+        !("type" in (val as object)) ||
+        ACCEPTED_TYPES.includes((val as { type: string }).type),
+      "Format accepté : jpg, png, webp",
+    )
+    .optional(),
 });
 
 export type AddRecipeFormData = z.infer<typeof addRecipeSchema>;

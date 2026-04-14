@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { cloudinary } = require("../config/cloudinary");
 const { translateToEnglish } = require("./translate");
+const sharp = require("sharp");
 
 const fetchAndUploadRecipeImage = async (name) => {
   try {
@@ -21,14 +22,24 @@ const fetchAndUploadRecipeImage = async (name) => {
     const imageResponse = await axios.get(pixabayUrl, {
       responseType: "arraybuffer",
     });
-    const base64 = Buffer.from(imageResponse.data).toString("base64");
-    const mimeType = imageResponse.headers["content-type"];
+    const compressedBuffer = await sharp(imageResponse.data)
+      .resize({ width: 1024, withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toBuffer();
 
-    const cloudinaryRes = await cloudinary.uploader.upload(
-      `data:${mimeType};base64,${base64}`,
-      { folder: "recipes" },
-    );
-    return cloudinaryRes.secure_url;
+    return new Promise((resolve) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: "recipes", format: "webp" },
+        (error, result) => {
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            return resolve(null);
+          }
+          resolve(result.secure_url);
+        },
+      );
+      uploadStream.end(compressedBuffer);
+    });
   } catch (err) {
     console.error("Erreur image recette:", err.message);
     return null;

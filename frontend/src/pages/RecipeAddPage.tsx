@@ -124,7 +124,11 @@ export function RecipeAddPage() {
               errors={errors}
             />
 
-            <ImageSectionForm register={register} setValue={setValue} />
+            <ImageSectionForm
+              register={register}
+              setValue={setValue}
+              error={typeof errors.image?.message === "string" ? errors.image.message : undefined}
+            />
           </div>
 
           <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4">

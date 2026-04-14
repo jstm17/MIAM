@@ -168,6 +168,7 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
             </div>
           )}
           <TextInput
+          key={inputKey}
             ref={inputRef}
             name="avatar"
             type="file"

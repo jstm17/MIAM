@@ -42,7 +42,10 @@ export const IngredientCard = ({
           {icon}
         </Button>
       )}
-      <AspectRatio ratio={1} className="rounded-xl overflow-hidden border">
+      <AspectRatio
+        ratio={1}
+        className="rounded-xl overflow-hidden border bg-white"
+      >
         {ingredient.url ? (
           <img
             src={ingredient.url}

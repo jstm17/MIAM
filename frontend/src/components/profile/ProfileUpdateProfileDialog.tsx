@@ -201,6 +201,7 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
           >
             <Button
               type="button"
+              size="lg"
               variant="outline"
               onClick={() => document.getElementById("avatar")?.click()}
             >

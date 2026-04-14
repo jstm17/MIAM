@@ -1,4 +1,3 @@
-import placeholderImage from "@/assets/placeholder-image.jpg";
 import { DeleteRecipeDialog } from "@/components/recipe-card/DeleteRecipeDialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
@@ -29,6 +28,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { Skeleton } from "../ui/skeleton";
 
 type RecipeDetailsImageProps = {
   recipe: Recipe;
@@ -174,14 +174,18 @@ export const RecipeDetailsImage = ({ recipe, y }: RecipeDetailsImageProps) => {
         </div>
       </div>
       <AspectRatio ratio={1} className=" overflow-hidden">
-        <motion.img
-          src={recipe?.image || placeholderImage}
-          alt="Recipe"
-          className="absolute inset-0 object-cover w-full h-full "
-          style={{
-            y,
-          }}
-        />
+        {recipe?.image ? (
+          <motion.img
+            src={recipe?.image}
+            alt="Recipe"
+            className="absolute inset-0 object-cover w-full h-full "
+            style={{
+              y,
+            }}
+          />
+        ) : (
+          <Skeleton className="w-full h-full bg-border" />
+        )}
       </AspectRatio>
 
       <DeleteRecipeDialog

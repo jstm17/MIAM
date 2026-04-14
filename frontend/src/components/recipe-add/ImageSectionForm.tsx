@@ -101,6 +101,7 @@ export const ImageSectionForm = ({
         >
           <Button
             type="button"
+            size="lg"
             variant="outline"
             onClick={() => document.getElementById("image")?.click()}
           >

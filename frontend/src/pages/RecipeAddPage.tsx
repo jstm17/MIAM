@@ -127,7 +127,11 @@ export function RecipeAddPage() {
             <ImageSectionForm
               register={register}
               setValue={setValue}
-              error={typeof errors.image?.message === "string" ? errors.image.message : undefined}
+              error={
+                typeof errors.image?.message === "string"
+                  ? errors.image.message
+                  : undefined
+              }
             />
           </div>
 

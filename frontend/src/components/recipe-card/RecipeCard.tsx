@@ -39,7 +39,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
             }}
           />
         ) : (
-          <Skeleton className="w-full h-full" />
+          <Skeleton className="w-full h-full bg-border rounded-b-none" />
         )}
       </AspectRatio>
       <CardHeader className="p-2 bg-background rounded-none">

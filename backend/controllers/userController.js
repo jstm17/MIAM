@@ -462,63 +462,74 @@ exports.DeleteUser = async (req, res) => {
 
     const userId = req.user.id;
 
-    // 1️⃣ récupérer les recettes du user
+    // 1️⃣ récupérer le user et son avatar
+    const userToDelete = await User.findById(userId);
+    if (!userToDelete) {
+      return res.status(404).json({ error: true, message: "Utilisateur non trouvé" });
+    }
+
+    // 2️⃣ récupérer les recettes du user (avec leurs images)
     const userRecipes = await Recipe.find({ addedBy: userId })
-      .select("_id ingredients categories")
+      .select("_id ingredients categories image")
       .lean();
 
     const recipeIds = userRecipes.map((r) => r._id);
+    const recipeImages = userRecipes.map((r) => r.image).filter(Boolean);
 
-    console.log("Recettes trouvées:", recipeIds.length);
-
-    if (recipeIds.length === 0) {
-      await User.findByIdAndDelete(userId);
-      return res.json({
-        error: false,
-        message: "Compte supprimé avec succès",
-      });
-    }
-
-    // 2️⃣ récupérer IDs uniques ingrédients + catégories
+    // 3️⃣ récupérer IDs uniques ingrédients + catégories
     const ingredientIds = [
       ...new Set(
         userRecipes.flatMap((r) => r.ingredients.map((i) => i.ingredient)),
       ),
     ];
-
     const categoryIds = [...new Set(userRecipes.flatMap((r) => r.categories))];
 
-    console.log("Ingredients collectés:", ingredientIds.length);
-    console.log("Categories collectées:", categoryIds.length);
+    // 4️⃣ supprimer les recettes du user
+    await Recipe.deleteMany({ addedBy: userId });
 
-    // 3️⃣ supprimer les recettes du user
-    const deletedRecipes = await Recipe.deleteMany({ addedBy: userId });
-    console.log("Recettes supprimées:", deletedRecipes.deletedCount);
-
-    // 4️⃣ ingrédients encore utilisés ailleurs
-    const stillUsedIngredients = await Recipe.distinct(
-      "ingredients.ingredient",
-    );
-    // 5️⃣ catégories encore utilisées ailleurs
+    // 5️⃣ identifier les ingrédients et catégories orphelins
+    const stillUsedIngredients = await Recipe.distinct("ingredients.ingredient");
     const stillUsedCategories = await Recipe.distinct("categories");
 
     const orphanIngredients = ingredientIds.filter(
       (id) => !stillUsedIngredients.some((used) => used.equals(id)),
     );
-
     const orphanCategories = categoryIds.filter(
       (id) => !stillUsedCategories.some((used) => used.equals(id)),
     );
 
-    // 6️⃣ supprimer orphelins
+    // 6️⃣ récupérer les images des orphelins avant suppression
+    const orphanIngredientImages = (
+      await Ingredient.find({ _id: { $in: orphanIngredients } }).select("url")
+    )
+      .map((i) => i.url)
+      .filter(Boolean);
+
+    const orphanCategoryImages = (
+      await Category.find({ _id: { $in: orphanCategories } }).select("image")
+    )
+      .map((c) => c.image)
+      .filter(Boolean);
+
+    // 7️⃣ supprimer les orphelins de la DB
     await Ingredient.deleteMany({ _id: { $in: orphanIngredients } });
     await Category.deleteMany({ _id: { $in: orphanCategories } });
 
-    // console.log("Ingredients supprimés:", deletedIngredients.deletedCount);
-    // console.log("Categories supprimées:", deletedCategories.deletedCount);
-
-    // 7️⃣ supprimer user
+    // 8️⃣ supprimer l'utilisateur de la DB
     await User.findByIdAndDelete(userId);
+
+    // 9️⃣ Nettoyage Cloudinary en arrière-plan (ou attendre, ici on attend pour être sûr)
+    const allImagesToDelete = [
+      userToDelete.avatar,
+      ...recipeImages,
+      ...orphanIngredientImages,
+      ...orphanCategoryImages,
+    ].filter(Boolean);
+
+    for (const imageUrl of allImagesToDelete) {
+      await deleteImageFromCloudinary(imageUrl);
+    }
+
     await CleanUsersOrphanData();
 
     res.status(200).json({

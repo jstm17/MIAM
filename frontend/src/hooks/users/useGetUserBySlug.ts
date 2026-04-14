@@ -8,6 +8,7 @@ export const useGetUserBySlug = (slug: string) => {
     queryFn: () =>
       userService.getUserBySlug(slug).then((res) => res.data.data as User),
     enabled: !!slug,
+    staleTime: 0,
   });
 
   return { user: data ?? null, isLoading, error };

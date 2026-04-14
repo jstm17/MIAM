@@ -8,6 +8,10 @@ export const useUnsaveRecipe = () => {
     mutationFn: (recipeId: string) => userService.unsaveRecipe(recipeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.invalidateQueries({ queryKey: ["recettes"] });
+      queryClient.invalidateQueries({ queryKey: ["recette"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },
     onError: (error) => {
       console.error("Error unsaving recipe:", error);

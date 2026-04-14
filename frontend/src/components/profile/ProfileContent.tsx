@@ -15,7 +15,6 @@ export const ProfileContent = () => {
   } = useGetSavedRecipes();
 
   if (isLoading || savedRecipesIsLoading) return <ProfileContentSkeleton />;
-
   return (
     <Tabs
       defaultValue="my-recipes"

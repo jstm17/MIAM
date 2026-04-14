@@ -23,6 +23,9 @@ export const useAddRecipe = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },
     onError: (err: AxiosError<{ message: string }>) => {
       const message = err.response?.data?.message || err.message;

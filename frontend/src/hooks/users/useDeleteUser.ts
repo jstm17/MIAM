@@ -10,6 +10,9 @@ export const useDeleteUser = () => {
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (err: AxiosError<{ message: string }>) => {
       throw new Error(err.response?.data?.message || err.message);

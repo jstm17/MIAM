@@ -18,21 +18,21 @@ type NotFoundPageProps = {
   description?: string;
   buttonText?: string;
   buttonLink?: string | -1;
+  icon?: React.ReactNode;
 };
 export const NotFoundPage = ({
   title,
   description,
   buttonText,
   buttonLink,
+  icon = <XCircle />,
 }: NotFoundPageProps) => {
   const navigate = useNavigate();
   return (
     <Layout className="p-4" header>
       <Empty>
         <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <XCircle />
-          </EmptyMedia>
+          <EmptyMedia variant="icon">{icon}</EmptyMedia>
           <EmptyTitle>{title || "Page non trouvée"}</EmptyTitle>
           <EmptyDescription>
             {description ||

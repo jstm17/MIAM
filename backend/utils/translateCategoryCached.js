@@ -13,7 +13,7 @@ const translateCategoryCached = async (name) => {
   category = await Category.findOneAndUpdate(
     { name },
     { name, englishName: translated, slug: baseSlugify(name) },
-    { upsert: true, new: true },
+    { upsert: true, returnDocument: "after" },
   );
   return category;
 };

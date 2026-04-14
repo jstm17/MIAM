@@ -1,9 +1,10 @@
 import { Typography } from "@/components/shared/Typography";
 import { Reply } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../ui/button";
 
 export const IngredientsHeader = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   return (
@@ -12,7 +13,7 @@ export const IngredientsHeader = () => {
         size="icon-lg"
         variant="outline"
         aria-label="Retour"
-        onClick={() => navigate("/search")}
+        onClick={() => navigate(`/search?${searchParams}`)}
       >
         <Reply />
       </Button>

@@ -4,9 +4,10 @@ const { hashPassword, verifyPassword } = require("../utils/passwordUtils");
 const User = require("../models/User");
 const Ingredient = require("../models/Ingredient");
 const Recipe = require("../models/Recipe");
-const Product = require("../models/Product");
+const Category = require("../models/Category");
 const { baseSlugify } = require("../utils/slugify");
 const cloudinary = require("cloudinary").v2;
+const { CleanUsersOrphanData } = require("../utils/cleanupUsers");
 
 const sanitizeSavedLists = (user) => {
   if (!Array.isArray(user.savedRecipes)) {
@@ -175,7 +176,7 @@ exports.SaveRecipe = async (req, res) => {
           savedRecipes: { recipe: req.params.recipeId, savedAt: new Date() },
         },
       },
-      { new: true },
+      { returnDocument: "after" },
     ).populate({
       path: "savedRecipes.recipe",
       populate: [
@@ -368,7 +369,7 @@ exports.UnsaveRecipe = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $pull: { savedRecipes: { recipe: req.params.recipeId } } },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     return res.status(200).json({
@@ -434,7 +435,7 @@ exports.UpdateUserProfile = async (req, res) => {
       updateData.avatar = req.file.path;
     }
     const user = await User.findByIdAndUpdate(req.user.id, updateData, {
-      new: true,
+      returnDocument: "after",
     });
 
     const returnedData = user.toObject();
@@ -451,19 +452,77 @@ exports.UpdateUserProfile = async (req, res) => {
   }
 };
 
-// Delete User
 exports.DeleteUser = async (req, res) => {
   try {
-    if (!req.user || !req.user.id) {
+    if (!req.user?.id) {
       return res.status(401).json({
         error: true,
         message: "Utilisateur non trouvé",
       });
     }
 
-    await User.findByIdAndDelete(req.user.id);
+    const userId = req.user.id;
 
-    return res.status(200).json({
+    // 1️⃣ récupérer les recettes du user
+    const userRecipes = await Recipe.find({ addedBy: userId })
+      .select("_id ingredients categories")
+      .lean();
+
+    const recipeIds = userRecipes.map((r) => r._id);
+
+    console.log("Recettes trouvées:", recipeIds.length);
+
+    if (recipeIds.length === 0) {
+      await User.findByIdAndDelete(userId);
+      return res.json({
+        error: false,
+        message: "Compte supprimé avec succès",
+      });
+    }
+
+    // 2️⃣ récupérer IDs uniques ingrédients + catégories
+    const ingredientIds = [
+      ...new Set(
+        userRecipes.flatMap((r) => r.ingredients.map((i) => i.ingredient)),
+      ),
+    ];
+
+    const categoryIds = [...new Set(userRecipes.flatMap((r) => r.categories))];
+
+    console.log("Ingredients collectés:", ingredientIds.length);
+    console.log("Categories collectées:", categoryIds.length);
+
+    // 3️⃣ supprimer les recettes du user
+    const deletedRecipes = await Recipe.deleteMany({ addedBy: userId });
+    console.log("Recettes supprimées:", deletedRecipes.deletedCount);
+
+    // 4️⃣ ingrédients encore utilisés ailleurs
+    const stillUsedIngredients = await Recipe.distinct(
+      "ingredients.ingredient",
+    );
+    // 5️⃣ catégories encore utilisées ailleurs
+    const stillUsedCategories = await Recipe.distinct("categories");
+
+    const orphanIngredients = ingredientIds.filter(
+      (id) => !stillUsedIngredients.some((used) => used.equals(id)),
+    );
+
+    const orphanCategories = categoryIds.filter(
+      (id) => !stillUsedCategories.some((used) => used.equals(id)),
+    );
+
+    // 6️⃣ supprimer orphelins
+    await Ingredient.deleteMany({ _id: { $in: orphanIngredients } });
+    await Category.deleteMany({ _id: { $in: orphanCategories } });
+
+    // console.log("Ingredients supprimés:", deletedIngredients.deletedCount);
+    // console.log("Categories supprimées:", deletedCategories.deletedCount);
+
+    // 7️⃣ supprimer user
+    await User.findByIdAndDelete(userId);
+    await CleanUsersOrphanData();
+
+    res.status(200).json({
       error: false,
       message: "Compte supprimé avec succès",
     });
@@ -471,7 +530,7 @@ exports.DeleteUser = async (req, res) => {
     console.error(error);
     res.status(500).json({
       error: true,
-      message: "Erreur Server - La suppression du compte a échoué",
+      message: "Erreur serveur - suppression échouée",
     });
   }
 };
@@ -482,7 +541,7 @@ exports.ClearShoppingList = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $set: { savedIngredients: [], savedProducts: [] } },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     return res.status(200).json({

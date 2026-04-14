@@ -4,6 +4,7 @@ const axios = require("axios");
 const Recipe = require("../models/Recipe");
 const Category = require("../models/Category");
 const User = require("../models/User");
+const { CleanUsersOrphanData } = require("../utils/cleanupUsers");
 const { CleanUnusedIngredients } = require("./ingredientController");
 const { CleanUnusedCategories } = require("./categoryController");
 const { cloudinary } = require("../config/cloudinary");
@@ -12,7 +13,6 @@ const { resolveCategories } = require("../utils/resolveCategories");
 const { hydrateIngredientImages } = require("../utils/hydrateIngredientImage");
 const { hydrateCategoryImages } = require("../utils/hydrateCategoryImage");
 const { slugifyRecipe } = require("../utils/slugify");
-const { translateToEnglish } = require("../utils/translate");
 const {
   fetchAndUploadRecipeImage,
 } = require("../utils/fetchAndUploadRecipeImage");
@@ -111,15 +111,7 @@ exports.GetRecipeById = async (req, res) => {
 
 exports.GetRecipeBySlug = async (req, res) => {
   try {
-    const userId = req.user?.id;
-    const filter = userId
-      ? {
-          slug: req.params.slug,
-          $or: [{ visible: true }, { addedBy: userId }],
-        }
-      : { slug: req.params.slug, visible: true };
-
-    const recipe = await Recipe.findOne(filter)
+    const recipe = await Recipe.findOne(req.params)
       .populate("categories")
       .populate("ingredients.ingredient")
       .populate("addedBy", "name _id");
@@ -344,6 +336,10 @@ exports.UpdateRecipe = async (req, res) => {
       });
     }
 
+    const oldIngredientIds = recipe.ingredients.map((i) =>
+      i.ingredient.toString(),
+    );
+
     let imageUrl = recipe.image;
     if (req.file) {
       imageUrl = req.file.path;
@@ -354,6 +350,14 @@ exports.UpdateRecipe = async (req, res) => {
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
     const { resolvedCategories, newCategoryIds } =
       await resolveCategories(categories);
+
+    const newIngredientIds = resolvedIngredients.map((i) =>
+      i.ingredient.toString(),
+    );
+
+    const removedIngredientIds = oldIngredientIds.filter(
+      (id) => !newIngredientIds.includes(id),
+    );
 
     const updateData = {
       name,
@@ -370,10 +374,24 @@ exports.UpdateRecipe = async (req, res) => {
     }
 
     const updatedRecipe = await Recipe.findByIdAndUpdate(id, updateData, {
-      new: true,
+      returnDocument: "after",
     })
       .populate("categories")
       .populate("ingredients.ingredient");
+
+    if (removedIngredientIds.length > 0) {
+      await User.updateMany(
+        {},
+        {
+          $pull: {
+            savedIngredients: {
+              recipe: recipe._id,
+              ingredient: { $in: removedIngredientIds },
+            },
+          },
+        },
+      );
+    }
 
     res.status(200).json({
       error: false,
@@ -381,12 +399,12 @@ exports.UpdateRecipe = async (req, res) => {
       data: updatedRecipe,
     });
 
-    // jobs en background
     const ingredientIds = resolvedIngredients.map((i) => i.ingredient);
     hydrateIngredientImages(ingredientIds);
     hydrateCategoryImages(newCategoryIds);
     CleanUnusedIngredients();
     CleanUnusedCategories();
+    CleanUsersOrphanData();
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -445,7 +463,7 @@ exports.DeleteRecipe = async (req, res) => {
 
     await CleanUnusedIngredients();
     await CleanUnusedCategories();
-
+    await CleanUsersOrphanData();
     return res.status(200).json({
       error: false,
       message: "Recette supprimée avec succès",
@@ -464,7 +482,7 @@ exports.ShowRecipe = async (req, res) => {
     const recipe = await Recipe.findByIdAndUpdate(
       req.params.id,
       { visible: true },
-      { new: true },
+      { returnDocument: "after" },
     );
     if (!recipe)
       return res
@@ -484,7 +502,7 @@ exports.HideRecipe = async (req, res) => {
     const recipe = await Recipe.findByIdAndUpdate(
       req.params.id,
       { visible: false },
-      { new: true },
+      { returnDocument: "after" },
     );
     if (!recipe)
       return res

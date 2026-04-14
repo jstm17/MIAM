@@ -33,11 +33,13 @@ export const useUpdateRecipe = () => {
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
       queryClient.invalidateQueries({ queryKey: ["recipe"] });
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      queryClient.invalidateQueries({ queryKey: ["recipes", "category"] });
+      queryClient.invalidateQueries({ queryKey: ["category"] });
       queryClient.invalidateQueries({
         queryKey: ["recipes", "category", "visibles"],
       });
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },
     onError: (err: AxiosError<{ message: string }>) => {

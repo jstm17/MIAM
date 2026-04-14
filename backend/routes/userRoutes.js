@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const { auth } = require("../middlewares/authMiddleware");
+const { auth, authOptional } = require("../middlewares/authMiddleware");
 const { upload } = require("../config/cloudinary");
 
 router.post("/register", userController.Register);
 router.post("/login", userController.Login);
 router.get("/top", userController.GetTopAllUsers);
 router.get("/all", userController.GetAllUsers);
-router.get("/visible", auth, userController.GetAllUsersVisibles);
+router.get("/visible", authOptional, userController.GetAllUsersVisibles);
 router.get("/me", auth, userController.GetMe);
 router.get("/:slug", userController.GetUserBySlug);
 router.post("/saved-recipes/:recipeId", auth, userController.SaveRecipe);

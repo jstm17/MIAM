@@ -20,7 +20,11 @@ import * as React from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { IngredientCarousel } from "./IngredientCarousel";
 
-const IngredientSectionHeader = () => (
+const IngredientSectionHeader = ({
+  searchParams,
+}: {
+  searchParams: URLSearchParams;
+}) => (
   <div className="flex gap-2 px-4 items-center justify-between mb-1">
     <div className="flex gap-2 items-center">
       <Carrot />
@@ -28,7 +32,10 @@ const IngredientSectionHeader = () => (
         Ingrédients
       </Typography>
     </div>
-    <Link to="/ingredients" className="flex gap-1 items-center">
+    <Link
+      to={`/ingredients?${searchParams}`}
+      className="flex gap-1 items-center"
+    >
       <Typography
         size="sm"
         variant="body"
@@ -77,7 +84,7 @@ export const IngredientSection = () => {
 
   return (
     <div className="min-h-68">
-      <IngredientSectionHeader />
+      <IngredientSectionHeader searchParams={searchParams} />
 
       <div className="px-4 py-2">
         <Combobox

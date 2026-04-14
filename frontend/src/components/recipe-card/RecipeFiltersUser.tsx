@@ -44,7 +44,6 @@ export function RecipeFiltersUser({
   };
 
   const allSelected = selectedUsers.length === users.length;
-  console.log(allSelected);
   return (
     <Collapsible
       open={isOpen}

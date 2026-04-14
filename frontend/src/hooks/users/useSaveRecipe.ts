@@ -8,6 +8,10 @@ export const useSaveRecipe = () => {
     mutationFn: (recipeId: string) => userService.saveRecipe(recipeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.invalidateQueries({ queryKey: ["recettes"] });
+      queryClient.invalidateQueries({ queryKey: ["recette"] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["ingredients"] });
     },
     onError: (error) => {
       console.error("Error saving recipe:", error);

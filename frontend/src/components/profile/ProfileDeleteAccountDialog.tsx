@@ -14,6 +14,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { useAuth } from "@/hooks/useAuth";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useDeleteUser } from "@/hooks/users/useDeleteUser";
 import { cn } from "@/lib/utils";
@@ -79,12 +80,14 @@ type ProfileFormProps = {
 
 function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
   const { deleteUser, isPending } = useDeleteUser();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit = async () => {
     try {
       const res = await deleteUser();
       toast.success(res.message);
+      logout();
       onOpenChange(false);
       navigate("/login");
     } catch (err: unknown) {

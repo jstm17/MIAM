@@ -11,7 +11,7 @@ const translateIngredientCached = async (name) => {
   ingredient = await Ingredient.findOneAndUpdate(
     { name },
     { name, englishName: translated },
-    { upsert: true, new: true }, // new: true retourne le document créé
+    { upsert: true, returnDocument: "after" },
   );
   return ingredient;
 };

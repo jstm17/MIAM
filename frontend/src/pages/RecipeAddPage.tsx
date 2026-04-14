@@ -33,26 +33,25 @@ export function RecipeAddPage() {
   } = useForm<AddRecipeFormData>({
     resolver: zodResolver(addRecipeSchema),
     defaultValues: {
-      ingredients: [{ ingredient: "", quantity: "" }],
-      instructions: [{ content: "" }],
-      // name: "Pain",
-      // time: 30,
-      // personsNumber: 4,
-      // ingredients: [
-      //   { ingredient: "Poulet", quantity: "1" },
-      //   { ingredient: "Sel", quantity: "1 pincée" },
-      //   { ingredient: "Eau", quantity: "500 ml" },
-      //   { ingredient: "Pâte", quantity: "500 ml" },
-      //   { ingredient: "Pate", quantity: "500 ml" },
-      //   { ingredient: "Pâte brisée", quantity: "500 ml" },
-      // ],
-      // instructions: [{ content: "1" }],
-      // categories: ["Italienne", "Rapide"],
+      // ingredients: [{ ingredient: "", quantity: "" }],
+      // instructions: [{ content: "" }],
+      name: "Pain",
+      time: 30,
+      personsNumber: 4,
+      ingredients: [
+        { ingredient: "Poulet", quantity: "1" },
+        // { ingredient: "Sel", quantity: "1 pincée" },
+        // { ingredient: "Eau", quantity: "500 ml" },
+        // { ingredient: "Pâte", quantity: "500 ml" },
+        // { ingredient: "Pate", quantity: "500 ml" },
+        // { ingredient: "Pâte brisée", quantity: "500 ml" },
+      ],
+      instructions: [{ content: "1" }],
+      categories: ["Italienne", "Rapide"],
     },
   });
 
   const onSubmit = async (formData: AddRecipeFormData) => {
-    console.log("RecipeAddPage - onSubmit", formData);
     try {
       const res = await addRecipe(formData);
       navigate("/recipe/" + res.data.slug);
@@ -73,13 +72,7 @@ export function RecipeAddPage() {
       titleSize="lg"
       className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
     >
-      <form
-        onSubmit={handleSubmit(onSubmit, (errors) => {
-          console.log("RecipeAddPage - submission errors", errors);
-          toast.error("Le formulaire contient des erreurs");
-        })}
-        className="w-full max-w-lg"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
         <FieldGroup className="relative">
           <div className="pb-20 flex flex-col gap-8">
             <div className="flex flex-col gap-4">

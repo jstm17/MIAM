@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 type RecipeDetailsImageProps = {
   recipe: Recipe;
@@ -71,6 +72,11 @@ export const RecipeDetailsImage = ({ recipe, y }: RecipeDetailsImageProps) => {
   ) => {
     e.preventDefault();
     toggleVisibility(recipeId, visible);
+    toast.success(
+      visible
+        ? "La recette n'est plus visible par les autres"
+        : "La recette est maintenant visible par les autres",
+    );
   };
 
   return (

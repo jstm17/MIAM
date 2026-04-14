@@ -5,13 +5,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRemoveIngredientFromCart } from "@/hooks/users/useRemoveIngredientFromCart";
 import type { Ingredient } from "@/types/ingredient.types";
 import { Eye, Minus, UtensilsCrossed } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 export const ShoppingIngredientsContent = () => {
   const { user, isLoading: isLoadingAuth } = useAuth();
-  const { removeIngredientFromCart, isPending } = useRemoveIngredientFromCart();
+  const { removeIngredientFromCart } = useRemoveIngredientFromCart();
   const { savedIngredients } = user || {};
+  const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
 
   if (!savedIngredients || savedIngredients.length === 0) {
     return null;
@@ -58,16 +60,18 @@ export const ShoppingIngredientsContent = () => {
     recipeId: string,
     ingredientId: string,
   ) => {
-    if (!user) {
-      toast.error("Connectez-vous pour utiliser la liste de course");
-      return;
-    }
-
+    setLoadingIds((prev) => new Set(prev).add(ingredientId));
     try {
       await removeIngredientFromCart(recipeId, ingredientId);
       toast.success("Ingrédient retiré de la liste");
     } catch {
       toast.error("Impossible de retirer l'ingrédient du panier");
+    } finally {
+      setLoadingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(ingredientId);
+        return next;
+      });
     }
   };
 
@@ -96,7 +100,9 @@ export const ShoppingIngredientsContent = () => {
                 quantity={quantity}
                 icon={<Minus color="white" />}
                 isSaved={true}
-                disabled={isPending || isLoadingAuth || !user}
+                disabled={
+                  loadingIds.has(ingredient._id) || isLoadingAuth || !user
+                }
                 onToggleCart={() =>
                   handleRemoveIngredientFromCart(recipe._id, ingredient._id)
                 }

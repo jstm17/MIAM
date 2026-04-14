@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { GroupInput } from "../shared/GroupInput";
 import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
 const formatProductName = (value: string) => {
   const trimmed = value.trim();
@@ -15,7 +16,7 @@ const formatProductName = (value: string) => {
 
 export const ShoppingSearchBar = () => {
   const [inputValue, setInputValue] = useState("");
-  const { addProductToCart } = useAddProductToCart();
+  const { addProductToCart, isPending } = useAddProductToCart();
   const handleSelect = async (name: string) => {
     const formattedName = formatProductName(name);
 
@@ -59,8 +60,12 @@ export const ShoppingSearchBar = () => {
           }
         }}
       />
-      <Button size="icon-lg" onClick={() => handleSelect(inputValue)}>
-        <Plus />
+      <Button
+        size="icon-lg"
+        onClick={() => handleSelect(inputValue)}
+        disabled={isPending}
+      >
+        {isPending ? <Spinner /> : <Plus />}
       </Button>
     </div>
   );

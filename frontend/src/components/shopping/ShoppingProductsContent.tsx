@@ -9,11 +9,8 @@ import { Button } from "../ui/button";
 
 export const ShoppingProductsContent = () => {
   const { user } = useAuth();
-  const {
-    removeProductFromCart,
-    isPending: isRemoving,
-    error: errorRemove,
-  } = useRemoveProductFromCart();
+  const { removeProductFromCart, error: errorRemove } =
+    useRemoveProductFromCart();
   const {
     updateProductInCart,
     isPending: isUpdating,
@@ -23,6 +20,7 @@ export const ShoppingProductsContent = () => {
   const [editedName, setEditedName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const isClickingSave = useRef(false);
+  const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
 
   const savedProducts = user?.savedProducts ?? [];
 
@@ -30,11 +28,18 @@ export const ShoppingProductsContent = () => {
     (a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime(),
   );
 
-  const handleRemove = async (name: string) => {
+  const handleRemove = async (product: { _id: string; name: string }) => {
+    setRemovingIds((prev) => new Set(prev).add(product._id));
     try {
-      await removeProductFromCart(name);
+      await removeProductFromCart(product.name);
     } catch {
       toast.error(errorRemove?.message ?? "Impossible de retirer le produit");
+    } finally {
+      setRemovingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(product._id);
+        return next;
+      });
     }
   };
 
@@ -168,8 +173,8 @@ export const ShoppingProductsContent = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled={isRemoving}
-                  onClick={() => handleRemove(product.name)}
+                  disabled={removingIds.has(product._id)}
+                  onClick={() => handleRemove(product)}
                 >
                   <MinusCircle className="size-4 text-destructive" />
                 </Button>

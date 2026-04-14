@@ -3,6 +3,7 @@ import { TextInput } from "@/components/shared/TextInput";
 import { Typography } from "@/components/shared/Typography";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -17,7 +18,7 @@ import type { ApiError } from "../types/error.types";
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { register: registerUser, error } = useAuth();
+  const { register: registerUser, error, isRegisterPending } = useAuth();
 
   const {
     register,
@@ -63,8 +64,8 @@ export const RegisterPage: React.FC = () => {
             error={errors.password?.message}
             {...register("password")}
           />
-          <Button type="submit" size="lg">
-            S'inscrire
+          <Button type="submit" size="lg" disabled={isRegisterPending}>
+            {isRegisterPending ? <Spinner /> : "S'inscrire"}
           </Button>
           <Button
             type="button"

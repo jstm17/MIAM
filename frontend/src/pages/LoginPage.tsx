@@ -1,6 +1,7 @@
 import { CheckboxInput } from "@/components/shared/CheckboxInput";
 import { Typography } from "@/components/shared/Typography";
 import { FieldGroup } from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -16,7 +17,7 @@ import type { ApiError } from "../types/error.types";
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, error } = useAuth();
+  const { login, error, isLoginPending } = useAuth();
 
   const {
     register,
@@ -86,8 +87,8 @@ export const LoginPage: React.FC = () => {
               />
             )}
           />
-          <Button type="submit" size="lg">
-            Se connecter
+          <Button type="submit" size="lg" disabled={isLoginPending}>
+            {isLoginPending ? <Spinner /> : "Se connecter"}
           </Button>
           <Button
             type="button"

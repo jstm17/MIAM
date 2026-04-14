@@ -9,7 +9,7 @@ import { useAddIngredientToCart } from "../../hooks/users/useAddIngredientToCart
 export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
   const { ingredients } = recipe;
   const { user, isLoading } = useAuth();
-  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
   const { addIngredientToCart } = useAddIngredientToCart();
   const { removeIngredientFromCart } = useRemoveIngredientFromCart();
 
@@ -19,7 +19,7 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
       return;
     }
 
-    setLoadingId(ingredientId);
+    setLoadingIds((prev) => new Set(prev).add(ingredientId));
     try {
       if (isSaved) {
         await removeIngredientFromCart(recipe._id, ingredientId);
@@ -31,7 +31,11 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
     } catch {
       toast.error("Impossible de mettre à jour le panier");
     } finally {
-      setLoadingId(null);
+      setLoadingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(ingredientId);
+        return next;
+      });
     }
   };
 
@@ -55,7 +59,7 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
             quantity={ingredient.quantity}
             isSaved={Boolean(isSaved)}
             disabled={
-              loadingId === ingredient.ingredient._id || isLoading || !user
+              loadingIds.has(ingredient.ingredient._id) || isLoading || !user
             }
             onToggleCart={() =>
               handleToggleCart(ingredient.ingredient._id, Boolean(isSaved))

@@ -42,11 +42,13 @@ export function RecipeFiltersCategory({
     );
   };
 
+  const allSelected = selectedCategories.length === categories.length;
+
   return (
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className="flex w-full flex-col gap-2 border border-input p-2 rounded-xl min-h-10 b dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40"
+      className="flex w-full flex-col gap-2 border border-input p-2 rounded-xl dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40"
     >
       <div className="flex items-center justify-between gap-2 w-full">
         <CollapsibleTrigger className="flex items-center gap-2 w-full">
@@ -57,11 +59,11 @@ export function RecipeFiltersCategory({
           <Checkbox checked={false} />
           <Switch
             id="filter-mode"
-            checked={selectedCategories.length === categories.length}
+            checked={allSelected}
             onCheckedChange={(checked) => {
               setSelectedCategories(checked ? categories : []);
             }}
-            className="bg-input"
+            className={allSelected ? "bg-primary" : "bg-input"}
           />
           <Checkbox checked={true} />
         </div>

@@ -4,7 +4,29 @@ const { hashPassword, verifyPassword } = require("../utils/passwordUtils");
 const User = require("../models/User");
 const Ingredient = require("../models/Ingredient");
 const Recipe = require("../models/Recipe");
+const Product = require("../models/Product");
 const { baseSlugify } = require("../utils/slugify");
+const cloudinary = require("cloudinary").v2;
+
+const sanitizeSavedLists = (user) => {
+  if (!Array.isArray(user.savedRecipes)) {
+    user.savedRecipes = [];
+  }
+  if (!Array.isArray(user.savedIngredients)) {
+    user.savedIngredients = [];
+  }
+  if (!Array.isArray(user.savedProducts)) {
+    user.savedProducts = [];
+  }
+
+  user.savedRecipes = user.savedRecipes.filter(
+    (savedRecipe) => savedRecipe && savedRecipe.recipe,
+  );
+  user.savedIngredients = user.savedIngredients.filter(
+    (savedIngredient) =>
+      savedIngredient && savedIngredient.ingredient && savedIngredient.recipe,
+  );
+};
 
 // Register
 exports.Register = async (req, res) => {
@@ -311,6 +333,7 @@ exports.RemoveIngredientFromCart = async (req, res) => {
         ),
     );
 
+    sanitizeSavedLists(user);
     await user.save();
     await user.populate({ path: "savedIngredients.ingredient" });
     await user.populate({
@@ -362,8 +385,8 @@ exports.UnsaveRecipe = async (req, res) => {
   }
 };
 
-// Update name
-exports.UpdateUserName = async (req, res) => {
+// Update User Profile
+exports.UpdateUserProfile = async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -375,46 +398,56 @@ exports.UpdateUserName = async (req, res) => {
         .json({ error: true, message: "Utilisateur non trouvé" });
     }
 
-    if (currentUser.name === name) {
-      return res.status(400).json({
-        error: true,
-        message: "Choisissez un nom différent de votre nom actuel",
+    const updateData = {};
+
+    // Mise à jour du nom uniquement si fourni et différent
+    if (name && name.toLowerCase() !== currentUser.name.toLowerCase()) {
+      const slug = baseSlugify(name);
+
+      const isExist = await User.findOne({
+        $or: [{ name }, { slug }],
+        _id: { $ne: req.user.id },
       });
+
+      if (isExist) {
+        return res
+          .status(409)
+          .json({ error: true, message: "Ce nom est déjà pris" });
+      }
+
+      updateData.name = name;
+      updateData.slug = slug;
     }
 
-    const slug = baseSlugify(name);
+    if (req.body.removeAvatar === "true" && currentUser.avatar) {
+      const publicId = currentUser.avatar
+        .split("/")
+        .slice(-2)
+        .join("/")
+        .split(".")[0];
 
-    const isExist = await User.findOne({
-      $or: [{ name }, { slug }],
-      _id: { $ne: req.user.id },
+      await cloudinary.uploader.destroy(publicId);
+      updateData.avatar = null;
+    }
+
+    if (req.file) {
+      updateData.avatar = req.file.path;
+    }
+    const user = await User.findByIdAndUpdate(req.user.id, updateData, {
+      new: true,
     });
-
-    if (isExist) {
-      return res
-        .status(409)
-        .json({ error: true, message: "Ce nom est déjà pris" });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { name, slug },
-      { new: true },
-    );
 
     const returnedData = user.toObject();
     delete returnedData.password;
 
     return res.status(200).json({
       error: false,
-      message: "Nom mis à jour avec succès",
+      message: "Profil mis à jour avec succès",
       data: returnedData,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      error: true,
-      message: "Erreur Server - La mise à jour du nom a échoué",
-    });
+    res.status(500).json({ error: true, message: "Erreur serveur" });
   }
 };
 
@@ -448,14 +481,17 @@ exports.ClearShoppingList = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $set: { savedIngredients: [] } },
+      { $set: { savedIngredients: [], savedProducts: [] } },
       { new: true },
     );
 
     return res.status(200).json({
       error: false,
       message: "Liste de course vidée avec succès",
-      data: user.savedIngredients,
+      data: {
+        savedIngredients: user.savedIngredients,
+        savedProducts: user.savedProducts,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -505,17 +541,17 @@ exports.GetAllUsersVisibles = async (req, res) => {
             },
             { $count: "count" },
           ],
-          as: "recipeCountData",
+          as: "recipesCountData",
         },
       },
       {
         $addFields: {
-          recipeCount: {
-            $ifNull: [{ $arrayElemAt: ["$recipeCountData.count", 0] }, 0],
+          recipesCount: {
+            $ifNull: [{ $arrayElemAt: ["$recipesCountData.count", 0] }, 0],
           },
         },
       },
-      { $project: { password: 0, recipeCountData: 0 } },
+      { $project: { password: 0, recipesCountData: 0 } },
       { $sort: { name: 1 } },
     ]);
 
@@ -541,10 +577,10 @@ exports.GetTopAllUsers = async (req, res) => {
       {
         $group: {
           _id: "$addedBy",
-          recipeCount: { $sum: 1 },
+          recipesCount: { $sum: 1 },
         },
       },
-      { $sort: { recipeCount: -1 } },
+      { $sort: { recipesCount: -1 } },
       { $limit: 10 },
       {
         $lookup: {
@@ -558,7 +594,7 @@ exports.GetTopAllUsers = async (req, res) => {
       {
         $replaceRoot: {
           newRoot: {
-            $mergeObjects: ["$user", { recipeCount: "$recipeCount" }],
+            $mergeObjects: ["$user", { recipesCount: "$recipesCount" }],
           },
         },
       },
@@ -616,6 +652,129 @@ exports.GetUserBySlug = async (req, res) => {
   }
 };
 
+exports.AddProductToCart = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: true, message: "Utilisateur non trouvé" });
+
+    const alreadyAdded = user.savedProducts.some(
+      (p) => p.name.toLowerCase() === name.toLowerCase(),
+    );
+
+    if (alreadyAdded) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Le produit déjà dans la liste" });
+    }
+
+    sanitizeSavedLists(user);
+    user.savedProducts.push({ name, addedAt: new Date() });
+    await user.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Produit ajouté",
+      data: user.savedProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
+exports.RemoveProductFromCart = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: true, message: "Utilisateur non trouvé" });
+
+    user.savedProducts = user.savedProducts.filter(
+      (p) => p.name.toLowerCase() !== name.toLowerCase(),
+    );
+
+    sanitizeSavedLists(user);
+    await user.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Produit retiré du panier",
+      data: user.savedProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
+exports.UpdateProductInCart = async (req, res) => {
+  try {
+    const { name, newName, checked } = req.body;
+
+    if (!name) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Nom du produit requis" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: true, message: "Utilisateur non trouvé" });
+
+    const product = user.savedProducts.find(
+      (p) => p.name.toLowerCase() === name.toLowerCase(),
+    );
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Produit introuvable" });
+    }
+
+    if (newName && newName.trim().length > 0) {
+      const alreadyAdded = user.savedProducts.some(
+        (p) =>
+          p.name.toLowerCase() === newName.toLowerCase() &&
+          p._id.toString() !== product._id.toString(),
+      );
+
+      if (alreadyAdded) {
+        return res
+          .status(400)
+          .json({ error: true, message: "Un produit du même nom existe déjà" });
+      }
+
+      product.name = newName.trim();
+    }
+
+    if (typeof checked === "boolean") {
+      product.checked = checked;
+    }
+
+    sanitizeSavedLists(user);
+    await user.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Produit mis à jour",
+      data: user.savedProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
 module.exports = {
   Register: exports.Register,
   Login: exports.Login,
@@ -625,10 +784,13 @@ module.exports = {
   AddIngredientToCart: exports.AddIngredientToCart,
   RemoveIngredientFromCart: exports.RemoveIngredientFromCart,
   ClearShoppingList: exports.ClearShoppingList,
-  UpdateUserName: exports.UpdateUserName,
+  UpdateUserProfile: exports.UpdateUserProfile,
   DeleteUser: exports.DeleteUser,
   GetAllUsers: exports.GetAllUsers,
   GetAllUsersVisibles: exports.GetAllUsersVisibles,
   GetTopAllUsers: exports.GetTopAllUsers,
   GetUserBySlug: exports.GetUserBySlug,
+  AddProductToCart: exports.AddProductToCart,
+  UpdateProductInCart: exports.UpdateProductInCart,
+  RemoveProductFromCart: exports.RemoveProductFromCart,
 };

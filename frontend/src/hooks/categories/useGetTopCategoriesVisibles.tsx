@@ -16,7 +16,7 @@ export const useGetTopCategoriesVisibles = () => {
   const categories = useMemo(() => {
     const sorted = [...(data ?? [])]
       .sort((a, b) => a.name.localeCompare(b.name))
-      .sort((a, b) => (b.recipeCount ?? 0) - (a.recipeCount ?? 0));
+      .sort((a, b) => (b.recipesCount ?? 0) - (a.recipesCount ?? 0));
     return sorted.slice(0, 10);
   }, [data]);
 

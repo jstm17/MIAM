@@ -35,6 +35,21 @@ const savedIngredientSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const savedProductSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  checked: {
+    type: Boolean,
+    default: false,
+  },
+  addedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -50,8 +65,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+    },
     savedRecipes: [savedRecipeSchema],
     savedIngredients: [savedIngredientSchema],
+    savedProducts: [savedProductSchema],
   },
   {
     timestamps: true,

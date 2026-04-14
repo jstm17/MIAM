@@ -13,7 +13,7 @@ export const useGetTopAllUsers = () => {
 
   const users = useMemo(() => {
     const sorted = [...(data ?? [])].sort(
-      (a, b) => (b.recipeCount ?? 0) - (a.recipeCount ?? 0),
+      (a, b) => (b.recipesCount ?? 0) - (a.recipesCount ?? 0),
     );
     return sorted.slice(0, 10);
   }, [data]);

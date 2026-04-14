@@ -23,7 +23,7 @@ export const RecipeDetailsPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
 
   if (isLoading) return <RecipeDetailsSkeleton />;
 

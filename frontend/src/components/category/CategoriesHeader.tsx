@@ -12,7 +12,7 @@ export const CategoriesHeader = () => {
         size="icon-lg"
         variant="outline"
         aria-label="Retour"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/search")}
       >
         <Reply />
       </Button>

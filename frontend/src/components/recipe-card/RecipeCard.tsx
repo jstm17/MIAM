@@ -9,6 +9,7 @@ import {
 import type { Recipe } from "@/types/recipe.types";
 import { EyeOff, UserRound } from "lucide-react";
 import { AspectRatio } from "../ui/aspect-ratio";
+import { Skeleton } from "../ui/skeleton";
 import { RecipeCardActions } from "./RecipeCardActions";
 
 type RecipeCardProps = {
@@ -28,20 +29,24 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
 
       <RecipeCardActions recipe={recipe} />
       <AspectRatio ratio={21 / 9} className="bg-muted">
-        <img
-          src={image || placeholderImage}
-          alt="Photo"
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = placeholderImage;
-          }}
-        />
+        {image ? (
+          <img
+            src={image}
+            alt="Photo"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = placeholderImage;
+            }}
+          />
+        ) : (
+          <Skeleton className="w-full h-full" />
+        )}
       </AspectRatio>
       <CardHeader className="p-2 bg-background rounded-none">
         <CardTitle className="flex justify-between items-center gap-4">
           {name}
-          <Badge variant={"ghost"} className="text-foreground/50 p-0">
-            <UserRound /> {addedBy.name}
+          <Badge variant={"ghost"} className="text-muted-foreground  p-0">
+            <UserRound strokeWidth={1.5} /> {addedBy.name}
           </Badge>
         </CardTitle>
         <CardDescription className="flex gap-2">

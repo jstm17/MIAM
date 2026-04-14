@@ -20,7 +20,7 @@ export const CategoriesContent = () => {
     if (sort === "recipes") {
       return items
         .sort((a, b) => a.name.localeCompare(b.name))
-        .sort((a, b) => (b.recipeCount ?? 0) - (a.recipeCount ?? 0));
+        .sort((a, b) => (b.recipesCount ?? 0) - (a.recipesCount ?? 0));
     }
     return items.sort((a, b) => a.name.localeCompare(b.name));
   }, [categories, sort]);

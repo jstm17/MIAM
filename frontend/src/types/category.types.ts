@@ -5,7 +5,7 @@ export type Category = {
   image: string;
   createdAt: string;
   updatedAt: string;
-  recipeCount?: number;
+  recipesCount?: number;
 };
 
 export type CreateCategoryDto = {

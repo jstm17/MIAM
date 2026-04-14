@@ -17,10 +17,20 @@ type GroupInputProps = {
   children?: ReactNode;
   placeholder?: string;
   inputGroupAddon?: string | ReactNode;
+  groupAddonAlign?:
+    | "inline-end"
+    | "inline-start"
+    | "block-start"
+    | "block-end"
+    | null
+    | undefined;
   capitalize?: boolean;
   list?: string;
   inputGroupAddonClassName?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
 };
 
 export const GroupInput = forwardRef<HTMLInputElement, GroupInputProps>(
@@ -37,9 +47,13 @@ export const GroupInput = forwardRef<HTMLInputElement, GroupInputProps>(
       children,
       placeholder = "",
       inputGroupAddon = "",
+      groupAddonAlign = "inline-end",
       capitalize = false,
       inputGroupAddonClassName = "",
       list,
+      onFocus,
+      onBlur,
+      onClick,
       ...props
     },
     ref,
@@ -70,12 +84,15 @@ export const GroupInput = forwardRef<HTMLInputElement, GroupInputProps>(
             className={className}
             list={list}
             onKeyDown={onKeyDown}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onClick={onClick}
             {...props}
           />
 
           {inputGroupAddon && (
             <InputGroupAddon
-              align="inline-end"
+              align={groupAddonAlign}
               className={`text-foreground/50 ${inputGroupAddonClassName}`}
             >
               {inputGroupAddon}

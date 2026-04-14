@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -7,11 +7,12 @@ import {
 import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import { useAuth } from "@/hooks/useAuth";
 import { useGetTopAllUsers } from "@/hooks/users/useGetTopAllUsers";
-import { ChevronRight, UserRound, UsersRound } from "lucide-react";
+import { ChevronRight, UsersRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { Typography } from "../shared/Typography";
 import { Skeleton } from "../ui/skeleton";
+import { UserCard } from "../user/UserCard";
 
 const UserCarouselHeader = () => (
   <div className="flex gap-2 px-4 items-center justify-between mb-1">
@@ -53,7 +54,7 @@ export function UserCarousel() {
     .filter((u) => u._id !== user?._id)
     .map((u) => ({
       ...u,
-      recipesCount: recipesCountByUser[u._id] || u.recipeCount || 0,
+      recipesCount: recipesCountByUser[u._id] || u.recipesCount || 0,
     }))
     .filter((u) => u.recipesCount > 0);
 
@@ -67,7 +68,7 @@ export function UserCarousel() {
               <CarouselItem key={i} className="basis-1/3">
                 <div className="py-2">
                   <Card className="p-0 bg-muted ring-0">
-                    <Skeleton className="h-21" />
+                    <Skeleton className="h-[118px]" />
                   </Card>
                 </div>
               </CarouselItem>
@@ -95,25 +96,12 @@ export function UserCarousel() {
   return (
     <div>
       <UserCarouselHeader />
-      <Carousel opts={{ align: "start" }} className="w-[110%]">
+      <Carousel opts={{ align: "start" }} className="w-[110%] mt-2">
         <CarouselContent>
           {sortedUsers.map((u) => (
             <CarouselItem key={u._id} className="basis-1/3">
               <Link to={`/chef/${u.slug}`}>
-                <div className="py-2">
-                  <Card className="p-0 border-none bg-muted active:brightness-95">
-                    <CardContent className="items-center flex flex-col p-2 gap-2">
-                      <UserRound />
-                      <p className="text-center">
-                        <span className="font-semibold block">{u.name}</span>
-                        <span className="text-foreground/50">
-                          {u.recipesCount} recette
-                          {u.recipesCount > 1 ? "s" : ""}
-                        </span>
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                <UserCard user={u} />
               </Link>
             </CarouselItem>
           ))}

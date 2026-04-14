@@ -25,6 +25,7 @@ import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
 import { useUnsaveRecipe } from "@/hooks/users/useUnsaveRecipe";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 
 type RecipeCardActionsProps = {
@@ -64,6 +65,11 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   ) => {
     e.preventDefault();
     toggleVisibility(recipeId, visible);
+    toast.success(
+      visible
+        ? "La recette n'est plus visible par les autres"
+        : "La recette est maintenant visible par les autres",
+    );
   };
 
   return (
@@ -107,7 +113,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                 }}
               >
                 <Pencil />
-                Modifier la recette
+                Modifier
               </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={isPendingVisibility}
@@ -116,12 +122,12 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                 {visible ? (
                   <>
                     <EyeOff />
-                    Masquer la recette
+                    Masquer
                   </>
                 ) : (
                   <>
                     <Eye />
-                    Exposer la recette
+                    Exposer
                   </>
                 )}
               </DropdownMenuItem>
@@ -136,7 +142,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                 variant="destructive"
               >
                 <Trash />
-                Supprimer la recette
+                Supprimer
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

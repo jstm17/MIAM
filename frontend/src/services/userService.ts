@@ -30,10 +30,21 @@ export const userService = {
   clearShoppingList: () =>
     axiosInstance.delete(`${USER_URL}/saved-ingredients`),
 
-  updateUserName: (newName: string) =>
-    axiosInstance.put(`${USER_URL}/update-name`, {
-      name: newName,
+  updateUserProfile: (formData: FormData) =>
+    axiosInstance.put(`${USER_URL}/update`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     }),
 
   deleteUser: () => axiosInstance.delete(USER_URL),
+
+  addProductToCart: (name: string) =>
+    axiosInstance.post(`${USER_URL}/product`, { name }),
+
+  updateProductInCart: (
+    name: string,
+    data: { newName?: string; checked?: boolean },
+  ) => axiosInstance.put(`${USER_URL}/product`, { name, ...data }),
+
+  removeProductFromCart: (name: string) =>
+    axiosInstance.delete(`${USER_URL}/product`, { data: { name } }),
 };

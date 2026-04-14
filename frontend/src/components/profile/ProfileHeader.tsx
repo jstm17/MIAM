@@ -14,7 +14,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ProfileDeleteAccountDialog } from "./ProfileDeleteAccountDialog";
-import { ProfileUpdateNameDialog } from "./ProfileUpdateNameDialog";
+import { ProfileUpdateProfileDialog } from "./ProfileUpdateProfileDialog";
 import { ProfileHeaderSkeleton } from "./skeletons/ProfileHeaderSkeleton";
 
 export const ProfileHeader = () => {
@@ -52,7 +52,7 @@ export const ProfileHeader = () => {
           <DropdownMenuGroup>
             <DropdownMenuItem onSelect={() => setUpdateDialogOpen(true)}>
               <Pencil />
-              Modifier mon nom
+              Modifier mon profil
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => setDeleteDialogOpen(true)}
@@ -72,7 +72,7 @@ export const ProfileHeader = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <ProfileUpdateNameDialog
+      <ProfileUpdateProfileDialog
         open={updateDialogOpen}
         onOpenChange={setUpdateDialogOpen}
       />

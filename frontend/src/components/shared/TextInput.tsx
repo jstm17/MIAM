@@ -1,8 +1,13 @@
 import { Input } from "@/components/ui/input";
-import { type ChangeEvent, type ReactNode, forwardRef } from "react";
+import {
+  type ChangeEvent,
+  type InputHTMLAttributes,
+  type ReactNode,
+  forwardRef,
+} from "react";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 
-type TextInputProps = {
+export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   name?: string;
   value?: string;
@@ -18,7 +23,7 @@ type TextInputProps = {
   description?: string | null;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-};
+}
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   (
@@ -71,6 +76,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           className={className}
           {...props}
         />
+        {children}
         {error && (
           <FieldDescription className="text-destructive text-xs">
             {error}
@@ -81,7 +87,6 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             {description}
           </FieldDescription>
         )}
-        {children}
       </Field>
     );
   },

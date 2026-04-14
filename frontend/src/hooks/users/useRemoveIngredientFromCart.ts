@@ -4,7 +4,7 @@ import { userService } from "../../services/userService";
 export const useRemoveIngredientFromCart = () => {
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isPending } = useMutation({
+  const { mutateAsync, isPending, error } = useMutation({
     mutationFn: ({
       recipeId,
       ingredientId,
@@ -24,5 +24,5 @@ export const useRemoveIngredientFromCart = () => {
   const removeIngredientFromCart = (recipeId: string, ingredientId: string) =>
     mutateAsync({ recipeId, ingredientId });
 
-  return { removeIngredientFromCart, isPending };
+  return { removeIngredientFromCart, isPending, error };
 };

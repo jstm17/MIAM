@@ -85,7 +85,8 @@ export const RecipeDetailsImage = ({ recipe, y }: RecipeDetailsImageProps) => {
         >
           <Reply color="white" />
         </Button>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {!visible && <EyeOff color="white" className="drop-shadow-sm" />}
           <Button
             size="icon-lg"
             variant="outline"
@@ -127,7 +128,7 @@ export const RecipeDetailsImage = ({ recipe, y }: RecipeDetailsImageProps) => {
                     }}
                   >
                     <Pencil />
-                    Modifier la recette
+                    Modifier
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     disabled={isPendingVisibility}
@@ -138,12 +139,12 @@ export const RecipeDetailsImage = ({ recipe, y }: RecipeDetailsImageProps) => {
                     {visible ? (
                       <>
                         <EyeOff />
-                        Masquer la recette
+                        Masquer
                       </>
                     ) : (
                       <>
                         <Eye />
-                        Exposer la recette
+                        Exposer
                       </>
                     )}
                   </DropdownMenuItem>
@@ -158,7 +159,7 @@ export const RecipeDetailsImage = ({ recipe, y }: RecipeDetailsImageProps) => {
                     variant="destructive"
                   >
                     <Trash />
-                    Supprimer la recette
+                    Supprimer
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>

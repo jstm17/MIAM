@@ -12,7 +12,7 @@ export const useGetAllUsersVisibles = () => {
   });
 
   const users = useMemo(
-    () => (data ?? []).filter((user) => (user.recipeCount ?? 0) > 0),
+    () => (data ?? []).filter((user) => (user.recipesCount ?? 0) > 0),
     [data],
   );
 

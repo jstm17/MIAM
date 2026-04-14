@@ -17,7 +17,7 @@ import {
 import { useGetAllIngredientsVisibles } from "@/hooks/ingredients/useGetAllIngredientsVisibles";
 import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { IngredientCarousel } from "./IngredientCarousel";
 
 const IngredientSectionHeader = () => (
@@ -43,10 +43,10 @@ const IngredientSectionHeader = () => (
 
 export const IngredientSection = () => {
   const anchor = useComboboxAnchor();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedIngredients, setSelectedIngredients] = React.useState<
     string[]
-  >([]);
-
+  >(() => searchParams.get("ingredients")?.split(",").filter(Boolean) ?? []);
   const { ingredients, isLoading: isLoadingIngredients } =
     useGetAllIngredientsVisibles();
   const { recipes, isLoading: isLoadingRecipes } = useGetAllRecipesVisibles();
@@ -66,6 +66,15 @@ export const IngredientSection = () => {
     );
   }, [recipes, selectedIngredients]);
 
+  const handleValueChange = (values: string[]) => {
+    setSelectedIngredients(values);
+    if (values.length > 0) {
+      setSearchParams({ ingredients: values.join(",") });
+    } else {
+      setSearchParams({});
+    }
+  };
+
   return (
     <div className="min-h-68">
       <IngredientSectionHeader />
@@ -76,7 +85,7 @@ export const IngredientSection = () => {
           autoHighlight
           items={ingredientNames}
           value={selectedIngredients}
-          onValueChange={setSelectedIngredients}
+          onValueChange={handleValueChange}
         >
           <div className="flex gap-2 items-center w-full relative">
             <Search

@@ -11,6 +11,7 @@ import {
   type UseFormTrigger,
 } from "react-hook-form";
 import { GroupInput } from "../shared/GroupInput";
+import { ShowSuggestions } from "../shared/ShowSuggestions";
 import { Typography } from "../shared/Typography";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -28,9 +29,9 @@ export const CategoriesSectionForm = ({
   trigger,
 }: CategoriesSectionFormProps) => {
   const { categories: allCategories } = useGetAllCategories();
-
   const [categoryInput, setCategoryInput] = useState("");
   const categories = useWatch({ control, name: "categories" }) || [];
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const addCategory = (val: string) => {
     if (!val.trim()) return;
@@ -75,23 +76,40 @@ export const CategoriesSectionForm = ({
           </div>
         )}
         <div className="flex gap-2">
-          <GroupInput
-            capitalize
-            type="text"
-            list="categories-list"
-            value={categoryInput}
-            onChange={(e) => setCategoryInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addCategory(categoryInput);
+          <ShowSuggestions
+            inputValue={categoryInput}
+            items={allCategories}
+            show={showSuggestions}
+            setShow={setShowSuggestions}
+            onSelect={(val) => addCategory(val)}
+          >
+            <GroupInput
+              capitalize
+              type="text"
+              value={categoryInput}
+              onChange={(e) => {
+                setCategoryInput(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addCategory(categoryInput);
+                }
+              }}
+              error={errors.categories?.message}
+              placeholder="Ex. Dessert"
+              inputGroupAddon={
+                <ChevronsUpDown
+                  className="cursor-pointer"
+                  onClick={() => setShowSuggestions((prev) => !prev)}
+                />
               }
-            }}
-            error={errors.categories?.message}
-            placeholder="Ex. Dessert"
-            inputGroupAddon={<ChevronsUpDown />}
-            inputGroupAddonClassName={"absolute right-0 -z-10"}
-          />
+              inputGroupAddonClassName="absolute right-0"
+            />
+          </ShowSuggestions>
           <Button
             type="button"
             size="icon-lg"
@@ -101,11 +119,11 @@ export const CategoriesSectionForm = ({
             <Plus />
           </Button>
         </div>
-        <datalist id="categories-list">
+        {/* <datalist id="categories-list">
           {allCategories.map((cat) => (
             <option key={cat._id} value={cat.name} />
           ))}
-        </datalist>
+        </datalist> */}
       </div>
     </div>
   );

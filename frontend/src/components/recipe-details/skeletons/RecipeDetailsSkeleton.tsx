@@ -11,8 +11,8 @@ export const RecipeDetailsSkeleton = () => {
         />
       </AspectRatio>
 
-      <div className="bg-background rounded-t-4xl -mt-6 relative z-10 min-h-full flex flex-col gap-4 items-center px-4 pb-18">
-        <div className="bg-secondary w-12 h-1.25 block rounded-lg mt-2" />
+      <div className="bg-background rounded-t-4xl -mt-8 relative z-10 min-h-[calc(100dvh-42px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center px-4">
+        <div className="bg-muted w-25 h-1 block rounded-full mt-4" />
         <Skeleton className="h-6 w-3/4" />
 
         <div className="grid gap-4 grid-cols-3 w-full">

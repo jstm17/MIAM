@@ -2,12 +2,23 @@ import { userService } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 
-export const useUpdateUserName = () => {
+type UpdateProductPayload = {
+  name: string;
+  newName?: string;
+  checked?: boolean;
+};
+
+export const useUpdateProductInCart = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending, error } = useMutation({
-    mutationFn: (newName: string) =>
-      userService.updateUserName(newName).then((res) => res.data),
+    mutationFn: (payload: UpdateProductPayload) =>
+      userService
+        .updateProductInCart(payload.name, {
+          newName: payload.newName,
+          checked: payload.checked,
+        })
+        .then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
     },
@@ -16,5 +27,5 @@ export const useUpdateUserName = () => {
     },
   });
 
-  return { updateUserName: mutateAsync, isPending, error };
+  return { updateProductInCart: mutateAsync, isPending, error };
 };

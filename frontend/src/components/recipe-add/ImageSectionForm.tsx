@@ -1,7 +1,7 @@
 import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
 import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
 import { Image, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { toast } from "sonner";
 import { TextInput } from "../shared/TextInput";
@@ -15,6 +15,7 @@ type ImageSectionFormProps = {
   existingImage?: string;
 };
 export const ImageSectionForm = ({
+  register,
   setValue,
   existingImage,
 }: ImageSectionFormProps) => {
@@ -30,6 +31,10 @@ export const ImageSectionForm = ({
     setInputKey((k) => k + 1);
     if (inputRef.current) inputRef.current.value = "";
   };
+
+  useEffect(() => {
+    register("image");
+  }, [register]);
 
   return (
     <div className="">
@@ -63,8 +68,9 @@ export const ImageSectionForm = ({
         )}
         <TextInput
           key={inputKey}
-          label={preview ? "Changer la photo" : "Photo"}
+          ref={inputRef}
           type="file"
+          className="hidden"
           accept="image/jpeg,image/png,image/webp"
           description={`Formats acceptés : jpg, png, webp \n ${
             fileSize ? `Taille : ${fileSize}` : "Taille : 5Mo max"
@@ -84,7 +90,15 @@ export const ImageSectionForm = ({
               }
             }
           }}
-        />
+        >
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => document.getElementById("image")?.click()}
+          >
+            {preview ? "Changer la photo" : "Ajouter une photo"}
+          </Button>
+        </TextInput>
       </div>
     </div>
   );

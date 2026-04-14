@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const { auth } = require("../middlewares/authMiddleware");
+const { upload } = require("../config/cloudinary");
 
 router.post("/register", userController.Register);
 router.post("/login", userController.Login);
@@ -23,7 +24,15 @@ router.delete(
   userController.RemoveIngredientFromCart,
 );
 router.delete("/saved-ingredients", auth, userController.ClearShoppingList);
-router.put("/update-name", auth, userController.UpdateUserName);
+router.put(
+  "/update",
+  auth,
+  upload.single("image"),
+  userController.UpdateUserProfile,
+);
+router.put("/product", auth, userController.UpdateProductInCart);
 router.delete("/", auth, userController.DeleteUser);
+router.post("/product", auth, userController.AddProductToCart);
+router.delete("/product", auth, userController.RemoveProductFromCart);
 
 module.exports = router;

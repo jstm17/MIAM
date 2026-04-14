@@ -34,7 +34,7 @@ exports.GetAllCategoriesVisibles = async (req, res) => {
       {
         $group: {
           _id: "$categories",
-          recipeCount: { $sum: 1 },
+          recipesCount: { $sum: 1 },
         },
       },
       {
@@ -49,7 +49,7 @@ exports.GetAllCategoriesVisibles = async (req, res) => {
       {
         $replaceRoot: {
           newRoot: {
-            $mergeObjects: ["$category", { recipeCount: "$recipeCount" }],
+            $mergeObjects: ["$category", { recipesCount: "$recipesCount" }],
           },
         },
       },
@@ -84,10 +84,10 @@ exports.GetTopCategoriesVisibles = async (req, res) => {
       {
         $group: {
           _id: "$categories",
-          recipeCount: { $sum: 1 },
+          recipesCount: { $sum: 1 },
         },
       },
-      { $sort: { recipeCount: -1 } },
+      { $sort: { recipesCount: -1 } },
       { $limit: 10 },
       {
         $lookup: {
@@ -101,7 +101,7 @@ exports.GetTopCategoriesVisibles = async (req, res) => {
       {
         $replaceRoot: {
           newRoot: {
-            $mergeObjects: ["$category", { recipeCount: "$recipeCount" }],
+            $mergeObjects: ["$category", { recipesCount: "$recipesCount" }],
           },
         },
       },

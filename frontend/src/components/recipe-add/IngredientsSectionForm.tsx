@@ -2,6 +2,7 @@ import { useGetAllIngredients } from "@/hooks/ingredients/useGetAllIngredients";
 import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
 import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
 import { Carrot, MinusCircle, Plus } from "lucide-react";
+import { useState } from "react";
 import {
   useFieldArray,
   type Control,
@@ -9,6 +10,7 @@ import {
   type UseFormRegister,
   type UseFormSetValue,
 } from "react-hook-form";
+import { ShowSuggestions } from "../shared/ShowSuggestions";
 import { TextInput } from "../shared/TextInput";
 import { Typography } from "../shared/Typography";
 import { Button } from "../ui/button";
@@ -27,15 +29,12 @@ export const IngredientsSectionForm = ({
   errors,
 }: IngredientsSectionFormProps) => {
   const { ingredients } = useGetAllIngredients();
-
+  const [showIndex, setShowIndex] = useState<number | null>(null);
+  const [inputValues, setInputValues] = useState<Record<number, string>>({});
   const { fields, append, remove } = useFieldArray({
     control,
     name: "ingredients",
   });
-
-  const handleIngredientChange = (val: string, index: number) => {
-    setValue(`ingredients.${index}.ingredient`, val);
-  };
 
   return (
     <div className="">
@@ -63,23 +62,34 @@ export const IngredientsSectionForm = ({
               error={errors.ingredients?.[index]?.quantity?.message}
               {...register(`ingredients.${index}.quantity`)}
             />
-            <TextInput
-              placeholder="Ex. Beurre"
-              capitalize
-              type="text"
-              list={`ingredients-list-${index}`}
-              error={errors.ingredients?.[index]?.ingredient?.message}
-              {...register(`ingredients.${index}.ingredient`)}
-              onChange={(e) => {
-                register(`ingredients.${index}.ingredient`).onChange(e);
-                handleIngredientChange(e.target.value, index);
+            <ShowSuggestions
+              inputValue={inputValues[index] ?? ""}
+              items={ingredients}
+              show={showIndex === index}
+              setShow={(val) => setShowIndex(val ? index : null)}
+              onSelect={(val) => {
+                setValue(`ingredients.${index}.ingredient`, val);
+                setInputValues((prev) => ({ ...prev, [index]: val }));
               }}
-            />
-            <datalist id={`ingredients-list-${index}`}>
-              {ingredients.map((ingredient) => (
-                <option key={ingredient._id} value={ingredient.name} />
-              ))}
-            </datalist>
+            >
+              <TextInput
+                placeholder="Ex. Beurre"
+                capitalize
+                type="text"
+                error={errors.ingredients?.[index]?.ingredient?.message}
+                {...register(`ingredients.${index}.ingredient`)}
+                onChange={(e) => {
+                  register(`ingredients.${index}.ingredient`).onChange(e);
+                  setInputValues((prev) => ({
+                    ...prev,
+                    [index]: e.target.value,
+                  }));
+                  setShowIndex(index);
+                }}
+                onBlur={() => setTimeout(() => setShowIndex(null), 150)}
+              />
+            </ShowSuggestions>
+
             <Button
               type="button"
               variant="outline"

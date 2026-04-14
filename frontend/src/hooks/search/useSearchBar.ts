@@ -103,7 +103,7 @@ export const useSearchBar = (
     saveSearch({
       label: user.name,
       type: "user",
-      slug: user.slug,
+      slug: user.slug!,
       recipesCount,
     });
     navigate(`/chef/${user.slug}`);

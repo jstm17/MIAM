@@ -13,6 +13,7 @@ import {
   Eye,
   EyeOff,
   Pencil,
+  Share,
   Trash,
 } from "lucide-react";
 
@@ -26,7 +27,8 @@ import { useUnsaveRecipe } from "@/hooks/users/useUnsaveRecipe";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
+import { DeleteRecipeDialog } from "../dialog/DeleteRecipeDialog";
+import { ShareRecipeDialog } from "../dialog/ShareRecipeDialog";
 
 type RecipeCardActionsProps = {
   recipe: Recipe;
@@ -40,6 +42,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toggleVisibility, isPending: isPendingVisibility } =
     useToggleRecipeVisibility();
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const { user, isLoading } = useAuth();
   const { _id, addedBy, visible } = recipe;
   const isSaved = savedRecipes.some((r) => r._id === _id);
@@ -104,8 +107,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                   </>
                 )}
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuGroup>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={(e) => {
                   e.preventDefault();
@@ -115,6 +117,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                 <Pencil />
                 Modifier
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 disabled={isPendingVisibility}
                 onClick={(e) => handleToggleRecipeVisibility(e, _id, visible)}
@@ -130,6 +133,16 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                     Exposer
                   </>
                 )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShareDialogOpen(true);
+                }}
+              >
+                <Share />
+                Partager
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -167,6 +180,12 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         recipeId={_id}
+      />
+
+      <ShareRecipeDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        recipe={recipe}
       />
     </div>
   );

@@ -13,8 +13,8 @@ import { Ellipsis, LogOut, Pencil, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ProfileDeleteAccountDialog } from "./ProfileDeleteAccountDialog";
-import { ProfileUpdateProfileDialog } from "./ProfileUpdateProfileDialog";
+import { ProfileDeleteAccountDialog } from "../dialog/ProfileDeleteAccountDialog";
+import { ProfileUpdateProfileDialog } from "../dialog/ProfileUpdateProfileDialog";
 import { ProfileHeaderSkeleton } from "./skeletons/ProfileHeaderSkeleton";
 
 export const ProfileHeader = () => {
@@ -54,6 +54,7 @@ export const ProfileHeader = () => {
               <Pencil />
               Modifier mon profil
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={() => setDeleteDialogOpen(true)}
               variant="destructive"

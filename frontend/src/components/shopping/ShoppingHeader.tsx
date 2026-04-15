@@ -1,8 +1,8 @@
 import { RefreshCcw } from "lucide-react";
 import { useState } from "react";
+import { ShoppingClearCartDialog } from "../dialog/ShoppingClearCartDialog";
 import { Typography } from "../shared/Typography";
 import { Button } from "../ui/button";
-import { ShoppingClearCartDialog } from "./ShoppingClearCartDialog";
 
 export const ShoppingHeader = ({ empty }: { empty?: boolean }) => {
   const [clearDialogOpen, setClearDialogOpen] = useState(false);

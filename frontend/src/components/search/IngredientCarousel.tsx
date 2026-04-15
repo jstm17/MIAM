@@ -1,6 +1,5 @@
 import type { Recipe } from "@/types/recipe.types";
 import { Carrot } from "lucide-react";
-import { Link } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { Typography } from "../shared/Typography";
@@ -74,9 +73,7 @@ export const IngredientCarousel = ({
         <CarouselContent>
           {filteredRecipes.map((recipe) => (
             <CarouselItem key={recipe._id} className="basis-2/3">
-              <Link to={`/recipe/${recipe.slug}`} key={recipe._id}>
-                <RecipeCard recipe={recipe} />
-              </Link>
+              <RecipeCard recipe={recipe} />
             </CarouselItem>
           ))}
         </CarouselContent>

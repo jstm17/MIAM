@@ -1,7 +1,6 @@
 import { useGetAllVisiblesByCategory } from "@/hooks/recipes/useGetAllRecipesVibsiblesByCategory";
 import type { Category } from "@/types/category.types";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
@@ -60,9 +59,7 @@ export const CategoryContent = ({ category }: CategoryContentProps) => {
         setSelectedUsers={setSelectedUsers}
       />
       {filteredRecipes.map((recipe) => (
-        <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
-          <RecipeCard recipe={recipe} />
-        </Link>
+        <RecipeCard recipe={recipe} key={recipe.slug} />
       ))}
     </div>
   );

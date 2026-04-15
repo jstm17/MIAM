@@ -9,12 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { Ellipsis, LogOut, Pencil, Plus, Trash } from "lucide-react";
+import { Ellipsis, LogOut, Pencil, Plus, Share, Trash } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ProfileDeleteAccountDialog } from "../dialog/ProfileDeleteAccountDialog";
 import { ProfileUpdateProfileDialog } from "../dialog/ProfileUpdateProfileDialog";
+import { ShareUserDialog } from "../dialog/ShareUserDialog";
 import { ProfileHeaderSkeleton } from "./skeletons/ProfileHeaderSkeleton";
 
 export const ProfileHeader = () => {
@@ -22,6 +23,7 @@ export const ProfileHeader = () => {
   const { user, logout, isLoading } = useAuth();
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -55,6 +57,11 @@ export const ProfileHeader = () => {
               Modifier mon profil
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setShareDialogOpen(true)}>
+              <Share />
+              Partager mon profil
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={() => setDeleteDialogOpen(true)}
               variant="destructive"
@@ -80,6 +87,13 @@ export const ProfileHeader = () => {
       <ProfileDeleteAccountDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
+      />
+
+      <ShareUserDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        user={user!}
+        current
       />
     </div>
   );

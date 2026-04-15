@@ -1,7 +1,6 @@
 import type { Recipe } from "@/types/recipe.types";
 import { Carrot } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
@@ -98,9 +97,7 @@ export const IngredientsContentResults = ({
         setSelectedUsers={setSelectedUsers}
       />
       {filteredRecipes.map((recipe) => (
-        <Link to={`/recipe/${recipe.slug}`} key={recipe._id}>
-          <RecipeCard recipe={recipe} />
-        </Link>
+        <RecipeCard recipe={recipe} key={recipe._id} />
       ))}
     </div>
   );

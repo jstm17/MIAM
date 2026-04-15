@@ -40,9 +40,9 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   const { unsaveRecipe, isPending: isUnsaving } = useUnsaveRecipe();
   const { recipes: savedRecipes } = useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const { toggleVisibility, isPending: isPendingVisibility } =
     useToggleRecipeVisibility();
-  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const { user, isLoading } = useAuth();
   const { _id, addedBy, visible } = recipe;
   const isSaved = savedRecipes.some((r) => r._id === _id);
@@ -54,6 +54,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
     isSaved: boolean,
   ) => {
     e.preventDefault();
+    e.stopPropagation();
     if (isSaved) {
       unsaveRecipe(recipeId);
     } else {
@@ -67,6 +68,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
     visible: boolean,
   ) => {
     e.preventDefault();
+    e.stopPropagation();
     toggleVisibility(recipeId, visible);
     toast.success(
       visible
@@ -77,7 +79,21 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
 
   return (
     <div className="absolute top-2 right-2 z-10">
-      {!isLoading && isMyRecipe ? (
+      {!user ? (
+        <Button
+          size="icon-lg"
+          variant="outline"
+          aria-label="Save Recipe"
+          className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShareDialogOpen(true);
+          }}
+        >
+          <Share className="text-white" />
+        </Button>
+      ) : !isLoading && isMyRecipe ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -85,6 +101,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
               size="icon-lg"
               aria-label="More Options"
               className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
+              onClick={(e) => e.stopPropagation()}
             >
               <Ellipsis color="white" />
             </Button>
@@ -111,6 +128,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
               <DropdownMenuItem
                 onClick={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   navigate(`/recipe-edit/${_id}`);
                 }}
               >
@@ -167,7 +185,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
           aria-label="Save Recipe"
           className="backdrop-blur-sm bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
           onClick={(e) => handleSaveRecipe(e, _id, isSaved)}
-          disabled={!user || isLoading || isSaving || isUnsaving}
+          disabled={isLoading || isSaving || isUnsaving}
         >
           <BookmarkIcon
             fill={isSaved ? "currentColor" : "transparent"}

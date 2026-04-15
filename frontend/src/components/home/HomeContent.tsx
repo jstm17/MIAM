@@ -1,6 +1,6 @@
 import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
@@ -68,9 +68,7 @@ export const HomeContent = () => {
         setSelectedUsers={setSelectedUsers}
       />
       {filteredRecipes.map((recipe) => (
-        <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
-          <RecipeCard recipe={recipe} />
-        </Link>
+        <RecipeCard recipe={recipe} key={recipe.slug} />
       ))}
     </div>
   );

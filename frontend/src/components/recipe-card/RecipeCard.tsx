@@ -78,7 +78,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
               </div>
               <div className="text-muted-foreground/80 flex gap-1 p-0 items-center my-1">
                 <Timer strokeWidth={1.5} size={14} />
-                <span className="leading-4 mt-[0.6px]">
+                <span className="leading-[14px] mt-[0.6px]">
                   {formatTime(timePrep + timeCook, true)}
                 </span>
               </div>

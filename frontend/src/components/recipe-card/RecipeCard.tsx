@@ -70,29 +70,24 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
               ))}
             </CardDescription>
             <CardAction className="flex-col flex items-end">
-              <Badge
-                variant={"ghost"}
-                className="text-muted-foreground/80 p-0 items-center"
-              >
-                <ChefHat strokeWidth={1.5} />
-                <span className="leading-3">{addedBy.name}</span>
-              </Badge>
-              <Badge
-                variant={"ghost"}
-                className="text-muted-foreground/80 -mt-1 p-0 items-center"
-              >
-                <Timer strokeWidth={1.5} />
-                <span className="leading-3 font-light">
+              <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
+                <ChefHat strokeWidth={1.5} size={14} />
+                <span className="leading-[14px] mt-[0.6px]">
+                  {addedBy.name}
+                </span>
+              </div>
+              <div className="text-muted-foreground/80 flex gap-1 p-0 items-center my-1">
+                <Timer strokeWidth={1.5} size={14} />
+                <span className="leading-4 mt-[0.6px]">
                   {formatTime(timePrep + timeCook, true)}
                 </span>
-              </Badge>
-              <Badge
-                variant={"ghost"}
-                className="text-muted-foreground/80 -mt-1 p-0 items-center"
-              >
-                <UsersRound strokeWidth={1.5} />{" "}
-                <span className="leading-3 font-light">{personsNumber}</span>
-              </Badge>
+              </div>
+              <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
+                <UsersRound strokeWidth={1.5} size={14} />{" "}
+                <span className="leading-[14px] mt-[0.6px]">
+                  {personsNumber}
+                </span>
+              </div>
             </CardAction>
           </CardHeader>
         </div>

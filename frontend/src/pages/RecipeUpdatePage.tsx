@@ -55,8 +55,8 @@ export function RecipeUpdatePage() {
     if (recipe) {
       reset({
         name: recipe.name,
-        timePrep: recipe.timePrep,
-        timeCook: recipe.timeCook || 0,
+        timePrep: recipe.timePrep === 0 ? null : recipe.timePrep,
+        timeCook: recipe.timeCook === 0 ? null : recipe.timeCook,
         personsNumber: recipe.personsNumber,
         categories: recipe.categories.map((c) => c.name),
         ingredients: recipe.ingredients.map((i) => ({
@@ -76,7 +76,11 @@ export function RecipeUpdatePage() {
 
   const onSubmit = async (formData: UpdateRecipeFormData) => {
     try {
-      const res = await updateRecipe(id!, formData);
+      const res = await updateRecipe(id!, {
+        ...formData,
+        timePrep: formData.timePrep ?? 0,
+        timeCook: formData.timeCook ?? 0,
+      });
       await queryClient.refetchQueries({ queryKey: ["recipe"] });
       // navigate(`/recipe/${res.data.slug}`);
       navigate(-1);
@@ -131,21 +135,26 @@ export function RecipeUpdatePage() {
                 capitalize
                 label="Nom *"
                 type="text"
+                placeholder="Ex. Pâtes carbonara"
                 error={errors.name?.message}
                 {...register("name")}
               />
               <div className="grid grid-cols-2 gap-4">
                 <GroupInput
-                  label="Temps de prépa. *"
+                  label="Temps de prépa."
                   type="number"
                   inputGroupAddon="min."
+                  placeholder="Ex. 30"
                   error={errors.timePrep?.message}
-                  {...register("timePrep", { valueAsNumber: true })}
+                  {...register("timePrep", {
+                    setValueAs: (v) => v === "" || v === null || v === undefined ? undefined : Number(v),
+                  })}
                 />
                 <GroupInput
                   label="Temps de cuisson"
                   type="number"
                   inputGroupAddon="min."
+                  placeholder="Ex. 30"
                   error={errors.timeCook?.message}
                   {...register("timeCook", {
                     setValueAs: (v) => v === "" || v === null || v === undefined ? undefined : Number(v),
@@ -155,6 +164,7 @@ export function RecipeUpdatePage() {
                   label="Nombre de personnes *"
                   type="number"
                   inputGroupAddon="pers."
+                  placeholder="Ex. 4"
                   error={errors.personsNumber?.message}
                   {...register("personsNumber", { valueAsNumber: true })}
                 />

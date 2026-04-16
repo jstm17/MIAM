@@ -12,7 +12,7 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
   return (
     <div className="bg-background rounded-t-4xl -mt-12 relative z-10 min-h-[calc(100dvh-42px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center">
       <span className="bg-muted w-25 h-1 block rounded-full mt-4"></span>
-      <div>
+      <div className="text-center">
         <Typography variant="h1" size="lg" weight="semibold">
           {recipe.name}
         </Typography>
@@ -24,7 +24,7 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
         <Item variant={"muted"} size={"xs"} orientation="vertical">
           <Timer />
           <div className="flex flex-col items-center">
-            <span>{formatTime(recipe.timePrep)}</span>
+            <span>{formatTime(recipe.timePrep || 0)}</span>
             <span className="text-muted-foreground/80 text-xs">
               de preparation
             </span>

@@ -26,15 +26,15 @@ export type Recipe = {
   visible: boolean;
   createdAt: string;
   updatedAt: string;
-  savedAt?: string; // Optional timestamp for when recipe was saved
+  savedAt?: string;
 };
 
 export type CreateRecipeDto = {
   name: string;
   ingredients: RecipeIngredient[];
   timePrep: number;
-  timeCook: number | undefined;
-  categories: string[]; // ids
+  timeCook: number;
+  categories: string[];
   instructions: RecipeInstruction[];
   personsNumber: number;
   visible: boolean;

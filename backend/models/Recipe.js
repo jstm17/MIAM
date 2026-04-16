@@ -46,6 +46,7 @@ const recipeSchema = new mongoose.Schema(
     },
     timeCook: {
       type: Number,
+      required: true,
       trim: true,
     },
     categories: [

@@ -59,6 +59,7 @@ export function RecipeAddPage() {
     try {
       const res = await addRecipe({
         ...formData,
+        timePrep: formData.timePrep ?? 0,
         timeCook: formData.timeCook ?? 0,
       });
       navigate("/recipe/" + res.data.slug);
@@ -93,12 +94,17 @@ export function RecipeAddPage() {
               />
               <div className="grid grid-cols-2 gap-4">
                 <GroupInput
-                  label="Temps de prépa. *"
+                  label="Temps de prépa."
                   type="number"
                   inputGroupAddon="min."
                   placeholder="Ex. 30"
                   error={errors.timePrep?.message}
-                  {...register("timePrep", { valueAsNumber: true })}
+                  {...register("timePrep", {
+                    setValueAs: (v) =>
+                      v === "" || v === null || v === undefined
+                        ? undefined
+                        : Number(v),
+                  })}
                 />
                 <GroupInput
                   label="Temps de cuisson"
@@ -122,7 +128,9 @@ export function RecipeAddPage() {
                   {...register("personsNumber", { valueAsNumber: true })}
                 />
                 <div className="flex flex-col gap-2 items-center">
-                  <label className="text-sm font-medium">Visibilité</label>
+                  <label className="text-sm font-medium" htmlFor="visible">
+                    Visibilité
+                  </label>
                   <div className="flex items-center space-x-2">
                     <EyeOff size={16} />
                     <Switch

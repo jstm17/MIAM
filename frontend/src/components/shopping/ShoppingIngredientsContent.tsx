@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useRemoveIngredientFromCart } from "@/hooks/users/useRemoveIngredientFromCart";
 import type { Ingredient } from "@/types/ingredient.types";
-import { Eye, Minus, UtensilsCrossed } from "lucide-react";
+import { ChevronRight, Minus, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -79,16 +79,20 @@ export const ShoppingIngredientsContent = () => {
     <div className="flex flex-col gap-6 mt-4">
       {groupedRecipes.map(({ recipe, ingredients }) => (
         <div key={recipe._id} className="space-y-4">
-          <div className="mb-4 p-1 pl-2 flex gap-2 items-center justify-between bg-primary/10 rounded-t-xl border-b border-primary">
+          <div className="mb-4 p-1 pr-0 pl-3 flex gap-2 items-center justify-between bg-primary/10 rounded-t-xl border-b border-primary">
             <div className="flex items-center gap-2">
-              <UtensilsCrossed />
+              <UtensilsCrossed size={20} />
               <Typography className="text-lg" weight="semibold">
                 {recipe.name}
               </Typography>
             </div>
             <Link to={`/recipe/${recipe.slug}`}>
-              <Button size="icon-lg">
-                <Eye />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="hover:bg-transparent hover:text-foreground active:bg-transparent active:text-foreground"
+              >
+                <ChevronRight />
               </Button>
             </Link>
           </div>

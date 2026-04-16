@@ -143,12 +143,12 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                 {visible ? (
                   <>
                     <EyeOff />
-                    Masquer
+                    Rendre privé
                   </>
                 ) : (
                   <>
                     <Eye />
-                    Exposer
+                    Rendre public
                   </>
                 )}
               </DropdownMenuItem>

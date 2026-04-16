@@ -10,7 +10,8 @@ export const useAddRecipe = () => {
     mutationFn: async (data: AddRecipeFormData) => {
       const formData = new FormData();
       formData.append("name", data.name);
-      formData.append("time", data.time.toString());
+      formData.append("timePrep", data.timePrep.toString());
+      formData.append("timeCook", data.timeCook?.toString() ?? "");
       formData.append("personsNumber", data.personsNumber.toString());
       formData.append("categories", JSON.stringify(data.categories));
       formData.append("ingredients", JSON.stringify(data.ingredients));
@@ -18,6 +19,7 @@ export const useAddRecipe = () => {
       if (data.image) {
         formData.append("image", data.image);
       }
+      formData.append("visible", data.visible.toString());
       const res = await recipeService.create(formData);
       return res.data;
     },

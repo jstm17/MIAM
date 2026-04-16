@@ -44,8 +44,8 @@ export const RecipeDetailsPage = () => {
     return (
       <NotFoundPage
         icon={<EyeOff />}
-        title="Recette masquée"
-        description={`Désolé, ${recipe.addedBy.name} a masqué cette recette.`}
+        title="Recette privée"
+        description={`Désolé, ${recipe.addedBy.name} a rendu cette recette privée.`}
         buttonText={"Retour"}
         buttonLink={-1}
       />

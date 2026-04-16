@@ -2,8 +2,9 @@ import { Typography } from "@/components/shared/Typography";
 import { Item } from "@/components/ui/item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Recipe } from "@/types/recipe.types";
+import { formatDate } from "@/utils/formatDate";
 import { formatTime } from "@/utils/formatTime";
-import { ChefHat, Timer, UsersRound } from "lucide-react";
+import { Microwave, Timer, UsersRound } from "lucide-react";
 import { IngredientsSection } from "./IngredientsSection";
 import { PreparationSection } from "./PreparationSection";
 
@@ -11,21 +12,37 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
   return (
     <div className="bg-background rounded-t-4xl -mt-12 relative z-10 min-h-[calc(100dvh-42px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center">
       <span className="bg-muted w-25 h-1 block rounded-full mt-4"></span>
-      <Typography variant="h1" size="lg" weight="semibold">
-        {recipe.name}
-      </Typography>
+      <div>
+        <Typography variant="h1" size="lg" weight="semibold">
+          {recipe.name}
+        </Typography>
+        <span className="text-muted-foreground/60 text-xs">
+          Ajouté le {formatDate(recipe.createdAt)} par {recipe.addedBy.name}
+        </span>
+      </div>
       <div className="flex justify-between w-full gap-2 px-4">
         <Item variant={"muted"} size={"xs"} orientation="vertical">
           <Timer />
-          {formatTime(recipe.time)}
+          <div className="flex flex-col items-center">
+            <span>{formatTime(recipe.timePrep)}</span>
+            <span className="text-muted-foreground/80 text-xs">
+              de preparation
+            </span>
+          </div>
+        </Item>
+        <Item variant={"muted"} size={"xs"} orientation="vertical">
+          <Microwave />
+          <div className="flex flex-col items-center">
+            <span>{formatTime(recipe.timeCook || 0)}</span>
+            <span className="text-muted-foreground/80 text-xs">de cuisson</span>
+          </div>
         </Item>
         <Item variant={"muted"} size={"xs"} orientation="vertical">
           <UsersRound />
-          Pour {recipe.personsNumber} pers.
-        </Item>
-        <Item variant={"muted"} size={"xs"} orientation="vertical">
-          <ChefHat />
-          <span className="text-center">Par {recipe.addedBy.name}</span>
+          <div className="flex flex-col items-center">
+            <span>{recipe.personsNumber}</span>
+            <span className="text-muted-foreground/80 text-xs">personnes</span>
+          </div>
         </Item>
       </div>
 

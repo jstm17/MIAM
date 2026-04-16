@@ -5,9 +5,10 @@ const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export const addRecipeSchema = z.object({
   name: z.string().min(1, "Champ requis"),
-  time: z
+  timePrep: z
     .number({ error: "Champ requis" })
     .min(1, "La durée doit être supérieure à 0"),
+  timeCook: z.number().optional().nullable(),
   personsNumber: z
     .number({ error: "Champ requis" })
     .min(1, "Le nombre de personnes doit être supérieur à 0"),
@@ -61,6 +62,7 @@ export const addRecipeSchema = z.object({
       "Format accepté : jpg, png, webp",
     )
     .optional(),
+  visible: z.boolean(),
 });
 
 export type AddRecipeFormData = z.infer<typeof addRecipeSchema>;

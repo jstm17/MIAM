@@ -39,9 +39,14 @@ const recipeSchema = new mongoose.Schema(
       trim: true,
     },
     ingredients: [ingredientSchema],
-    time: {
+    timePrep: {
       type: Number,
       required: true,
+      trim: true,
+    },
+    timeCook: {
+      type: Number,
+      trim: true,
     },
     categories: [
       {
@@ -64,7 +69,7 @@ const recipeSchema = new mongoose.Schema(
     },
     visible: {
       type: Boolean,
-      default: true,
+      required: true,
     },
   },
   {

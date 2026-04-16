@@ -16,7 +16,8 @@ export type Recipe = {
   name: string;
   slug: string;
   ingredients: RecipeIngredient[];
-  time: number;
+  timePrep: number;
+  timeCook: number;
   categories: Category[];
   instructions: RecipeInstruction[];
   personsNumber: number;
@@ -31,10 +32,12 @@ export type Recipe = {
 export type CreateRecipeDto = {
   name: string;
   ingredients: RecipeIngredient[];
-  time: number;
+  timePrep: number;
+  timeCook: number | undefined;
   categories: string[]; // ids
   instructions: RecipeInstruction[];
   personsNumber: number;
+  visible: boolean;
 };
 
 export type UpdateRecipeDto = Partial<CreateRecipeDto>;

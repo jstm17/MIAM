@@ -2,6 +2,7 @@ import type { Recipe } from "@/types/recipe.types";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toast } from "sonner";
+import { formatTime } from "./formatTime";
 
 export const exportPdf = async (recipe: Recipe) => {
   const toastId = toast.loading("Génération du PDF...");
@@ -124,7 +125,9 @@ export const exportPdf = async (recipe: Recipe) => {
         <div class="header">
           <h1 class="title">${recipe.name}</h1>
           <div class="metadata">
-            ⏱️ ${recipe.time} min • 👥 ${recipe.personsNumber} personnes
+            • ⏱️ ${formatTime(recipe.timePrep)} de préparation ${
+    recipe.timeCook ? `• ⏱️ ${formatTime(recipe.timeCook ?? 0)} de cuisson` : ""
+  } • 👥 ${recipe.personsNumber} personnes
           </div>
         </div>
         <div class="content">

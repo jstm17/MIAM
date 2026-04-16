@@ -8,6 +8,7 @@ import { Loading } from "@/components/shared/Loading";
 import { TextInput } from "@/components/shared/TextInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
+import { Switch } from "@/components/ui/switch";
 import { useGetRecipeById } from "@/hooks/recipes/useGetRecipeById";
 import { useUpdateRecipe } from "@/hooks/recipes/useUpdateRecipe";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,6 +19,7 @@ import {
 import type { ApiError } from "@/types/error.types";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import { useQueryClient } from "@tanstack/react-query";
+import { Eye, EyeOff } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -30,6 +32,7 @@ export function RecipeUpdatePage() {
   const { recipe, isLoading } = useGetRecipeById(id!);
   const { updateRecipe, isPending } = useUpdateRecipe();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -38,6 +41,7 @@ export function RecipeUpdatePage() {
     trigger,
     setValue,
     reset,
+    watch,
     formState: { errors },
   } = useForm<UpdateRecipeFormData>({
     resolver: zodResolver(updateRecipeSchema),
@@ -51,7 +55,8 @@ export function RecipeUpdatePage() {
     if (recipe) {
       reset({
         name: recipe.name,
-        time: recipe.time,
+        timePrep: recipe.timePrep,
+        timeCook: recipe.timeCook || 0,
         personsNumber: recipe.personsNumber,
         categories: recipe.categories.map((c) => c.name),
         ingredients: recipe.ingredients.map((i) => ({
@@ -62,11 +67,12 @@ export function RecipeUpdatePage() {
           content: i.content,
         })),
         image: recipe.image,
+        visible: recipe.visible,
       });
     }
   }, [recipe, reset]);
 
-  const queryClient = useQueryClient();
+  const isPublic = watch("visible");
 
   const onSubmit = async (formData: UpdateRecipeFormData) => {
     try {
@@ -84,6 +90,10 @@ export function RecipeUpdatePage() {
   if (isLoading || isPending) {
     return <Loading />;
   }
+
+  console.log(recipe);
+  console.log(isPublic);
+  
 
   if (user!._id !== recipe?.addedBy._id) {
     return (
@@ -126,11 +136,20 @@ export function RecipeUpdatePage() {
               />
               <div className="grid grid-cols-2 gap-4">
                 <GroupInput
-                  label="Durée *"
+                  label="Temps de prépa. *"
                   type="number"
                   inputGroupAddon="min."
-                  error={errors.time?.message}
-                  {...register("time", { valueAsNumber: true })}
+                  error={errors.timePrep?.message}
+                  {...register("timePrep", { valueAsNumber: true })}
+                />
+                <GroupInput
+                  label="Temps de cuisson"
+                  type="number"
+                  inputGroupAddon="min."
+                  error={errors.timeCook?.message}
+                  {...register("timeCook", {
+                    setValueAs: (v) => v === "" || v === null || v === undefined ? undefined : Number(v),
+                  })}
                 />
                 <GroupInput
                   label="Nombre de personnes *"
@@ -139,6 +158,24 @@ export function RecipeUpdatePage() {
                   error={errors.personsNumber?.message}
                   {...register("personsNumber", { valueAsNumber: true })}
                 />
+                  <div className="flex flex-col gap-2 items-center">
+                  <label className="text-sm font-medium">Visibilité</label>
+                  <div className="flex items-center space-x-2">
+                    <EyeOff size={16} />
+                    <Switch
+                      id="visible"
+                      checked={isPublic}
+                      onCheckedChange={(checked) =>
+                        setValue("visible", checked)
+                      }
+                      className={isPublic ? "bg-primary" : "bg-input"}
+                    />
+                    <Eye size={16} />
+                  </div>
+                  <span className="text-muted-foreground/80 text-xs -mt-1">
+                    Recette {isPublic ? "publique" : "privée"}
+                  </span>
+                </div>
               </div>
             </div>
 

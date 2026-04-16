@@ -8,13 +8,13 @@ import { Loading } from "@/components/shared/Loading";
 import { TextInput } from "@/components/shared/TextInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
+import { Switch } from "@/components/ui/switch";
 import { useAddRecipe } from "@/hooks/recipes/useAddRecipe";
-import {
-  addRecipeSchema,
-  type AddRecipeFormData,
-} from "@/schemas/addRecipeForm.schemas";
+import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
+import { addRecipeSchema } from "@/schemas/addRecipeForm.schemas";
 import type { ApiError } from "@/types/error.types";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
+import { Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -29,14 +29,16 @@ export function RecipeAddPage() {
     control,
     trigger,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<AddRecipeFormData>({
     resolver: zodResolver(addRecipeSchema),
     defaultValues: {
       ingredients: [{ ingredient: "", quantity: "" }],
       instructions: [{ content: "" }],
+      visible: true,
       // name: "Pain",
-      // time: 30,
+      // timePrep: 30,
       // personsNumber: 4,
       // ingredients: [
       //   { ingredient: "Poulet", quantity: "1" },
@@ -51,9 +53,14 @@ export function RecipeAddPage() {
     },
   });
 
+  const isPublic = watch("visible");
+
   const onSubmit = async (formData: AddRecipeFormData) => {
     try {
-      const res = await addRecipe(formData);
+      const res = await addRecipe({
+        ...formData,
+        timeCook: formData.timeCook ?? 0,
+      });
       navigate("/recipe/" + res.data.slug);
       toast.success(res.message);
     } catch (err: unknown) {
@@ -86,12 +93,25 @@ export function RecipeAddPage() {
               />
               <div className="grid grid-cols-2 gap-4">
                 <GroupInput
-                  label="Durée *"
+                  label="Temps de prépa. *"
                   type="number"
                   inputGroupAddon="min."
                   placeholder="Ex. 30"
-                  error={errors.time?.message}
-                  {...register("time", { valueAsNumber: true })}
+                  error={errors.timePrep?.message}
+                  {...register("timePrep", { valueAsNumber: true })}
+                />
+                <GroupInput
+                  label="Temps de cuisson"
+                  type="number"
+                  inputGroupAddon="min."
+                  placeholder="Ex. 30"
+                  error={errors.timeCook?.message}
+                  {...register("timeCook", {
+                    setValueAs: (v) =>
+                      v === "" || v === null || v === undefined
+                        ? undefined
+                        : Number(v),
+                  })}
                 />
                 <GroupInput
                   label="Nombre de personnes *"
@@ -101,6 +121,24 @@ export function RecipeAddPage() {
                   error={errors.personsNumber?.message}
                   {...register("personsNumber", { valueAsNumber: true })}
                 />
+                <div className="flex flex-col gap-2 items-center">
+                  <label className="text-sm font-medium">Visibilité</label>
+                  <div className="flex items-center space-x-2">
+                    <EyeOff size={16} />
+                    <Switch
+                      id="visible"
+                      checked={isPublic}
+                      onCheckedChange={(checked) =>
+                        setValue("visible", checked)
+                      }
+                      className={isPublic ? "bg-primary" : "bg-input"}
+                    />
+                    <Eye size={16} />
+                  </div>
+                  <span className="text-muted-foreground/80 text-xs -mt-1">
+                    Recette {isPublic ? "publique" : "privée"}
+                  </span>
+                </div>
               </div>
             </div>
 

@@ -16,7 +16,8 @@ export const useUpdateRecipe = () => {
     }) => {
       const formData = new FormData();
       formData.append("name", data.name);
-      formData.append("time", data.time.toString());
+      formData.append("timePrep", data.timePrep.toString());
+      formData.append("timeCook", data.timeCook?.toString() ?? "");
       formData.append("personsNumber", data.personsNumber.toString());
       formData.append("categories", JSON.stringify(data.categories));
       formData.append("ingredients", JSON.stringify(data.ingredients));
@@ -26,6 +27,7 @@ export const useUpdateRecipe = () => {
       } else if (data.image) {
         formData.append("image", data.image);
       }
+      formData.append("visible", data.visible.toString());
       const res = await recipeService.update(id, formData);
       return res.data;
     },
@@ -41,6 +43,7 @@ export const useUpdateRecipe = () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.invalidateQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+      queryClient.invalidateQueries({ queryKey: ["recipe", "visible"] });
     },
     onError: (err: AxiosError<{ message: string }>) => {
       const message = err.response?.data?.message || err.message;

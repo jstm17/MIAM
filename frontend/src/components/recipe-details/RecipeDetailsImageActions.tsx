@@ -158,12 +158,12 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
                   {visible ? (
                     <>
                       <EyeOff />
-                      Masquer
+                      Rendre privé
                     </>
                   ) : (
                     <>
                       <Eye />
-                      Exposer
+                      Rendre public
                     </>
                   )}
                 </DropdownMenuItem>

@@ -23,18 +23,20 @@ const { deleteImageFromCloudinary } = require("../utils/cloudinaryUtils");
 // Create recipe
 exports.CreateRecipe = async (req, res) => {
   try {
-    const { name, time, personsNumber } = req.body;
+    const { name, timePrep, timeCook, personsNumber, visible } = req.body;
     const categories = JSON.parse(req.body.categories);
     const ingredients = JSON.parse(req.body.ingredients);
     const instructions = JSON.parse(req.body.instructions);
 
     if (
       !name ||
-      !time ||
+      !timePrep ||
+      !timeCook ||
       !personsNumber ||
       !categories ||
       !ingredients ||
-      !instructions
+      !instructions ||
+      !visible
     ) {
       return res.status(400).json({
         error: true,
@@ -47,18 +49,21 @@ exports.CreateRecipe = async (req, res) => {
       : await fetchAndUploadRecipeImage(name);
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-    const { resolvedCategories, newCategoryIds } =
-      await resolveCategories(categories);
+    const { resolvedCategories, newCategoryIds } = await resolveCategories(
+      categories,
+    );
 
     const recipe = new Recipe({
       name,
-      time,
+      timePrep,
+      timeCook,
       personsNumber,
       categories: resolvedCategories,
       ingredients: resolvedIngredients,
       instructions,
       addedBy: req.user.id,
       image: imageUrl,
+      visible,
     });
 
     await recipe.save();
@@ -321,7 +326,7 @@ exports.GetAllRecipesByUserId = async (req, res) => {
 exports.UpdateRecipe = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, time, personsNumber } = req.body;
+    const { name, timePrep, timeCook, personsNumber, visible } = req.body;
     const categories = JSON.parse(req.body.categories);
     const ingredients = JSON.parse(req.body.ingredients);
     const instructions = JSON.parse(req.body.instructions);
@@ -362,8 +367,9 @@ exports.UpdateRecipe = async (req, res) => {
     }
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-    const { resolvedCategories, newCategoryIds } =
-      await resolveCategories(categories);
+    const { resolvedCategories, newCategoryIds } = await resolveCategories(
+      categories,
+    );
 
     const newIngredientIds = resolvedIngredients.map((i) =>
       i.ingredient.toString(),
@@ -375,12 +381,14 @@ exports.UpdateRecipe = async (req, res) => {
 
     const updateData = {
       name,
-      time,
+      timePrep,
+      timeCook,
       personsNumber,
       categories: resolvedCategories,
       ingredients: resolvedIngredients,
       instructions,
       image: imageUrl,
+      visible,
     };
 
     if (name && name !== recipe.name) {
@@ -519,7 +527,7 @@ exports.HideRecipe = async (req, res) => {
         .json({ error: true, message: "Recette non trouvée" });
     return res
       .status(200)
-      .json({ error: false, message: "Recette masquée", data: recipe });
+      .json({ error: false, message: "Recette privée", data: recipe });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: true, message: "Erreur serveur" });

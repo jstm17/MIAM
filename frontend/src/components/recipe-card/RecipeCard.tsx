@@ -45,14 +45,14 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
             <Skeleton className="w-full h-full bg-border rounded-b-none" />
           )}
         </AspectRatio>
-        <CardHeader className="p-2 bg-background rounded-none">
+        <CardHeader className="p-2 bg-background rounded-none gap-2">
           <CardTitle className="flex justify-between items-center gap-4">
             {name}
             <Badge variant={"ghost"} className="text-muted-foreground  p-0">
               <UserRound strokeWidth={1.5} /> {addedBy.name}
             </Badge>
           </CardTitle>
-          <CardDescription className="flex gap-2">
+          <CardDescription className="flex gap-1">
             {categories.map((category) => (
               <Badge key={category._id} variant="secondary">
                 {category.name}

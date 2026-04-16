@@ -70,21 +70,28 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
               ))}
             </CardDescription>
             <CardAction className="flex-col flex items-end">
-              <Badge variant={"ghost"} className="text-muted-foreground/80 p-0">
-                <ChefHat strokeWidth={1.5} /> {addedBy.name}
+              <Badge
+                variant={"ghost"}
+                className="text-muted-foreground/80 p-0 items-center"
+              >
+                <ChefHat strokeWidth={1.5} />
+                <span className="leading-3">{addedBy.name}</span>
               </Badge>
               <Badge
                 variant={"ghost"}
-                className="text-muted-foreground/80 -mt-1 p-0"
+                className="text-muted-foreground/80 -mt-1 p-0 items-center"
               >
-                <Timer strokeWidth={1.5} />{" "}
-                {formatTime(timePrep + timeCook, true)}
+                <Timer strokeWidth={1.5} />
+                <span className="leading-3 font-light">
+                  {formatTime(timePrep + timeCook, true)}
+                </span>
               </Badge>
               <Badge
                 variant={"ghost"}
-                className="text-muted-foreground/80 -mt-1 p-0"
+                className="text-muted-foreground/80 -mt-1 p-0 items-center"
               >
-                <UsersRound strokeWidth={1.5} /> {personsNumber}
+                <UsersRound strokeWidth={1.5} />{" "}
+                <span className="leading-3 font-light">{personsNumber}</span>
               </Badge>
             </CardAction>
           </CardHeader>

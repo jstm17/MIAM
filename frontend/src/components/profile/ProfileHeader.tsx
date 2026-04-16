@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { Ellipsis, LogOut, Pencil, Plus, Share, Trash } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ProfileDeleteAccountDialog } from "../dialog/ProfileDeleteAccountDialog";
@@ -24,6 +24,26 @@ export const ProfileHeader = () => {
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
+
+  useEffect(() => {
+    if (!openDropdown) return;
+
+    const startScrollY = window.scrollY;
+    const THRESHOLD = 25;
+
+    const handleScroll = () => {
+      const diff = Math.abs(window.scrollY - startScrollY);
+
+      if (diff > THRESHOLD) {
+        setOpenDropdown(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [openDropdown]);
 
   const handleLogout = () => {
     logout();
@@ -44,7 +64,11 @@ export const ProfileHeader = () => {
         {user?.name}
       </Typography>
 
-      <DropdownMenu>
+      <DropdownMenu
+        open={openDropdown}
+        onOpenChange={setOpenDropdown}
+        modal={false}
+      >
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon-lg" aria-label="More Options">
             <Ellipsis />

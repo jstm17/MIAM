@@ -62,6 +62,7 @@ export const ShoppingSearchBar = () => {
       />
       <Button
         size="icon-lg"
+        variant="outline"
         onClick={() => handleSelect(inputValue)}
         disabled={isPending}
       >

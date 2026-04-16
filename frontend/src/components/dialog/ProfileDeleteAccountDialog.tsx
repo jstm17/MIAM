@@ -8,9 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -52,7 +50,7 @@ export function ProfileDeleteAccountDialog({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent>
+      <DrawerContent className="pb-[calc(16px+env(safe-area-inset-bottom))]">
         <DrawerHeader className="text-left">
           <DrawerTitle>Supprimer le compte</DrawerTitle>
           <DialogDescription>
@@ -61,13 +59,6 @@ export function ProfileDeleteAccountDialog({
           </DialogDescription>
         </DrawerHeader>
         <ProfileForm className="px-4" onOpenChange={onOpenChange} />
-        <DrawerFooter className="pt-2">
-          <DrawerClose asChild>
-            <Button variant="outline" size="lg">
-              Annuler
-            </Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
@@ -105,7 +96,12 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
       }}
       className={cn("grid items-start gap-6", className)}
     >
-      <Button type="submit" size="lg" disabled={isPending}>
+      <Button
+        type="submit"
+        size="lg"
+        disabled={isPending}
+        variant="destructive"
+      >
         {isPending ? <Spinner /> : "Supprimer"}
       </Button>
     </form>

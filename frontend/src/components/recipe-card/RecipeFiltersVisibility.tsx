@@ -22,8 +22,8 @@ type RecipeFiltersVisibilityProps = {
 };
 
 const visibilityOptions = [
-  { id: "visible", label: "Publiques" },
-  { id: "hidden", label: "Privées" },
+  { id: "visible", label: "Public" },
+  { id: "hidden", label: "Privé" },
 ];
 
 export function RecipeFiltersVisibility({

@@ -7,9 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -47,7 +45,7 @@ export function ProfileUpdateProfileDialog({
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-106.25">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Modifier mon profil</DialogTitle>
           </DialogHeader>
@@ -59,18 +57,11 @@ export function ProfileUpdateProfileDialog({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent>
+      <DrawerContent className="sm:max-w-106.25 pb-[calc(16px+env(safe-area-inset-bottom))]">
         <DrawerHeader className="text-left">
           <DrawerTitle>Modifier mon profil</DrawerTitle>
         </DrawerHeader>
         <ProfileForm className="px-4" onOpenChange={onOpenChange} />
-        <DrawerFooter className="pt-2">
-          <DrawerClose asChild>
-            <Button variant="outline" size="lg">
-              Annuler
-            </Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
@@ -168,13 +159,17 @@ function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
             </div>
           )}
           <TextInput
-          key={inputKey}
+            key={inputKey}
             ref={inputRef}
             name="avatar"
             type="file"
             accept="image/jpeg,image/png,image/webp"
             className="hidden"
-            error={typeof errors.avatar?.message === "string" ? errors.avatar.message : undefined}
+            error={
+              typeof errors.avatar?.message === "string"
+                ? errors.avatar.message
+                : undefined
+            }
             description={`Formats acceptés : jpg, png, webp \n ${
               fileSize ? `Taille : ${fileSize}` : "Taille : 5Mo max"
             }`}

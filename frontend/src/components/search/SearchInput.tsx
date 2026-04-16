@@ -14,15 +14,17 @@ import { useGetAllUsersVisibles } from "@/hooks/users/useGetAllUsersVisibles";
 import { SearchIcon } from "lucide-react";
 import { GroupInput } from "../shared/GroupInput";
 import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 import { SearchCategoryItem } from "./SearchCategoryItem";
 import { SearchRecentItem } from "./SearchRecentItem";
 import { SearchRecipeItem } from "./SearchRecipeItem";
 import { SearchUserItem } from "./SearchUserItem";
 
 export const SearchBar = () => {
-  const { recipes } = useGetAllRecipesVisibles();
-  const { categories } = useGetAllCategoriesVisibles();
-  const { users } = useGetAllUsersVisibles();
+  const { recipes, isLoading: isLoadingRecipes } = useGetAllRecipesVisibles();
+  const { categories, isLoading: isLoadingCategories } =
+    useGetAllCategoriesVisibles();
+  const { users, isLoading: isLoadingUsers } = useGetAllUsersVisibles();
 
   const {
     query,
@@ -46,6 +48,8 @@ export const SearchBar = () => {
     handleClose,
     setRecentSearches,
   } = useSearchBar(recipes, categories, users);
+
+  const isLoading = isLoadingCategories || isLoadingRecipes || isLoadingUsers;
 
   return (
     <div>
@@ -77,115 +81,126 @@ export const SearchBar = () => {
             onValueChange={handleQueryChange}
           />
           <CommandList className="mt-1">
-            {query && !hasResults && (
-              <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
-            )}
-
-            {!query && (
+            {isLoading ? (
+              <div className="p-4 flex flex-col gap-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div className="flex w-full gap-4 justify-between" key={i}>
+                    <Skeleton className="h-4 w-2/3" />
+                    <Skeleton className="h-4 w-1/5 self-end" />
+                  </div>
+                ))}
+              </div>
+            ) : (
               <>
-                {recentSearches.length > 0 && (
-                  <CommandGroup
-                    heading={
-                      <div className="flex justify-between items-center w-full p-0">
-                        <span>Recherches récentes</span>
-                        <Button
-                          variant="link"
-                          size="xs"
-                          className="text-[0.6rem] text-muted-foreground hover:text-foreground -mlr-6 p-0 h-4"
-                          onClick={() => {
-                            setRecentSearches([]);
-                            localStorage.removeItem("recentSearches");
-                          }}
-                        >
-                          Effacer
-                        </Button>
-                      </div>
-                    }
-                  >
-                    {recentSearches.map((search) => (
-                      <SearchRecentItem
-                        key={search.slug}
-                        search={search}
-                        onSelect={() => handleRecentSelect(search)}
+                {query && !hasResults && (
+                  <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
+                )}
+                {!query && (
+                  <>
+                    {recentSearches.length > 0 && (
+                      <CommandGroup
+                        heading={
+                          <div className="flex justify-between items-center w-full p-0">
+                            <span>Recherches récentes</span>
+                            <Button
+                              variant="link"
+                              size="xs"
+                              className="text-[0.6rem] text-muted-foreground hover:text-foreground -mlr-6 p-0 h-4"
+                              onClick={() => {
+                                setRecentSearches([]);
+                                localStorage.removeItem("recentSearches");
+                              }}
+                            >
+                              Effacer
+                            </Button>
+                          </div>
+                        }
+                      >
+                        {recentSearches.map((search) => (
+                          <SearchRecentItem
+                            key={search.slug}
+                            search={search}
+                            onSelect={() => handleRecentSelect(search)}
+                          />
+                        ))}
+                      </CommandGroup>
+                    )}
+                    {recentSearches.length > 0 && <CommandSeparator />}
+                    <CommandGroup heading="Recettes">
+                      {randomRecipes.map((recipe) => (
+                        <SearchRecipeItem
+                          key={recipe._id}
+                          recipe={recipe}
+                          onSelect={() => handleRecipeSelect(recipe)}
+                        />
+                      ))}
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Catégories">
+                      {randomCategories.map((category) => (
+                        <SearchCategoryItem
+                          key={category._id}
+                          category={category}
+                          recipesCount={getRecipesCount(category._id)}
+                          onSelect={() => handleCategorySelect(category)}
+                        />
+                      ))}
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Chefs">
+                      {randomUsers.map((user) => (
+                        <SearchUserItem
+                          key={user._id}
+                          user={user}
+                          recipesCount={getUserRecipesCount(user._id)}
+                          onSelect={() => handleUserSelect(user)}
+                        />
+                      ))}
+                    </CommandGroup>
+                  </>
+                )}
+                {filteredRecipes.length > 0 && (
+                  <CommandGroup heading="Recettes">
+                    {filteredRecipes.map((recipe) => (
+                      <SearchRecipeItem
+                        key={recipe._id}
+                        recipe={recipe}
+                        onSelect={() => handleRecipeSelect(recipe)}
                       />
                     ))}
                   </CommandGroup>
                 )}
-                {recentSearches.length > 0 && <CommandSeparator />}
-                <CommandGroup heading="Recettes">
-                  {randomRecipes.map((recipe) => (
-                    <SearchRecipeItem
-                      key={recipe._id}
-                      recipe={recipe}
-                      onSelect={() => handleRecipeSelect(recipe)}
-                    />
-                  ))}
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="Catégories">
-                  {randomCategories.map((category) => (
-                    <SearchCategoryItem
-                      key={category._id}
-                      category={category}
-                      recipesCount={getRecipesCount(category._id)}
-                      onSelect={() => handleCategorySelect(category)}
-                    />
-                  ))}
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="Chefs">
-                  {randomUsers.map((user) => (
-                    <SearchUserItem
-                      key={user._id}
-                      user={user}
-                      recipesCount={getUserRecipesCount(user._id)}
-                      onSelect={() => handleUserSelect(user)}
-                    />
-                  ))}
-                </CommandGroup>
+                {!isLoading &&
+                  filteredRecipes.length > 0 &&
+                  filteredCategories.length > 0 && <CommandSeparator />}
+                {filteredCategories.length > 0 && (
+                  <CommandGroup heading="Catégories">
+                    {filteredCategories.map((category) => (
+                      <SearchCategoryItem
+                        key={category._id}
+                        category={category}
+                        recipesCount={getRecipesCount(category._id)}
+                        onSelect={() => handleCategorySelect(category)}
+                      />
+                    ))}
+                  </CommandGroup>
+                )}
+                {!isLoading &&
+                  filteredCategories.length > 0 &&
+                  filteredUsers.length > 0 && <CommandSeparator />}
+                {filteredUsers.length > 0 && (
+                  <CommandGroup heading="Chefs">
+                    {filteredUsers.map((user) => (
+                      <SearchUserItem
+                        key={user._id}
+                        user={user}
+                        recipesCount={getUserRecipesCount(user._id)}
+                        onSelect={() => handleUserSelect(user)}
+                      />
+                    ))}
+                  </CommandGroup>
+                )}
               </>
-            )}
-
-            {filteredRecipes.length > 0 && (
-              <CommandGroup heading="Recettes">
-                {filteredRecipes.map((recipe) => (
-                  <SearchRecipeItem
-                    key={recipe._id}
-                    recipe={recipe}
-                    onSelect={() => handleRecipeSelect(recipe)}
-                  />
-                ))}
-              </CommandGroup>
-            )}
-            {filteredRecipes.length > 0 && filteredCategories.length > 0 && (
-              <CommandSeparator />
-            )}
-            {filteredCategories.length > 0 && (
-              <CommandGroup heading="Catégories">
-                {filteredCategories.map((category) => (
-                  <SearchCategoryItem
-                    key={category._id}
-                    category={category}
-                    recipesCount={getRecipesCount(category._id)}
-                    onSelect={() => handleCategorySelect(category)}
-                  />
-                ))}
-              </CommandGroup>
-            )}
-            {filteredCategories.length > 0 && filteredUsers.length > 0 && (
-              <CommandSeparator />
-            )}
-            {filteredUsers.length > 0 && (
-              <CommandGroup heading="Chefs">
-                {filteredUsers.map((user) => (
-                  <SearchUserItem
-                    key={user._id}
-                    user={user}
-                    recipesCount={getUserRecipesCount(user._id)}
-                    onSelect={() => handleUserSelect(user)}
-                  />
-                ))}
-              </CommandGroup>
             )}
           </CommandList>
         </Command>

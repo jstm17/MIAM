@@ -24,7 +24,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGetSavedRecipes } from "@/hooks/users/useGetSavedRecipes";
 import { useSaveRecipe } from "@/hooks/users/useSaveRecipe";
 import { useUnsaveRecipe } from "@/hooks/users/useUnsaveRecipe";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { DeleteRecipeDialog } from "../dialog/DeleteRecipeDialog";
@@ -41,12 +41,32 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   const { recipes: savedRecipes } = useGetSavedRecipes();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
   const { toggleVisibility, isPending: isPendingVisibility } =
     useToggleRecipeVisibility();
   const { user, isLoading } = useAuth();
   const { _id, addedBy, visible } = recipe;
   const isSaved = savedRecipes.some((r) => r._id === _id);
   const isMyRecipe = addedBy._id === user?._id;
+
+  useEffect(() => {
+    if (!openDropdown) return;
+
+    const startScrollY = window.scrollY;
+    const THRESHOLD = 25;
+
+    const handleScroll = () => {
+      const diff = Math.abs(window.scrollY - startScrollY);
+
+      if (diff > THRESHOLD) {
+        setOpenDropdown(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [openDropdown]);
 
   const handleSaveRecipe = (
     e: React.MouseEvent,
@@ -94,7 +114,11 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
           <Share className="text-white" />
         </Button>
       ) : !isLoading && isMyRecipe ? (
-        <DropdownMenu>
+        <DropdownMenu
+          open={openDropdown}
+          onOpenChange={setOpenDropdown}
+          modal={false}
+        >
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"

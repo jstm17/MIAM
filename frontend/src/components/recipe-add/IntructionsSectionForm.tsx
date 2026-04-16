@@ -29,7 +29,7 @@ export const InstructionsSectionForm = ({
   return (
     <div className="">
       <div className="border-b border-primary mb-4 py-1 flex gap-2 items-center justify-center bg-primary/10 rounded-t-xl">
-        <ClipboardList />
+        <ClipboardList size={20} />
         <Typography className="text-lg" weight="semibold">
           Préparation
         </Typography>

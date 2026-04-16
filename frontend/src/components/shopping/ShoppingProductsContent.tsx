@@ -116,6 +116,7 @@ export const ShoppingProductsContent = () => {
             <div className="flex items-center gap-2 w-full">
               <Button
                 type="button"
+                variant="outline"
                 size="icon-xs"
                 className="flex items-center justify-center rounded-sm border border-input bg-background text-foreground"
                 aria-label={isChecked ? "Produit non coché" : "Produit coché"}

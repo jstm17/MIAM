@@ -185,4 +185,7 @@ select {
   body {
     @apply bg-background text-foreground;
   }
+  svg {
+    stroke-width: 1.5;
+  }
 }

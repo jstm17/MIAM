@@ -97,7 +97,6 @@ export function RecipeUpdatePage() {
 
   console.log(recipe);
   console.log(isPublic);
-  
 
   if (user!._id !== recipe?.addedBy._id) {
     return (
@@ -135,7 +134,7 @@ export function RecipeUpdatePage() {
                 capitalize
                 label="Nom *"
                 type="text"
-                placeholder="Ex. Pâtes carbonara"
+                placeholder="Ex. Gâteau au chocolat"
                 error={errors.name?.message}
                 {...register("name")}
               />
@@ -147,7 +146,10 @@ export function RecipeUpdatePage() {
                   placeholder="Ex. 30"
                   error={errors.timePrep?.message}
                   {...register("timePrep", {
-                    setValueAs: (v) => v === "" || v === null || v === undefined ? undefined : Number(v),
+                    setValueAs: (v) =>
+                      v === "" || v === null || v === undefined
+                        ? undefined
+                        : Number(v),
                   })}
                 />
                 <GroupInput
@@ -157,7 +159,10 @@ export function RecipeUpdatePage() {
                   placeholder="Ex. 30"
                   error={errors.timeCook?.message}
                   {...register("timeCook", {
-                    setValueAs: (v) => v === "" || v === null || v === undefined ? undefined : Number(v),
+                    setValueAs: (v) =>
+                      v === "" || v === null || v === undefined
+                        ? undefined
+                        : Number(v),
                   })}
                 />
                 <GroupInput
@@ -168,7 +173,7 @@ export function RecipeUpdatePage() {
                   error={errors.personsNumber?.message}
                   {...register("personsNumber", { valueAsNumber: true })}
                 />
-                  <div className="flex flex-col gap-2 items-center">
+                <div className="flex flex-col gap-2 items-center">
                   <label className="text-sm font-medium">Visibilité</label>
                   <div className="flex items-center space-x-2">
                     <EyeOff size={16} />
@@ -182,7 +187,7 @@ export function RecipeUpdatePage() {
                     />
                     <Eye size={16} />
                   </div>
-                  <span className="text-muted-foreground/80 text-xs -mt-1">
+                  <span className="text-muted-foreground/80 text-xs leading-3">
                     Recette {isPublic ? "publique" : "privée"}
                   </span>
                 </div>
@@ -213,7 +218,11 @@ export function RecipeUpdatePage() {
               register={register}
               setValue={setValue}
               existingImage={recipe.image}
-              error={typeof errors.image?.message === "string" ? errors.image.message : undefined}
+              error={
+                typeof errors.image?.message === "string"
+                  ? errors.image.message
+                  : undefined
+              }
             />
           </div>
 

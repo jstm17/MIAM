@@ -1,10 +1,10 @@
 import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
 import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
+import imageCompression from "browser-image-compression";
 import { Image, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { toast } from "sonner";
-import imageCompression from "browser-image-compression";
 import { TextInput } from "../shared/TextInput";
 import { Typography } from "../shared/Typography";
 import { AspectRatio } from "../ui/aspect-ratio";
@@ -42,7 +42,7 @@ export const ImageSectionForm = ({
   return (
     <div className="">
       <div className="border-b border-primary mb-4 py-1 flex gap-2 items-center justify-center bg-primary/10 rounded-t-xl">
-        <Image />
+        <Image size={20} />
         <Typography className="text-lg" weight="semibold">
           Photo
         </Typography>
@@ -105,7 +105,16 @@ export const ImageSectionForm = ({
             variant="outline"
             onClick={() => document.getElementById("image")?.click()}
           >
-            {preview ? "Changer la photo" : "Ajouter une photo"}
+            {preview ? (
+              "Changer la photo"
+            ) : (
+              <>
+                Ajouter une photo{" "}
+                <span className="text-muted-foreground/50 text-xs">
+                  (Optionnel)
+                </span>
+              </>
+            )}
           </Button>
         </TextInput>
       </div>

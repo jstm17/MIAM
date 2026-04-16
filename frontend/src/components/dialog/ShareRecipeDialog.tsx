@@ -97,11 +97,7 @@ function ShareForm({ className, onOpenChange, recipe }: ShareFormProps) {
         onClick={handleCopy}
       >
         <div className="bg-muted-foreground/10 active:bg-muted-foreground/5 hover:bg-muted-foreground/5  h-16 w-16 flex items-center justify-center rounded-full">
-          <Link
-            className="text-black dark:text-white"
-            size={32}
-            strokeWidth={1.5}
-          />
+          <Link className="text-black dark:text-white" size={32} />
         </div>
         Copier le lien
       </button>
@@ -124,11 +120,7 @@ function ShareForm({ className, onOpenChange, recipe }: ShareFormProps) {
         onClick={() => exportPdf(recipe)}
       >
         <div className="bg-muted-foreground/10 active:bg-muted-foreground/5 hover:bg-muted-foreground/5 h-16! w-16 flex items-center justify-center rounded-full">
-          <FileText
-            className="text-black dark:text-white"
-            size={32}
-            strokeWidth={1.5}
-          />
+          <FileText className="text-black dark:text-white" size={32} />
         </div>
         Exporter en PDF
       </button>

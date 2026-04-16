@@ -24,7 +24,7 @@ import {
   Share,
   Trash,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { ShareRecipeDialog } from "../dialog/ShareRecipeDialog";
@@ -33,6 +33,7 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
 
   const { saveRecipe, isPending: isSaving } = useSaveRecipe();
   const { unsaveRecipe, isPending: isUnsaving } = useUnsaveRecipe();
@@ -47,6 +48,25 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
   const isSaved = savedRecipes.some((r) => r._id === _id);
 
   const isMyRecipe = addedBy._id === user?._id;
+
+  useEffect(() => {
+    if (!openDropdown) return;
+
+    const startScrollY = window.scrollY;
+    const THRESHOLD = 25;
+
+    const handleScroll = () => {
+      const diff = Math.abs(window.scrollY - startScrollY);
+
+      if (diff > THRESHOLD) {
+        setOpenDropdown(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [openDropdown]);
 
   const handleSaveRecipe = (
     e: React.MouseEvent,
@@ -128,7 +148,11 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
         )}
 
         {isMyRecipe && (
-          <DropdownMenu>
+          <DropdownMenu
+            open={openDropdown}
+            onOpenChange={setOpenDropdown}
+            modal={false}
+          >
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"

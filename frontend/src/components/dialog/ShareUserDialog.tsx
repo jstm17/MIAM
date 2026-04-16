@@ -94,11 +94,7 @@ function ShareForm({ className, onOpenChange, user }: ShareFormProps) {
         onClick={handleCopy}
       >
         <div className="bg-muted-foreground/10 active:bg-muted-foreground/5 hover:bg-muted-foreground/5  h-16 w-16 flex items-center justify-center rounded-full">
-          <Link
-            className="text-black dark:text-white"
-            size={32}
-            strokeWidth={1.5}
-          />
+          <Link className="text-black dark:text-white" size={32} />
         </div>
         Copier le lien
       </button>

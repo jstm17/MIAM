@@ -88,7 +88,7 @@ export function RecipeAddPage() {
                 capitalize
                 label="Nom *"
                 type="text"
-                placeholder="Ex. Pâtes carbonara"
+                placeholder="Ex. Gâteau au chocolat"
                 error={errors.name?.message}
                 {...register("name")}
               />
@@ -143,7 +143,7 @@ export function RecipeAddPage() {
                     />
                     <Eye size={16} />
                   </div>
-                  <span className="text-muted-foreground/80 text-xs -mt-1">
+                  <span className="text-muted-foreground/80 text-xs leading-3">
                     Recette {isPublic ? "publique" : "privée"}
                   </span>
                 </div>

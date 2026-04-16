@@ -39,7 +39,7 @@ export const IngredientsSectionForm = ({
   return (
     <div className="">
       <div className="mb-4 py-1 flex gap-2 items-center justify-center bg-primary/10 rounded-t-xl border-b border-primary">
-        <Carrot />
+        <Carrot size={20} />
         <Typography className="text-lg" weight="semibold">
           Ingrédients
         </Typography>

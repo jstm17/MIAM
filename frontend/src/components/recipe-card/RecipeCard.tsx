@@ -71,17 +71,17 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
             </CardDescription>
             <CardAction className="flex-col flex items-end justify-between h-full max-h-13">
               <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
-                <ChefHat strokeWidth={1.5} size={12} />
+                <ChefHat size={12} />
                 <span className="text-xs mt-[1px]">{addedBy.name}</span>
               </div>
               <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
-                <Timer strokeWidth={1.5} size={12} />
+                <Timer size={12} />
                 <span className="text-xs mt-[1px]">
                   {formatTime(timePrep + timeCook, true)}
                 </span>
               </div>
               <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
-                <UsersRound strokeWidth={1.5} size={12} />{" "}
+                <UsersRound size={12} />{" "}
                 <span className="text-xs mt-[1px]">{personsNumber}</span>
               </div>
             </CardAction>

@@ -8,9 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -62,6 +60,7 @@ export function DeleteRecipeDialog({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
+        className="pb-[calc(16px+env(safe-area-inset-bottom))]"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
@@ -80,13 +79,6 @@ export function DeleteRecipeDialog({
           recipeId={recipeId}
           navigate={navigate}
         />
-        <DrawerFooter className="pt-2">
-          <DrawerClose asChild>
-            <Button variant="outline" size="lg">
-              Annuler
-            </Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
@@ -124,7 +116,12 @@ function ProfileForm({
 
   return (
     <div className={cn("grid items-start gap-6", className)}>
-      <Button onClick={handleDelete} disabled={isPending} size="lg">
+      <Button
+        onClick={handleDelete}
+        disabled={isPending}
+        size="lg"
+        variant="destructive"
+      >
         {isPending ? <Spinner /> : "Supprimer"}
       </Button>
     </div>

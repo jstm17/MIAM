@@ -52,7 +52,7 @@ export const CategoriesSectionForm = ({
   return (
     <div className="">
       <div className="border-b border-primary mb-4 py-1 rounded-t-xl flex gap-2 items-center justify-center bg-primary/10">
-        <Tags />
+        <Tags size={20} />
         <Typography className="text-lg" weight="semibold">
           Catégories
         </Typography>

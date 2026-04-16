@@ -54,16 +54,16 @@ export const RecipesFilters = ({
 }: RecipesFiltersProps) => {
   return (
     <Drawer direction="right">
-      <DrawerTrigger asChild>
-        <div className="flex justify-between items-center">
-          <Typography variant="body" className="text-muted-foreground">
-            {totalElement} {title}
-          </Typography>
+      <div className="flex justify-between items-center">
+        <Typography variant="body" className="text-muted-foreground">
+          {totalElement} {title}
+        </Typography>
+        <DrawerTrigger asChild>
           <Button variant="outline" size="icon-lg">
             <ListFilter />
           </Button>
-        </div>
-      </DrawerTrigger>
+        </DrawerTrigger>
+      </div>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Trier</DrawerTitle>

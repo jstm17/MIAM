@@ -30,8 +30,9 @@ router.put(
   upload.single("image"),
   userController.UpdateUserProfile,
 );
+router.put("/update-password", auth, userController.UpdatePassword);
 router.put("/product", auth, userController.UpdateProductInCart);
-router.delete("/", auth, userController.DeleteUser);
+router.delete("/:id", auth, userController.DeleteUser);
 router.post("/product", auth, userController.AddProductToCart);
 router.delete("/product", auth, userController.RemoveProductFromCart);
 

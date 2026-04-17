@@ -24,9 +24,20 @@ export type User = {
   updatedAt?: string;
   recipesCount?: number;
   savedProducts?: Product[];
+  role: "user" | "admin";
 };
 
 export type UserUpdate = {
   name?: string;
   avatar?: File | Blob | string;
+  currentPassword?: string;
+  newPassword?: string;
+};
+
+export type AdminUser = {
+  _id: string;
+  name: string;
+  email: string;
+  recipesCount: number;
+  createdAt: string;
 };

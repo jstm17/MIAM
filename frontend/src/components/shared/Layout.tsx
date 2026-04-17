@@ -1,5 +1,7 @@
 import miamLogo from "@/assets/miam-logo.svg";
+import { useAuth } from "@/hooks/useAuth";
 import { type ReactNode } from "react";
+import { AdminBottomNav } from "../admin/AdminBottomNav";
 import { BottomNav } from "./BottomNav";
 import { Typography } from "./Typography";
 
@@ -15,10 +17,14 @@ export const Layout = ({
   children,
   title,
   titleSize = "lg",
-  className = "p-4 pb-[calc(74px+env(safe-area-inset-bottom))]",
+  className = "p-4 pb-[calc(78px+env(safe-area-inset-bottom))]",
   navBar = true,
   header = false,
 }: LayoutProps) => {
+  const { user } = useAuth();
+
+  const isAdmin = user && user.role === "admin";
+
   return (
     <>
       {header && (
@@ -45,6 +51,7 @@ export const Layout = ({
         )}
         {children}
       </main>
+      {isAdmin && <AdminBottomNav />}
       {navBar && <BottomNav />}
     </>
   );

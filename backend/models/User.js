@@ -71,6 +71,11 @@ const userSchema = new mongoose.Schema(
     savedRecipes: [savedRecipeSchema],
     savedIngredients: [savedIngredientSchema],
     savedProducts: [savedProductSchema],
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
   },
   {
     timestamps: true,

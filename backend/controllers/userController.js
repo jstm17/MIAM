@@ -104,7 +104,11 @@ exports.Login = async (req, res) => {
       });
     }
 
-    const jwtToken = await generateJwt({ id: user._id, name: user.name });
+    const jwtToken = await generateJwt({
+      id: user._id,
+      name: user.name,
+      role: user.role,
+    });
 
     return res.status(200).json({
       error: false,
@@ -391,7 +395,7 @@ exports.UnsaveRecipe = async (req, res) => {
 // Update User Profile
 exports.UpdateUserProfile = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, currentPassword, newPassword } = req.body;
 
     const currentUser = await User.findById(req.user.id);
 
@@ -422,20 +426,65 @@ exports.UpdateUserProfile = async (req, res) => {
       updateData.slug = slug;
     }
 
+    if (currentPassword || newPassword) {
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          error: true,
+          message: "Les deux champs de mot de passe sont requis",
+        });
+      }
+
+      const isPasswordValid = await verifyPassword(
+        currentPassword,
+        currentUser.password,
+      );
+
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          error: true,
+          message: "Le mot de passe actuel est incorrect",
+        });
+      }
+
+      const isSameAsCurrent = await verifyPassword(
+        newPassword,
+        currentUser.password,
+      );
+
+      if (isSameAsCurrent) {
+        return res.status(400).json({
+          error: true,
+          message: "Le nouveau mot de passe doit être différent de l'ancien",
+        });
+      }
+
+      updateData.password = await hashPassword(newPassword);
+    }
+
     if (req.body.removeAvatar === "true" && currentUser.avatar) {
       await deleteImageFromCloudinary(currentUser.avatar);
-      updateData.avatar = null;
+      currentUser.avatar = null;
     }
 
     if (req.file) {
       if (currentUser.avatar) {
         await deleteImageFromCloudinary(currentUser.avatar);
       }
-      updateData.avatar = await compressAndUploadImage(req.file.buffer, "avatars");
+      currentUser.avatar = await compressAndUploadImage(
+        req.file.buffer,
+        "avatars",
+      );
     }
-    const user = await User.findByIdAndUpdate(req.user.id, updateData, {
-      returnDocument: "after",
-    });
+
+    if (updateData.name !== undefined) {
+      currentUser.name = updateData.name;
+      currentUser.slug = updateData.slug;
+    }
+    if (updateData.password !== undefined) {
+      currentUser.password = updateData.password;
+    }
+
+    const user = await currentUser.save();
 
     const returnedData = user.toObject();
     delete returnedData.password;
@@ -448,6 +497,53 @@ exports.UpdateUserProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
+exports.UpdatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        error: true,
+        message: "Les deux mots de passe sont requis",
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        error: true,
+        message: "Utilisateur non trouvé",
+      });
+    }
+
+    const isPasswordValid = await verifyPassword(
+      currentPassword,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        error: true,
+        message: "Le mot de passe actuel est incorrect",
+      });
+    }
+
+    user.password = await hashPassword(newPassword);
+    await user.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Mot de passe mis à jour avec succès",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur - Impossible de mettre à jour le mot de passe",
+    });
   }
 };
 
@@ -465,7 +561,9 @@ exports.DeleteUser = async (req, res) => {
     // 1️⃣ récupérer le user et son avatar
     const userToDelete = await User.findById(userId);
     if (!userToDelete) {
-      return res.status(404).json({ error: true, message: "Utilisateur non trouvé" });
+      return res
+        .status(404)
+        .json({ error: true, message: "Utilisateur non trouvé" });
     }
 
     // 2️⃣ récupérer les recettes du user (avec leurs images)
@@ -488,7 +586,9 @@ exports.DeleteUser = async (req, res) => {
     await Recipe.deleteMany({ addedBy: userId });
 
     // 5️⃣ identifier les ingrédients et catégories orphelins
-    const stillUsedIngredients = await Recipe.distinct("ingredients.ingredient");
+    const stillUsedIngredients = await Recipe.distinct(
+      "ingredients.ingredient",
+    );
     const stillUsedCategories = await Recipe.distinct("categories");
 
     const orphanIngredients = ingredientIds.filter(
@@ -574,7 +674,32 @@ exports.ClearShoppingList = async (req, res) => {
 // Get all users
 exports.GetAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password").sort({ name: 1 });
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "recipes",
+          let: { userId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$addedBy", "$$userId"] },
+              },
+            },
+            { $count: "count" },
+          ],
+          as: "recipesCountData",
+        },
+      },
+      {
+        $addFields: {
+          recipesCount: {
+            $ifNull: [{ $arrayElemAt: ["$recipesCountData.count", 0] }, 0],
+          },
+        },
+      },
+      { $project: { password: 0, recipesCountData: 0 } },
+      { $sort: { name: 1 } },
+    ]);
 
     return res.status(200).json({
       error: false,
@@ -854,6 +979,7 @@ module.exports = {
   RemoveIngredientFromCart: exports.RemoveIngredientFromCart,
   ClearShoppingList: exports.ClearShoppingList,
   UpdateUserProfile: exports.UpdateUserProfile,
+  UpdatePassword: exports.UpdatePassword,
   DeleteUser: exports.DeleteUser,
   GetAllUsers: exports.GetAllUsers,
   GetAllUsersVisibles: exports.GetAllUsersVisibles,

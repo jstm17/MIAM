@@ -6,7 +6,8 @@ export const useDeleteUser = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending, error } = useMutation({
-    mutationFn: () => userService.deleteUser().then((res) => res.data),
+    mutationFn: (id: string) =>
+      userService.deleteUser(id).then((res) => res.data),
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });

@@ -25,7 +25,7 @@ export const ProfileContent = () => {
           value="my-recipes"
           className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
         >
-          <Typography variant="body" weight="semibold">
+          <Typography size="sm" weight="semibold">
             Mes recettes
           </Typography>
         </TabsTrigger>
@@ -33,12 +33,15 @@ export const ProfileContent = () => {
           value="saved-recipes"
           className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
         >
-          <Typography variant="body" weight="semibold">
+          <Typography size="sm" weight="semibold">
             Recettes enregistrées
           </Typography>
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="my-recipes" className="p-4">
+      <TabsContent
+        value="my-recipes"
+        className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
+      >
         <ProfileMyRecipesContent
           recipes={recipes}
           totalElement={totalRecipes}
@@ -46,7 +49,10 @@ export const ProfileContent = () => {
           // setTotalRecipes={setTotalRecipes}
         />
       </TabsContent>
-      <TabsContent value="saved-recipes" className="p-4">
+      <TabsContent
+        value="saved-recipes"
+        className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
+      >
         <ProfileSavedRecipesContent
           recipes={savedRecipes}
           totalElement={totalSavedRecipes}

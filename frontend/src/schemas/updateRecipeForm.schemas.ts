@@ -20,8 +20,12 @@ export const updateRecipeSchema = z.object({
       message: "Le temps doit être supérieure à 0",
     }),
   personsNumber: z
-    .number({ error: "Champ requis" })
-    .min(1, "Le nombre de personnes doit être supérieur à 0"),
+    .number()
+    .optional()
+    .nullable()
+    .refine((val) => val === null || val === undefined || val >= 0, {
+      message: "Le nombre de personnes doit être supérieure à 0",
+    }),
   categories: z
     .array(z.string(), { error: "Au moins une catégorie est requise" })
     .min(1, "Au moins une catégorie est requise"),

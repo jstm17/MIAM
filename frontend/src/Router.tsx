@@ -1,6 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { AdminRoute } from "./AdminRoute.js";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute.js";
+import { AdminIngredientsPage } from "./pages/AdminIngredientsPage.js";
+import { AdminPage } from "./pages/AdminPage.js";
+import { AdminRecipesPage } from "./pages/AdminRecipesPage.js";
+import { AdminUsersPage } from "./pages/AdminUsersPage.js";
 import { CategoriesPage } from "./pages/CategoriesPage.js";
 import { CategoryPage } from "./pages/CategoryPage.js";
 import { HomePage } from "./pages/HomePage.js";
@@ -8,6 +13,7 @@ import IngredientsPage from "./pages/IngredientsPage.js";
 import { LoginPage } from "./pages/LoginPage.js";
 import { NotFoundPage } from "./pages/NotFoundPage.js";
 import { ProfilePage } from "./pages/ProfilePage.js";
+import { ProfileUpdatePage } from "./pages/ProfileUpdatePage.js";
 import { RecipeAddPage } from "./pages/RecipeAddPage.js";
 import { RecipeDetailsPage } from "./pages/RecipeDetailsPage.js";
 import { RecipeUpdatePage } from "./pages/RecipeUpdatePage.js";
@@ -29,6 +35,14 @@ export const Router = () => {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile-edit"
+          element={
+            <ProtectedRoute>
+              <ProfileUpdatePage />
             </ProtectedRoute>
           }
         />
@@ -63,6 +77,40 @@ export const Router = () => {
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/chefs" element={<UsersPage />} />
         <Route path="/ingredients" element={<IngredientsPage />} />
+
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <AdminUsersPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/recipes"
+          element={
+            <AdminRoute>
+              <AdminRecipesPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/ingredients"
+          element={
+            <AdminRoute>
+              <AdminIngredientsPage />
+            </AdminRoute>
+          }
+        />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

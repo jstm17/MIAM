@@ -31,7 +31,7 @@ export function RecipeUpdatePage() {
   const navigate = useNavigate();
   const { recipe, isLoading } = useGetRecipeById(id!);
   const { updateRecipe, isPending } = useUpdateRecipe();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const queryClient = useQueryClient();
 
   const {
@@ -57,7 +57,7 @@ export function RecipeUpdatePage() {
         name: recipe.name,
         timePrep: recipe.timePrep === 0 ? null : recipe.timePrep,
         timeCook: recipe.timeCook === 0 ? null : recipe.timeCook,
-        personsNumber: recipe.personsNumber,
+        personsNumber: recipe.personsNumber === 0 ? null : recipe.personsNumber,
         categories: recipe.categories.map((c) => c.name),
         ingredients: recipe.ingredients.map((i) => ({
           ingredient: i.ingredient.name,
@@ -78,6 +78,7 @@ export function RecipeUpdatePage() {
     try {
       const res = await updateRecipe(id!, {
         ...formData,
+        personsNumber: formData.personsNumber ?? 0,
         timePrep: formData.timePrep ?? 0,
         timeCook: formData.timeCook ?? 0,
       });
@@ -126,7 +127,13 @@ export function RecipeUpdatePage() {
       titleSize="md"
       className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-lg"
+        style={{
+          paddingBottom: `calc(${isAdmin ? "16px" : "0"} + env(safe-area-inset-bottom))`,
+        }}
+      >
         <FieldGroup className="relative">
           <div className="pb-20 flex flex-col gap-8">
             <div className="flex flex-col gap-4">
@@ -166,12 +173,17 @@ export function RecipeUpdatePage() {
                   })}
                 />
                 <GroupInput
-                  label="Nombre de personnes *"
+                  label="Nombre de personnes"
                   type="number"
                   inputGroupAddon="pers."
                   placeholder="Ex. 4"
                   error={errors.personsNumber?.message}
-                  {...register("personsNumber", { valueAsNumber: true })}
+                  {...register("personsNumber", {
+                    setValueAs: (v) =>
+                      v === "" || v === null || v === undefined
+                        ? undefined
+                        : Number(v),
+                  })}
                 />
                 <div className="flex flex-col gap-2 items-center">
                   <label className="text-sm font-medium">Visibilité</label>
@@ -226,7 +238,12 @@ export function RecipeUpdatePage() {
             />
           </div>
 
-          <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4">
+          <Field
+            className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4"
+            style={{
+              bottom: `calc(${isAdmin ? "108px" : "58px"} + env(safe-area-inset-bottom))`,
+            }}
+          >
             <Button
               size="lg"
               type="button"

@@ -8,7 +8,7 @@ type UserCardProps = {
 export const UserCard = ({ user }: UserCardProps) => {
   return (
     <Card className="py-4 px-2 border-none bg-muted active:brightness-95">
-      <CardContent className="items-center flex flex-col gap-2">
+      <CardContent className="items-center flex flex-col gap-2 p-0">
         <UserAvatar user={user} />
         <p className="text-center">
           <span className="font-semibold block">{user.name}</span>

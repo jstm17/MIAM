@@ -59,6 +59,7 @@ const recipeSchema = new mongoose.Schema(
     personsNumber: {
       type: Number,
       required: true,
+      trim: true,
     },
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,

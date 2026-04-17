@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { useAddRecipe } from "@/hooks/recipes/useAddRecipe";
+import { useAuth } from "@/hooks/useAuth";
 import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
 import { addRecipeSchema } from "@/schemas/addRecipeForm.schemas";
 import type { ApiError } from "@/types/error.types";
@@ -22,7 +23,7 @@ import { toast } from "sonner";
 export function RecipeAddPage() {
   const navigate = useNavigate();
   const { addRecipe, isPending } = useAddRecipe();
-
+  const { isAdmin } = useAuth();
   const {
     register,
     handleSubmit,
@@ -59,6 +60,7 @@ export function RecipeAddPage() {
     try {
       const res = await addRecipe({
         ...formData,
+        personsNumber: formData.personsNumber ?? 0,
         timePrep: formData.timePrep ?? 0,
         timeCook: formData.timeCook ?? 0,
       });
@@ -80,7 +82,13 @@ export function RecipeAddPage() {
       titleSize="lg"
       className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-lg"
+        style={{
+          paddingBottom: `calc(${isAdmin ? "16px" : "0"} + env(safe-area-inset-bottom))`,
+        }}
+      >
         <FieldGroup className="relative">
           <div className="pb-20 flex flex-col gap-8">
             <div className="flex flex-col gap-4">
@@ -120,12 +128,17 @@ export function RecipeAddPage() {
                   })}
                 />
                 <GroupInput
-                  label="Nombre de personnes *"
+                  label="Nombre de personnes"
                   type="number"
                   inputGroupAddon="pers."
                   placeholder="Ex. 4"
                   error={errors.personsNumber?.message}
-                  {...register("personsNumber", { valueAsNumber: true })}
+                  {...register("personsNumber", {
+                    setValueAs: (v) =>
+                      v === "" || v === null || v === undefined
+                        ? undefined
+                        : Number(v),
+                  })}
                 />
                 <div className="flex flex-col gap-2 items-center">
                   <label className="text-sm font-medium" htmlFor="visible">
@@ -181,7 +194,12 @@ export function RecipeAddPage() {
             />
           </div>
 
-          <Field className="fixed bottom-[calc(58px+env(safe-area-inset-bottom))] inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4">
+          <Field
+            className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4"
+            style={{
+              bottom: `calc(${isAdmin ? "108px" : "58px"} + env(safe-area-inset-bottom))`,
+            }}
+          >
             <Button
               size="lg"
               type="button"

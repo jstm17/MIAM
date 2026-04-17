@@ -20,31 +20,62 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
           Ajouté le {formatDate(recipe.createdAt)} par {recipe.addedBy.name}
         </span>
       </div>
-      <div className="flex justify-between w-full gap-2 px-4">
-        <Item variant={"muted"} size={"xs"} orientation="vertical">
-          <Timer />
-          <div className="flex flex-col items-center">
-            <span>{formatTime(recipe.timePrep || 0)}</span>
-            <span className="text-muted-foreground/80 text-xs">
-              de preparation
-            </span>
-          </div>
-        </Item>
-        <Item variant={"muted"} size={"xs"} orientation="vertical">
-          <Microwave />
-          <div className="flex flex-col items-center">
-            <span>{formatTime(recipe.timeCook || 0)}</span>
-            <span className="text-muted-foreground/80 text-xs">de cuisson</span>
-          </div>
-        </Item>
-        <Item variant={"muted"} size={"xs"} orientation="vertical">
-          <UsersRound />
-          <div className="flex flex-col items-center">
-            <span>{recipe.personsNumber}</span>
-            <span className="text-muted-foreground/80 text-xs">personnes</span>
-          </div>
-        </Item>
-      </div>
+
+      {(recipe.timePrep > 0 ||
+        recipe.timeCook > 0 ||
+        recipe.personsNumber > 0) && (
+        <div className="flex justify-center w-full gap-2 px-4">
+          {recipe.timePrep > 0 && (
+            <Item
+              variant={"muted"}
+              size={"xs"}
+              orientation="vertical"
+              className="max-w-40"
+            >
+              <Timer />
+              <div className="flex flex-col items-center">
+                <span>{formatTime(recipe.timePrep || 0)}</span>
+                <span className="text-muted-foreground/80 text-xs text-center">
+                  de préparation
+                </span>
+              </div>
+            </Item>
+          )}
+          {recipe.timeCook > 0 && (
+            <Item
+              variant={"muted"}
+              size={"xs"}
+              orientation="vertical"
+              className="max-w-40"
+            >
+              <Microwave />
+              <div className="flex flex-col items-center">
+                <span>{formatTime(recipe.timeCook || 0)}</span>
+                <span className="text-muted-foreground/80 text-xs">
+                  de cuisson
+                </span>
+              </div>
+            </Item>
+          )}
+
+          {recipe.personsNumber > 0 && (
+            <Item
+              variant={"muted"}
+              size={"xs"}
+              orientation="vertical"
+              className="max-w-40"
+            >
+              <UsersRound />
+              <div className="flex flex-col items-center">
+                <span>{recipe.personsNumber}</span>
+                <span className="text-muted-foreground/80 text-xs">
+                  personnes
+                </span>
+              </div>
+            </Item>
+          )}
+        </div>
+      )}
 
       <Tabs
         defaultValue="ingredients"

@@ -7,7 +7,7 @@ export const UsersHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-between w-full mb-4">
+    <div className="flex items-center justify-between w-full mb-4 gap-2">
       <Button
         size="icon-lg"
         variant="outline"

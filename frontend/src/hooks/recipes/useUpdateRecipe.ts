@@ -18,7 +18,7 @@ export const useUpdateRecipe = () => {
       formData.append("name", data.name);
       formData.append("timePrep", data.timePrep?.toString() ?? "");
       formData.append("timeCook", data.timeCook?.toString() ?? "");
-      formData.append("personsNumber", data.personsNumber.toString());
+      formData.append("personsNumber", data.personsNumber?.toString() ?? "");
       formData.append("categories", JSON.stringify(data.categories));
       formData.append("ingredients", JSON.stringify(data.ingredients));
       formData.append("instructions", JSON.stringify(data.instructions));

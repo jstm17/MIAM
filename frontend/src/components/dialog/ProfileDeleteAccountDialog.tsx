@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import { useAuth } from "@/hooks/useAuth";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useDeleteUser } from "@/hooks/users/useDeleteUser";
+import { useDeleteAccount } from "@/hooks/users/useDeleteAccount";
 import { cn } from "@/lib/utils";
 import type { ApiError } from "@/types/error.types";
 import { useNavigate } from "react-router-dom";
@@ -70,7 +70,7 @@ type ProfileFormProps = {
 };
 
 function ProfileForm({ className, onOpenChange }: ProfileFormProps) {
-  const { deleteUser, isPending } = useDeleteUser();
+  const { deleteUser, isPending } = useDeleteAccount();
   const { logout } = useAuth();
   const navigate = useNavigate();
 

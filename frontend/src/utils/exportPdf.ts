@@ -135,7 +135,12 @@ export const exportPdf = async (recipe: Recipe) => {
                 ? `• ⏱️ ${formatTime(recipe.timeCook ?? 0)} de cuisson`
                 : ""
             }
-            • 👥 ${recipe.personsNumber} personnes
+            ${
+              recipe.personsNumber
+                ? `
+            • 👥 ${recipe.personsNumber} personnes`
+                : ""
+            }
           </div>
         </div>
         <div class="content">

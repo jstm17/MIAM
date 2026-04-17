@@ -76,7 +76,7 @@ export const ProfileHeader = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-fit">
           <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={() => setUpdateDialogOpen(true)}>
+            <DropdownMenuItem onClick={() => navigate("/profile-edit")}>
               <Pencil />
               Modifier mon profil
             </DropdownMenuItem>

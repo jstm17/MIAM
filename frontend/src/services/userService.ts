@@ -35,7 +35,12 @@ export const userService = {
       headers: { "Content-Type": "multipart/form-data" },
     }),
 
-  deleteUser: () => axiosInstance.delete(USER_URL),
+  updatePassword: (payload: { currentPassword: string; newPassword: string }) =>
+    axiosInstance.put(`${USER_URL}/update-password`, payload),
+
+  deleteUser: (id: string) => axiosInstance.delete(`${USER_URL}/${id}`),
+
+  deleteAccount: () => axiosInstance.delete(USER_URL),
 
   addProductToCart: (name: string) =>
     axiosInstance.post(`${USER_URL}/product`, { name }),

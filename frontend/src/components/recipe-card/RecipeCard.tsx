@@ -72,18 +72,22 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
             <CardAction className="flex-col flex items-end justify-between h-full max-h-13">
               <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
                 <ChefHat size={12} />
-                <span className="text-xs mt-[1px]">{addedBy.name}</span>
+                <span className="text-xs mt-px">{addedBy.name}</span>
               </div>
-              <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
-                <Timer size={12} />
-                <span className="text-xs mt-[1px]">
-                  {formatTime(timePrep + timeCook, true)}
-                </span>
-              </div>
-              <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
-                <UsersRound size={12} />{" "}
-                <span className="text-xs mt-[1px]">{personsNumber}</span>
-              </div>
+              {(timePrep > 0 || timeCook > 0) && (
+                <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
+                  <Timer size={12} />
+                  <span className="text-xs mt-px">
+                    {formatTime(timePrep + timeCook, true)}
+                  </span>
+                </div>
+              )}
+              {personsNumber > 0 && (
+                <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
+                  <UsersRound size={12} />
+                  <span className="text-xs mt-px">{personsNumber ?? 0}</span>
+                </div>
+              )}
             </CardAction>
           </CardHeader>
         </div>

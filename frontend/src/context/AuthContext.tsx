@@ -9,6 +9,7 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   error: string;
+  isAdmin: boolean | undefined;
   login: (
     name: string,
     password: string,
@@ -83,11 +84,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await queryClient.invalidateQueries({ queryKey: ["me"] });
   };
 
+  const isAdmin = user && user.role === "admin";
+
   return (
     <AuthContext.Provider
       value={{
         user: user ?? null,
         isLoading,
+        isAdmin,
         login,
         logout,
         register,

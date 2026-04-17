@@ -18,7 +18,7 @@ export const AdminUsersPage = () => {
       });
   };
 
-  const sendResetMail = async (id: string) => {
+  const sendResetMail = async () => {
     // await api.post(`/admin/users/${id}/reset-password`);
     // toast.success("Mail envoyé !");
   };

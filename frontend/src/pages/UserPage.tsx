@@ -37,7 +37,7 @@ export const UserPage = () => {
     );
   }
   return (
-    <Layout>
+    <Layout className="items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+58px)]">
       <UserHeader user={user} />
 
       <Tabs
@@ -56,25 +56,19 @@ export const UserPage = () => {
             value="recipe"
             className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
           >
-            <UtensilsCrossed className="size-5" />
+            <UtensilsCrossed className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
           </TabsTrigger>
           <TabsTrigger
             value="cooking-time"
             className="overflow-hidden whitespace-nowrap text-ellipsis relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
           >
-            <Timer className="size-5" />
+            <Timer className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
           </TabsTrigger>
         </TabsList>
-        <TabsContent
-          value="recipe"
-          className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
-        >
+        <TabsContent value="recipe" className="p-4">
           <UserRecipeContent user={user} />
         </TabsContent>
-        <TabsContent
-          value="cooking-time"
-          className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
-        >
+        <TabsContent value="cooking-time" className="p-4">
           <UserContentCookingTime user={user} />
         </TabsContent>
       </Tabs>

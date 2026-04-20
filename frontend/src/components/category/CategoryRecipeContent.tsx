@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
+import { EmptyCard } from "../shared/EmptyCard";
 
 type CategoryRecipeContentProps = {
   category: Category;
@@ -47,6 +48,17 @@ export const CategoryRecipeContent = ({
 
   if (isLoading) {
     return <HomeContentSkeleton />;
+  }
+
+  if (filteredRecipes.length === 0) {
+    return (
+      <div>
+        <EmptyCard
+          title="0 temps de cuisson disponible"
+          description={`Personne n'a pas ajouté de recette dans cette catégorie.`}
+        />
+      </div>
+    );
   }
 
   return (

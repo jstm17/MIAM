@@ -51,7 +51,6 @@ export const UsersRecipeContent = () => {
     return (
       <div>
         <EmptyCard
-          className="p-0"
           title="0 chef disponible"
           description="Les autres chefs n'ont pas ajouté de recette."
         />

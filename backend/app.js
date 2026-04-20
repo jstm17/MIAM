@@ -6,6 +6,7 @@ const userRoutes = require("./routes/userRoutes");
 const recipeRoutes = require("./routes/recipeRoutes");
 const ingredientRoutes = require("./routes/ingredientRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const cookingTimeRoutes = require("./routes/cookingTimeRoutes");
 const testUploadRoutes = require("./routes/testUpload");
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/cooking-times", cookingTimeRoutes);
 app.use("/api/upload", testUploadRoutes);
 
 module.exports = app;

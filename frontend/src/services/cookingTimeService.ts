@@ -16,8 +16,8 @@ export const cookingTimeService = {
   getAllVisiblesByCategory: (slug: string) =>
     axiosInstance.get(`${COOKING_TIME_URL}/category/${slug}`),
   create: (data: unknown) => axiosInstance.post(`${COOKING_TIME_URL}/`, data),
-  update: (id: string, data: unknown) =>
-    axiosInstance.put(`${COOKING_TIME_URL}/${id}`, data),
+  update: (slug: string, data: unknown) =>
+    axiosInstance.put(`${COOKING_TIME_URL}/${slug}`, data),
   delete: (id: string) => axiosInstance.delete(`${COOKING_TIME_URL}/${id}`),
   show: (id: string) => axiosInstance.patch(`${COOKING_TIME_URL}/${id}/show`),
   hide: (id: string) => axiosInstance.patch(`${COOKING_TIME_URL}/${id}/hide`),

@@ -35,9 +35,8 @@ exports.CreateCookingTime = async (req, res) => {
       ? await compressAndUploadImage(req.file.buffer, "cookingTimes")
       : await fetchAndUploadCookingTimeImage(name);
 
-    const { resolvedCategories, newCategoryIds } = await resolveCategories(
-      categories,
-    );
+    const { resolvedCategories, newCategoryIds } =
+      await resolveCategories(categories);
 
     const cookingTime = new CookingTime({
       name,
@@ -307,12 +306,12 @@ exports.GetAllCookingTimesByUserId = async (req, res) => {
 // Update cookingTime
 exports.UpdateCookingTime = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { slug } = req.params;
     const { name, device, degreeCook, timeCook, methodCook, notes, visible } =
       req.body;
     const categories = JSON.parse(req.body.categories);
 
-    const cookingTime = await CookingTime.findById(id);
+    const cookingTime = await CookingTime.findOne({ slug });
 
     if (!cookingTime) {
       return res
@@ -343,9 +342,8 @@ exports.UpdateCookingTime = async (req, res) => {
       }
     }
 
-    const { resolvedCategories, newCategoryIds } = await resolveCategories(
-      categories,
-    );
+    const { resolvedCategories, newCategoryIds } =
+      await resolveCategories(categories);
 
     const updateData = {
       name,
@@ -363,8 +361,8 @@ exports.UpdateCookingTime = async (req, res) => {
       updateData.slug = slugifyRecipe(name, cookingTime._id);
     }
 
-    const updatedCookingTime = await CookingTime.findByIdAndUpdate(
-      id,
+    const updatedCookingTime = await CookingTime.findOneAndUpdate(
+      { slug },
       updateData,
       {
         returnDocument: "after",

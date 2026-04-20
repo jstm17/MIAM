@@ -34,7 +34,7 @@ router.post(
   cookingTimeController.CreateCookingTime,
 );
 router.put(
-  "/:id",
+  "/:slug",
   auth,
   upload.single("image"),
   cookingTimeController.UpdateCookingTime,

@@ -58,7 +58,7 @@ export const Router = () => {
           }
         />
         <Route
-          path="/recipe-edit/:id"
+          path="/recipe-edit/:slug"
           element={
             <ProtectedRoute>
               <RecipeUpdatePage />
@@ -66,7 +66,7 @@ export const Router = () => {
           }
         />
         <Route
-          path="/cooking-time-edit/:id"
+          path="/cooking-time-edit/:slug"
           element={
             <ProtectedRoute>
               <CookingTimeUpdatePage />

@@ -4,7 +4,7 @@ import { Layout } from "@/components/shared/Layout";
 
 export const ProfilePage = () => {
   return (
-    <Layout className="p-0 pb-14">
+    <Layout className="p-0 pb-[calc(58px+env(safe-area-inset-bottom))]">
       <ProfileHeader />
       <ProfileContent />
     </Layout>

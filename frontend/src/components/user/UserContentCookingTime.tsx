@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { CookingTimeCard } from "../cooking-time-card/CookingTimeCard";
 import { CookingTimesFilters } from "../cooking-time-card/CookingTimesFilters";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
+import { EmptyCard } from "../shared/EmptyCard";
 
 type UserContentCookingTimeProps = {
   user: User;
@@ -39,6 +40,17 @@ export const UserContentCookingTime = ({
 
   if (isLoading) {
     return <HomeContentSkeleton />;
+  }
+
+  if (filteredCookingTimes.length === 0) {
+    return (
+      <div>
+        <EmptyCard
+          title="0 temps de cuisson disponible"
+          description={`${user.name} n'a pas ajouté de temps de cuisson.`}
+        />
+      </div>
+    );
   }
 
   return (

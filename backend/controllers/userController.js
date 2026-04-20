@@ -633,6 +633,15 @@ exports.DeleteAccount = async (req, res) => {
     const recipeIds = userRecipes.map((r) => r._id);
     const recipeImages = userRecipes.map((r) => r.image).filter(Boolean);
 
+    // 2.5️⃣ récupérer les cooking times du user (avec leurs images)
+    const userCookingTimes = await CookingTime.find({ addedBy: userId })
+      .select("image")
+      .lean();
+
+    const cookingTimeImages = userCookingTimes
+      .map((ct) => ct.image)
+      .filter(Boolean);
+
     // 3️⃣ récupérer IDs uniques ingrédients + catégories
     const ingredientIds = [
       ...new Set(
@@ -650,9 +659,8 @@ exports.DeleteAccount = async (req, res) => {
       "ingredients.ingredient",
     );
     const stillUsedCategoriesRecipe = await Recipe.distinct("categories");
-    const stillUsedCategoriesCookingTime = await CookingTime.distinct(
-      "categories",
-    );
+    const stillUsedCategoriesCookingTime =
+      await CookingTime.distinct("categories");
 
     const orphanIngredients = ingredientIds.filter(
       (id) => !stillUsedIngredients.some((used) => used.equals(id)),
@@ -687,6 +695,7 @@ exports.DeleteAccount = async (req, res) => {
     const allImagesToDelete = [
       userToDelete.avatar,
       ...recipeImages,
+      ...cookingTimeImages,
       ...orphanIngredientImages,
       ...orphanCategoryImages,
     ].filter(Boolean);
@@ -730,6 +739,15 @@ exports.DeleteUser = async (req, res) => {
     const recipeIds = userRecipes.map((r) => r._id);
     const recipeImages = userRecipes.map((r) => r.image).filter(Boolean);
 
+    // 2.5️⃣ récupérer les cooking times du user (avec leurs images)
+    const userCookingTimes = await CookingTime.find({ addedBy: userId })
+      .select("image")
+      .lean();
+
+    const cookingTimeImages = userCookingTimes
+      .map((ct) => ct.image)
+      .filter(Boolean);
+
     // 3️⃣ récupérer IDs uniques ingrédients + catégories
     const ingredientIds = [
       ...new Set(
@@ -747,9 +765,8 @@ exports.DeleteUser = async (req, res) => {
       "ingredients.ingredient",
     );
     const stillUsedCategoriesRecipe = await Recipe.distinct("categories");
-    const stillUsedCategoriesCookingTime = await CookingTime.distinct(
-      "categories",
-    );
+    const stillUsedCategoriesCookingTime =
+      await CookingTime.distinct("categories");
 
     const orphanIngredients = ingredientIds.filter(
       (id) => !stillUsedIngredients.some((used) => used.equals(id)),

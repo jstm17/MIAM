@@ -47,7 +47,7 @@ export const CookingTimeCardActions = ({
   const { toggleVisibility, isPending: isPendingVisibility } =
     useToggleCookingTimeVisibility();
   const { user, isLoading } = useAuth();
-  const { _id, addedBy, visible } = cookingTime;
+  const { _id, slug, addedBy, visible } = cookingTime;
   const isSaved = savedCookingTimes.some((r) => r._id === _id);
   const isMyCookingTime = addedBy._id === user?._id;
 
@@ -155,7 +155,7 @@ export const CookingTimeCardActions = ({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  navigate(`/cooking-time-edit/${_id}`);
+                  navigate(`/cooking-time-edit/${slug}`);
                 }}
               >
                 <Pencil />

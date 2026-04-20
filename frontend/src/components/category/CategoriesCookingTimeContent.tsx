@@ -49,11 +49,10 @@ export const CategoriesCookingTimeContent = () => {
     return (
       <div>
         <EmptyCard
-          className="p-0"
           title="0 catégorie disponible"
-          description="Personne n'a ajouté de recette."
-          buttonText="Ajouter une recette"
-          onButtonClick={() => navigate("/add")}
+          description="Personne n'a ajouté de temps de cuisson."
+          buttonText="Ajouter un temps de cuisson"
+          onButtonClick={() => navigate("/add?tab=cooking-time")}
         />
       </div>
     );

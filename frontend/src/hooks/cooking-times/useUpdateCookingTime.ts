@@ -8,10 +8,10 @@ export const useUpdateCookingTime = () => {
 
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: async ({
-      id,
+      slug,
       data,
     }: {
-      id: string;
+      slug: string;
       data: CookingTimeFormData;
     }) => {
       const formData = new FormData();
@@ -28,7 +28,7 @@ export const useUpdateCookingTime = () => {
         formData.append("image", data.image);
       }
       formData.append("visible", data.visible.toString());
-      const res = await cookingTimeService.update(id, formData);
+      const res = await cookingTimeService.update(slug, formData);
       return res.data;
     },
     onSuccess: () => {
@@ -50,8 +50,8 @@ export const useUpdateCookingTime = () => {
     },
   });
 
-  const updateCookingTime = (id: string, data: CookingTimeFormData) =>
-    mutateAsync({ id, data });
+  const updateCookingTime = (slug: string, data: CookingTimeFormData) =>
+    mutateAsync({ slug, data });
 
   return { updateCookingTime, isPending, error };
 };

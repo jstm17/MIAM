@@ -97,7 +97,8 @@ export const ProfileFavoritesContent = ({
     return (
       <EmptyCard
         icon={<Frown />}
-        description="Vous n'avez enregistré aucune recette."
+        title="0 favori disponible"
+        description="Vous n'avez aucun favori."
         buttonText="Voir les recettes"
         onButtonClick={() => {
           navigate("/");

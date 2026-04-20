@@ -15,7 +15,7 @@ export const SearchRecipeItem = ({
     id={recipe._id}
     label={recipe.name}
     icon={<UtensilsCrossed className="size-4" />}
-    meta={{
+    metaRecipe={{
       icon: <UserRound className="size-3" strokeWidth={1} />,
       value: recipe.addedBy?.name ?? "",
     }}

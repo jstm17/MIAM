@@ -18,7 +18,6 @@ type DeviceSectionFormProps = {
 
 export function DeviceSectionForm({
   setValue,
-  errors,
   defaultValue,
 }: DeviceSectionFormProps) {
   return (

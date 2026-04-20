@@ -1,7 +1,8 @@
 export type RecentSearch = {
   label: string;
-  type: "recipe" | "category" | "user";
+  type: "recipe" | "cooking-time" | "category" | "user";
   slug: string;
   addedBy?: string;
   recipesCount?: number;
+  cookingTimesCount?: number;
 };

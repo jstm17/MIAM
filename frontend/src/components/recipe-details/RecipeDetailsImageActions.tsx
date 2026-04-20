@@ -43,7 +43,7 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
     useToggleRecipeVisibility();
 
   const { user, isLoading: isLoadingAuth } = useAuth();
-  const { _id, addedBy, visible } = recipe;
+  const { _id, slug, addedBy, visible } = recipe;
 
   const isSaved = savedRecipes.some((r) => r._id === _id);
 
@@ -168,7 +168,7 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
                 <DropdownMenuItem
                   onClick={(e) => {
                     e.preventDefault();
-                    navigate(`/recipe-edit/${_id}`);
+                    navigate(`/recipe-edit/${slug}`);
                   }}
                 >
                   <Pencil />

@@ -7,13 +7,14 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function RecipeAddPage() {
-  const [tab, setTab] = useState("add-recipe");
   const [searchParams] = useSearchParams();
 
   const defaultTab =
     searchParams.get("tab") === "cooking-time"
       ? "add-cooking-time"
       : "add-recipe";
+
+  const [tab, setTab] = useState(defaultTab);
 
   const title =
     tab === "add-recipe"
@@ -24,38 +25,31 @@ export function RecipeAddPage() {
     <Layout
       title={title}
       titleSize="lg"
-      className="items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
+      className="items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+32px)]"
     >
       <Tabs
         value={tab}
         onValueChange={setTab}
-        defaultValue={defaultTab}
-        className="relative mr-auto w-full flex flex-col mt-2"
+        className="relative mr-auto w-full flex flex-col mt-[20px]"
       >
         <TabsList className="w-full justify-start rounded-none border-b p-0 sticky top-0 z-40 bg-background">
           <TabsTrigger
             value="add-recipe"
             className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
           >
-            <UtensilsCrossed className="size-5" />
+            <UtensilsCrossed className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
           </TabsTrigger>
           <TabsTrigger
             value="add-cooking-time"
             className="overflow-hidden whitespace-nowrap text-ellipsis relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
           >
-            <Timer className="size-5" />
+            <Timer className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
           </TabsTrigger>
         </TabsList>
-        <TabsContent
-          value="add-recipe"
-          className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
-        >
+        <TabsContent value="add-recipe" className="p-4">
           <RecipeAddContent />
         </TabsContent>
-        <TabsContent
-          value="add-cooking-time"
-          className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
-        >
+        <TabsContent value="add-cooking-time" className="p-4">
           <CookingTimeAddContent />
         </TabsContent>
       </Tabs>

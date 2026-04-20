@@ -49,7 +49,7 @@ export const CookingTimeDetailsImageActions = ({
     useToggleCookingTimeVisibility();
 
   const { user, isLoading: isLoadingAuth } = useAuth();
-  const { _id, addedBy, visible } = cookingTime;
+  const { _id, slug, addedBy, visible } = cookingTime;
 
   const isSaved = savedCookingTimes.some((r) => r._id === _id);
 
@@ -177,7 +177,7 @@ export const CookingTimeDetailsImageActions = ({
                 <DropdownMenuItem
                   onClick={(e) => {
                     e.preventDefault();
-                    navigate(`/cooking-time-edit/${_id}`);
+                    navigate(`/cooking-time-edit/${slug}`);
                   }}
                 >
                   <Pencil />

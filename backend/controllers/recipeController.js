@@ -49,9 +49,8 @@ exports.CreateRecipe = async (req, res) => {
       : await fetchAndUploadRecipeImage(name);
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-    const { resolvedCategories, newCategoryIds } = await resolveCategories(
-      categories,
-    );
+    const { resolvedCategories, newCategoryIds } =
+      await resolveCategories(categories);
 
     const recipe = new Recipe({
       name,
@@ -325,13 +324,12 @@ exports.GetAllRecipesByUserId = async (req, res) => {
 // Update recipe
 exports.UpdateRecipe = async (req, res) => {
   try {
-    const { id } = req.params;
     const { name, timePrep, timeCook, personsNumber, visible } = req.body;
     const categories = JSON.parse(req.body.categories);
     const ingredients = JSON.parse(req.body.ingredients);
     const instructions = JSON.parse(req.body.instructions);
 
-    const recipe = await Recipe.findById(id);
+    const recipe = await Recipe.findOne({ slug: req.params.slug });
 
     if (!recipe) {
       return res
@@ -367,9 +365,8 @@ exports.UpdateRecipe = async (req, res) => {
     }
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-    const { resolvedCategories, newCategoryIds } = await resolveCategories(
-      categories,
-    );
+    const { resolvedCategories, newCategoryIds } =
+      await resolveCategories(categories);
 
     const newIngredientIds = resolvedIngredients.map((i) =>
       i.ingredient.toString(),
@@ -395,9 +392,13 @@ exports.UpdateRecipe = async (req, res) => {
       updateData.slug = slugifyRecipe(name, recipe._id);
     }
 
-    const updatedRecipe = await Recipe.findByIdAndUpdate(id, updateData, {
-      returnDocument: "after",
-    })
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      recipe._id,
+      updateData,
+      {
+        returnDocument: "after",
+      },
+    )
       .populate("categories")
       .populate("ingredients.ingredient");
 

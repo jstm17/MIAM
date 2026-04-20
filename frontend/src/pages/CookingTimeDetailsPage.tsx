@@ -51,7 +51,7 @@ export const CookingTimeDetailsPage = () => {
     );
 
   return (
-    <Layout className="">
+    <Layout className=" pb-[calc(58px+env(safe-area-inset-bottom))]">
       <div ref={containerRef} className="h-1/2 no-scrollbar overflow-y-auto">
         <CookingTimeDetailsImage cookingTime={cookingTime} y={y} />
       </div>

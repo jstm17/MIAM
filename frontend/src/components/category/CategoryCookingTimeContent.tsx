@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CookingTimeCard } from "../cooking-time-card/CookingTimeCard";
 import { CookingTimesFilters } from "../cooking-time-card/CookingTimesFilters";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
+import { EmptyCard } from "../shared/EmptyCard";
 
 type CategoryCookingTimeContentProps = {
   category: Category;
@@ -51,6 +52,17 @@ export const CategoryCookingTimeContent = ({
 
   if (isLoading) {
     return <HomeContentSkeleton />;
+  }
+
+  if (filteredCookingTimes.length === 0) {
+    return (
+      <div>
+        <EmptyCard
+          title="0 temps de cuisson disponible"
+          description={`Personne n'a pas ajouté de temps de cuisson dans cette catégorie.`}
+        />
+      </div>
+    );
   }
 
   return (

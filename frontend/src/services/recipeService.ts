@@ -14,8 +14,8 @@ export const recipeService = {
   getAllVisiblesByCategory: (slug: string) =>
     axiosInstance.get(`${RECIPE_URL}/category/${slug}`),
   create: (data: unknown) => axiosInstance.post(`${RECIPE_URL}/`, data),
-  update: (id: string, data: unknown) =>
-    axiosInstance.put(`${RECIPE_URL}/${id}`, data),
+  update: (slug: string, data: unknown) =>
+    axiosInstance.put(`${RECIPE_URL}/${slug}`, data),
   delete: (id: string) => axiosInstance.delete(`${RECIPE_URL}/${id}`),
   show: (id: string) => axiosInstance.patch(`${RECIPE_URL}/${id}/show`),
   hide: (id: string) => axiosInstance.patch(`${RECIPE_URL}/${id}/hide`),

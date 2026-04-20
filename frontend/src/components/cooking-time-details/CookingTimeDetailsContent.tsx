@@ -45,9 +45,7 @@ export const CookingTimeDetailsContent = ({
             )}
             <div className="flex flex-col items-center">
               <span>{cookingTime.device}</span>
-              <span className="text-muted-foreground/80 text-xs text-center">
-                Appareil
-              </span>
+              <span className="text-muted-foreground/80 text-xs">Appareil</span>
             </div>
           </Item>
         )}
@@ -56,7 +54,7 @@ export const CookingTimeDetailsContent = ({
             <Microwave />
             <div className="flex flex-col items-center">
               <span>{cookingTime.methodCook || 0}</span>
-              <span className="text-muted-foreground/80 text-xs">
+              <span className="text-muted-foreground/80 text-xs text-center">
                 Méthode de cuisson
               </span>
             </div>
@@ -67,7 +65,7 @@ export const CookingTimeDetailsContent = ({
             <Thermometer />
             <div className="flex flex-col items-center">
               <span>{cookingTime.degreeCook}°C</span>
-              <span className="text-muted-foreground/80 text-xs">
+              <span className="text-muted-foreground/80 text-xs text-center">
                 Température de cuisson
               </span>
             </div>
@@ -78,8 +76,8 @@ export const CookingTimeDetailsContent = ({
             <Timer />
             <div className="flex flex-col items-center">
               <span>{formatTime(cookingTime.timeCook || 0)}</span>
-              <span className="text-muted-foreground/80 text-xs">
-                de cuisson
+              <span className="text-muted-foreground/80 text-xs text-center">
+                Temps de cuisson
               </span>
             </div>
           </Item>
@@ -91,7 +89,9 @@ export const CookingTimeDetailsContent = ({
           <Item variant={"muted"} size={"xs"} orientation="vertical">
             <NotepadText />
             <div className="flex flex-col items-center">
-              <span className="text-muted-foreground/80 text-xs">Notes</span>
+              <span className="text-muted-foreground/80 text-xs text-center">
+                Notes
+              </span>
               <span>{cookingTime.notes}</span>
             </div>
           </Item>

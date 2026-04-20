@@ -7,7 +7,13 @@ export const useUpdateRecipe = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending, error } = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: RecipeFormData }) => {
+    mutationFn: async ({
+      slug,
+      data,
+    }: {
+      slug: string;
+      data: RecipeFormData;
+    }) => {
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("timePrep", data.timePrep?.toString() ?? "");
@@ -22,7 +28,7 @@ export const useUpdateRecipe = () => {
         formData.append("image", data.image);
       }
       formData.append("visible", data.visible.toString());
-      const res = await recipeService.update(id, formData);
+      const res = await recipeService.update(slug, formData);
       return res.data;
     },
     onSuccess: () => {
@@ -45,8 +51,8 @@ export const useUpdateRecipe = () => {
     },
   });
 
-  const updateRecipe = (id: string, data: RecipeFormData) =>
-    mutateAsync({ id, data });
+  const updateRecipe = (slug: string, data: RecipeFormData) =>
+    mutateAsync({ slug, data });
 
   return { updateRecipe, isPending, error };
 };

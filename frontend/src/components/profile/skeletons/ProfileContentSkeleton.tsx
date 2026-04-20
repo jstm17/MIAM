@@ -4,9 +4,10 @@ export const ProfileContentSkeleton = () => {
   return (
     <div className="w-full flex flex-col">
       {/* Tabs */}
-      <div className="w-full flex border-b sticky top-0 z-40 bg-background gap-4 p-4">
-        <Skeleton className="h-5 w-1/2" />
-        <Skeleton className="h-5 w-1/2" />
+      <div className="w-full flex border-b sticky justify-around top-0 z-40 bg-background gap-4 p-2">
+        <Skeleton className="h-6 w-6" />
+        <Skeleton className="h-6 w-6" />
+        <Skeleton className="h-6 w-6" />
       </div>
 
       <div className="justify-between flex items-center p-4 pb-0">

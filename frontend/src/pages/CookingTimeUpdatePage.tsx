@@ -9,7 +9,7 @@ import { TextInput } from "@/components/shared/TextInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
-import { useGetCookingTimeById } from "@/hooks/cooking-times/useGetCookingTimeById";
+import { useGetCookingTimeBySlug } from "@/hooks/cooking-times/useGetCookingTimeBySlug";
 import { useUpdateCookingTime } from "@/hooks/cooking-times/useUpdateCookingTime";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -27,9 +27,9 @@ import { toast } from "sonner";
 import { NotFoundPage } from "./NotFoundPage";
 
 export function CookingTimeUpdatePage() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { cookingTime, isLoading } = useGetCookingTimeById(id!);
+  const { cookingTime, isLoading } = useGetCookingTimeBySlug(slug!);
   const { updateCookingTime, isPending } = useUpdateCookingTime();
   const { user, isAdmin } = useAuth();
   const queryClient = useQueryClient();
@@ -52,7 +52,8 @@ export function CookingTimeUpdatePage() {
       reset({
         name: cookingTime.name,
         device: cookingTime.device ?? null,
-        degreeCook: cookingTime.degreeCook === 0 ? null : cookingTime.degreeCook,
+        degreeCook:
+          cookingTime.degreeCook === 0 ? null : cookingTime.degreeCook,
         timeCook: cookingTime.timeCook === 0 ? null : cookingTime.timeCook,
         methodCook: cookingTime.methodCook ?? null,
         notes: cookingTime.notes ?? null,
@@ -67,7 +68,7 @@ export function CookingTimeUpdatePage() {
 
   const onSubmit = async (formData: CookingTimeFormData) => {
     try {
-      const res = await updateCookingTime(id!, formData);
+      const res = await updateCookingTime(slug!, formData);
       await queryClient.refetchQueries({ queryKey: ["cooking-time"] });
       navigate(-1);
       toast.success(res.message);
@@ -122,8 +123,12 @@ export function CookingTimeUpdatePage() {
         <FieldGroup className="relative">
           <div className="pb-20 flex flex-col gap-8">
             <div className="flex flex-col gap-4">
-                          <DeviceSectionForm defaultValue={cookingTime.device ?? undefined} setValue={setValue} errors={errors} />
-              
+              <DeviceSectionForm
+                defaultValue={cookingTime.device ?? undefined}
+                setValue={setValue}
+                errors={errors}
+              />
+
               <TextInput
                 capitalize
                 label="Nom *"
@@ -134,18 +139,18 @@ export function CookingTimeUpdatePage() {
               />
               <div className="grid grid-cols-2 gap-4">
                 <GroupInput
-                label="Température"
-                type="number"
-                inputGroupAddon="°C"
-                placeholder="Ex. 180"
-                error={errors.degreeCook?.message}
-                {...register("degreeCook", {
-                  setValueAs: (v) =>
-                    v === "" || v === null || v === undefined
-                      ? undefined
-                      : Number(v),
-                })}
-              />
+                  label="Température"
+                  type="number"
+                  inputGroupAddon="°C"
+                  placeholder="Ex. 180"
+                  error={errors.degreeCook?.message}
+                  {...register("degreeCook", {
+                    setValueAs: (v) =>
+                      v === "" || v === null || v === undefined
+                        ? undefined
+                        : Number(v),
+                  })}
+                />
                 <GroupInput
                   label="Temps de cuisson"
                   type="number"
@@ -160,14 +165,14 @@ export function CookingTimeUpdatePage() {
                   })}
                 />
                 <TextInput
-                label="Mode de cuisson"
-                type="text"
-                placeholder="Ex. Airfryer"
-                error={errors.methodCook?.message}
-                {...register("methodCook", {
-                  setValueAs: (v) => v === "" ? undefined : v,
-                })}
-              />
+                  label="Mode de cuisson"
+                  type="text"
+                  placeholder="Ex. Airfryer"
+                  error={errors.methodCook?.message}
+                  {...register("methodCook", {
+                    setValueAs: (v) => (v === "" ? undefined : v),
+                  })}
+                />
                 <div className="flex flex-col gap-2 items-center">
                   <label className="text-sm font-medium">Visibilité</label>
                   <div className="flex items-center space-x-2">
@@ -187,14 +192,14 @@ export function CookingTimeUpdatePage() {
                   </span>
                 </div>
               </div>
-               <TextAreaInput
-                            label="Notes"
-                            placeholder="Ex. Retourner au bout de 6 minutes"
-                            error={errors.notes?.message}
-                            {...register("notes", {
-                              setValueAs: (v) => v === "" ? undefined : v,
-                            })}
-                          />
+              <TextAreaInput
+                label="Notes"
+                placeholder="Ex. Retourner au bout de 6 minutes"
+                error={errors.notes?.message}
+                {...register("notes", {
+                  setValueAs: (v) => (v === "" ? undefined : v),
+                })}
+              />
             </div>
 
             <CategoriesSectionForm

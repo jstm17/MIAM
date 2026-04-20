@@ -14,7 +14,7 @@ export const UserHeader = ({ user }: UserHeaderProps) => {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   return (
-    <div className="flex items-center justify-between w-full px-4gap-2  max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
+    <div className="flex items-center px-4 justify-between w-full px-4gap-2  max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
       <Button
         size="icon-lg"
         variant="outline"

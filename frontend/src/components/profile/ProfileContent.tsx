@@ -41,6 +41,7 @@ export const ProfileContent = () => {
 
   return (
     <Tabs
+      defaultValue={defaultTab}
       value={defaultTab}
       onValueChange={(val) => {
         if (val === "my-cooking-times") {
@@ -56,45 +57,36 @@ export const ProfileContent = () => {
       <TabsList className="w-full justify-start rounded-none border-b p-0 sticky top-0 z-40 bg-background">
         <TabsTrigger
           value="my-recipes"
-          className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
+          className="group select-none touch-manipulation relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
         >
-          <UtensilsCrossed className="size-5" />
+          <UtensilsCrossed className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
         </TabsTrigger>
         <TabsTrigger
           value="my-cooking-times"
-          className="overflow-hidden whitespace-nowrap text-ellipsis relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
+          className="group select-none touch-manipulation overflow-hidden whitespace-nowrap text-ellipsis relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
         >
-          <Timer className="size-5" />
+          <Timer className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
         </TabsTrigger>
         <TabsTrigger
           value="saved"
-          className="overflow-hidden whitespace-nowrap text-ellipsis relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
+          className="group select-none touch-manipulation overflow-hidden whitespace-nowrap text-ellipsis relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-primary data-[state=active]:shadow-none "
         >
-          <Star className="size-5" />
+          <Star className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
         </TabsTrigger>
       </TabsList>
-      <TabsContent
-        value="my-recipes"
-        className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
-      >
+      <TabsContent value="my-recipes" className="p-4">
         <ProfileMyRecipesContent
           recipes={recipes}
           totalElement={totalRecipes}
         />
       </TabsContent>
-      <TabsContent
-        value="my-cooking-times"
-        className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
-      >
+      <TabsContent value="my-cooking-times" className="p-4">
         <ProfileMyCookingTimesContent
           cookingTimes={cookingTimes}
           totalElement={totalCookingTimes}
         />
       </TabsContent>
-      <TabsContent
-        value="saved"
-        className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]"
-      >
+      <TabsContent value="saved" className="p-4">
         <ProfileFavoritesContent
           favorites={favorites}
           totalElement={totalFavorites}

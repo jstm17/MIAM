@@ -45,7 +45,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
   const { toggleVisibility, isPending: isPendingVisibility } =
     useToggleRecipeVisibility();
   const { user, isLoading } = useAuth();
-  const { _id, addedBy, visible } = recipe;
+  const { _id, slug, addedBy, visible } = recipe;
   const isSaved = savedRecipes.some((r) => r._id === _id);
   const isMyRecipe = addedBy._id === user?._id;
 
@@ -153,7 +153,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  navigate(`/recipe-edit/${_id}`);
+                  navigate(`/recipe-edit/${slug}`);
                 }}
               >
                 <Pencil />

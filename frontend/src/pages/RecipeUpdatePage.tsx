@@ -9,12 +9,12 @@ import { TextInput } from "@/components/shared/TextInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
-import { useGetRecipeById } from "@/hooks/recipes/useGetRecipeById";
+import { useGetRecipeBySlug } from "@/hooks/recipes/useGetRecipeBySlug";
 import { useUpdateRecipe } from "@/hooks/recipes/useUpdateRecipe";
 import { useAuth } from "@/hooks/useAuth";
 import {
   recipeSchema,
-  type RecipeFormData
+  type RecipeFormData,
 } from "@/schemas/recipeForm.schemas";
 import type { ApiError } from "@/types/error.types";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
@@ -27,9 +27,9 @@ import { toast } from "sonner";
 import { NotFoundPage } from "./NotFoundPage";
 
 export function RecipeUpdatePage() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { recipe, isLoading } = useGetRecipeById(id!);
+  const { recipe, isLoading } = useGetRecipeBySlug(slug!);
   const { updateRecipe, isPending } = useUpdateRecipe();
   const { user, isAdmin } = useAuth();
   const queryClient = useQueryClient();
@@ -76,7 +76,7 @@ export function RecipeUpdatePage() {
 
   const onSubmit = async (formData: RecipeFormData) => {
     try {
-      const res = await updateRecipe(id!, {
+      const res = await updateRecipe(slug!, {
         ...formData,
         personsNumber: formData.personsNumber ?? 0,
         timePrep: formData.timePrep ?? 0,

@@ -84,31 +84,33 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
         <TabsList className="w-full justify-start rounded-none border-b p-0 sticky -top-px z-40 bg-background">
           <TabsTrigger
             value="ingredients"
-            className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
+            className="group select-none touch-manipulation relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
           >
-            <Typography variant="body" weight="semibold">
+            <Typography
+              variant="body"
+              weight="semibold"
+              className="text-muted-foreground group-data-[state=active]:text-foreground"
+            >
               Ingrédients
             </Typography>
           </TabsTrigger>
           <TabsTrigger
             value="preparation"
-            className="relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
+            className="group select-none touch-manipulation relative rounded-none border-b-2 border-b-transparent p-2 bg-transparent font-semibold text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none "
           >
-            <Typography variant="body" weight="semibold">
+            <Typography
+              variant="body"
+              weight="semibold"
+              className="text-muted-foreground group-data-[state=active]:text-foreground"
+            >
               Préparation
             </Typography>
           </TabsTrigger>
         </TabsList>
-        <TabsContent
-          value="ingredients"
-          className="p-4 pb-[calc(74px+env(safe-area-inset-bottom))]"
-        >
+        <TabsContent value="ingredients" className="p-4">
           <IngredientsSection recipe={recipe} />
         </TabsContent>
-        <TabsContent
-          value="preparation"
-          className="p-4 pb-[calc(74px+env(safe-area-inset-bottom))]"
-        >
+        <TabsContent value="preparation" className="p-4">
           <PreparationSection recipe={recipe} />
         </TabsContent>
       </Tabs>

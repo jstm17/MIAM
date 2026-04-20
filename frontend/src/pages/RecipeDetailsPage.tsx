@@ -52,7 +52,7 @@ export const RecipeDetailsPage = () => {
     );
 
   return (
-    <Layout className="">
+    <Layout className=" pb-[calc(58px+env(safe-area-inset-bottom))]">
       <div ref={containerRef} className="h-1/2 no-scrollbar overflow-y-auto">
         <RecipeDetailsImage recipe={recipe} y={y} />
       </div>

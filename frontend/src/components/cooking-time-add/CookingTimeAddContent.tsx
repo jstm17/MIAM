@@ -74,7 +74,7 @@ export function CookingTimeAddContent() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, () => console.log(errors))}
       className="w-full max-w-lg"
       style={{
         paddingBottom: `calc(${

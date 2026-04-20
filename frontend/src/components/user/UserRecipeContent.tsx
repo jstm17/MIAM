@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
+import { EmptyCard } from "../shared/EmptyCard";
 
 type UserRecipeContentProps = {
   user: User;
@@ -38,6 +39,17 @@ export const UserRecipeContent = ({ user }: UserRecipeContentProps) => {
 
   if (isLoading) {
     return <HomeContentSkeleton />;
+  }
+
+  if (filteredRecipes.length === 0) {
+    return (
+      <div>
+        <EmptyCard
+          title="0 recette disponible"
+          description={`${user.name} n'a pas ajouté de recette.`}
+        />
+      </div>
+    );
   }
 
   return (

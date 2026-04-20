@@ -8,6 +8,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { useGetAllCategoriesVisibles } from "@/hooks/categories/useGetAllCategoriesVisibles";
+import { useGetAllCookingTimesVisibles } from "@/hooks/cooking-times/useGetAllCookingTimesVisibles";
 import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import { useSearchBar } from "@/hooks/search/useSearchBar";
 import { useGetAllUsersVisibles } from "@/hooks/users/useGetAllUsersVisibles";
@@ -16,12 +17,15 @@ import { GroupInput } from "../shared/GroupInput";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { SearchCategoryItem } from "./SearchCategoryItem";
+import { SearchCookingTimeItem } from "./SearchCookingTimeItem";
 import { SearchRecentItem } from "./SearchRecentItem";
 import { SearchRecipeItem } from "./SearchRecipeItem";
 import { SearchUserItem } from "./SearchUserItem";
 
 export const SearchBar = () => {
   const { recipes, isLoading: isLoadingRecipes } = useGetAllRecipesVisibles();
+  const { cookingTimes, isLoading: isLoadingCookingTimes } =
+    useGetAllCookingTimesVisibles();
   const { categories, isLoading: isLoadingCategories } =
     useGetAllCategoriesVisibles();
   const { users, isLoading: isLoadingUsers } = useGetAllUsersVisibles();
@@ -31,25 +35,34 @@ export const SearchBar = () => {
     open,
     setOpen,
     filteredRecipes,
+    filteredCookingTimes,
     filteredCategories,
     filteredUsers,
     hasResults,
     randomRecipes,
+    randomCookingTimes,
     randomCategories,
     randomUsers,
     recentSearches,
     getRecipesCount,
+    getCookingTimesCount,
     getUserRecipesCount,
+    getUserCookingTimesCount,
     handleRecipeSelect,
+    handleCookingTimeSelect,
     handleCategorySelect,
     handleUserSelect,
     handleRecentSelect,
     handleQueryChange,
     handleClose,
     setRecentSearches,
-  } = useSearchBar(recipes, categories, users);
+  } = useSearchBar(recipes, cookingTimes, categories, users);
 
-  const isLoading = isLoadingCategories || isLoadingRecipes || isLoadingUsers;
+  const isLoading =
+    isLoadingCategories ||
+    isLoadingRecipes ||
+    isLoadingUsers ||
+    isLoadingCookingTimes;
 
   return (
     <div>
@@ -136,12 +149,23 @@ export const SearchBar = () => {
                       ))}
                     </CommandGroup>
                     <CommandSeparator />
+                    <CommandGroup heading="Temps de cuisson">
+                      {randomCookingTimes.map((cookingTime) => (
+                        <SearchCookingTimeItem
+                          key={cookingTime._id}
+                          cookingTime={cookingTime}
+                          onSelect={() => handleCookingTimeSelect(cookingTime)}
+                        />
+                      ))}
+                    </CommandGroup>
+                    <CommandSeparator />
                     <CommandGroup heading="Catégories">
                       {randomCategories.map((category) => (
                         <SearchCategoryItem
                           key={category._id}
                           category={category}
                           recipesCount={getRecipesCount(category._id)}
+                          cookingTimesCount={getCookingTimesCount(category._id)}
                           onSelect={() => handleCategorySelect(category)}
                         />
                       ))}
@@ -153,6 +177,7 @@ export const SearchBar = () => {
                           key={user._id}
                           user={user}
                           recipesCount={getUserRecipesCount(user._id)}
+                          cookingTimesCount={getUserCookingTimesCount(user._id)}
                           onSelect={() => handleUserSelect(user)}
                         />
                       ))}
@@ -170,6 +195,17 @@ export const SearchBar = () => {
                     ))}
                   </CommandGroup>
                 )}
+                {filteredCookingTimes.length > 0 && (
+                  <CommandGroup heading="Temps de cuisson">
+                    {filteredCookingTimes.map((cookingTime) => (
+                      <SearchCookingTimeItem
+                        key={cookingTime._id}
+                        cookingTime={cookingTime}
+                        onSelect={() => handleCookingTimeSelect(cookingTime)}
+                      />
+                    ))}
+                  </CommandGroup>
+                )}
                 {!isLoading &&
                   filteredRecipes.length > 0 &&
                   filteredCategories.length > 0 && <CommandSeparator />}
@@ -180,6 +216,7 @@ export const SearchBar = () => {
                         key={category._id}
                         category={category}
                         recipesCount={getRecipesCount(category._id)}
+                        cookingTimesCount={getCookingTimesCount(category._id)}
                         onSelect={() => handleCategorySelect(category)}
                       />
                     ))}
@@ -195,6 +232,7 @@ export const SearchBar = () => {
                         key={user._id}
                         user={user}
                         recipesCount={getUserRecipesCount(user._id)}
+                        cookingTimesCount={getUserCookingTimesCount(user._id)}
                         onSelect={() => handleUserSelect(user)}
                       />
                     ))}

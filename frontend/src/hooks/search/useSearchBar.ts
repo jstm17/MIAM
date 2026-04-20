@@ -1,4 +1,5 @@
 import type { Category } from "@/types/category.types";
+import type { CookingTime } from "@/types/cookingTime.types";
 import type { Recipe } from "@/types/recipe.types";
 import type { RecentSearch } from "@/types/search.types";
 import type { User } from "@/types/user.types";
@@ -9,6 +10,7 @@ import { useAuth } from "../useAuth";
 
 export const useSearchBar = (
   recipes: Recipe[],
+  cookingTimes: CookingTime[],
   categories: Category[],
   users: User[],
 ) => {
@@ -34,6 +36,9 @@ export const useSearchBar = (
   const filteredRecipes = q
     ? recipes.filter((r) => normalize(r.name).includes(q))
     : [];
+  const filteredCookingTimes = q
+    ? cookingTimes.filter((r) => normalize(r.name).includes(q))
+    : [];
   const filteredCategories = q
     ? categories.filter((c) => normalize(c.name).includes(q))
     : [];
@@ -42,12 +47,17 @@ export const useSearchBar = (
     : [];
   const hasResults =
     filteredRecipes.length > 0 ||
+    filteredCookingTimes.length > 0 ||
     filteredCategories.length > 0 ||
     filteredUsers.length > 0;
 
   const randomSlice = <T>(arr: T[], n: number) =>
     [...arr].sort(() => Math.random() - 0.5).slice(0, n);
   const randomRecipes = useMemo(() => randomSlice(recipes, 5), [recipes]);
+  const randomCookingTimes = useMemo(
+    () => randomSlice(cookingTimes, 5),
+    [cookingTimes],
+  );
   const randomCategories = useMemo(
     () => randomSlice(categories, 5),
     [categories],
@@ -66,8 +76,18 @@ export const useSearchBar = (
   const getRecipesCount = (id: string) =>
     recipes.filter((r) => r.categories.some((c) => c._id === id)).length;
 
+  const getCookingTimesCount = (id: string) =>
+    cookingTimes.filter((r) => r.categories.some((c) => c._id === id)).length;
+
   const getUserRecipesCount = (id: string) =>
     recipes.filter((r) => {
+      if (r.addedBy?._id !== id) return false;
+      if (id === user?._id) return r.visible;
+      return r;
+    }).length;
+
+  const getUserCookingTimesCount = (id: string) =>
+    cookingTimes.filter((r) => {
       if (r.addedBy?._id !== id) return false;
       if (id === user?._id) return r.visible;
       return r;
@@ -85,13 +105,27 @@ export const useSearchBar = (
     setOpen(false);
   };
 
+  const handleCookingTimeSelect = (cookingTime: CookingTime) => {
+    saveSearch({
+      label: cookingTime.name,
+      type: "cooking-time",
+      slug: cookingTime.slug,
+      addedBy: cookingTime.addedBy?.name,
+    });
+    navigate(`/cooking-time/${cookingTime.slug}`);
+    setQuery("");
+    setOpen(false);
+  };
+
   const handleCategorySelect = (category: Category) => {
     const recipesCount = getRecipesCount(category._id);
+    const cookingTimesCount = getRecipesCount(category._id);
     saveSearch({
       label: category.name,
       type: "category",
       slug: category.slug,
       recipesCount,
+      cookingTimesCount,
     });
     navigate(`/category/${category.slug}`);
     setQuery("");
@@ -100,11 +134,13 @@ export const useSearchBar = (
 
   const handleUserSelect = (user: User) => {
     const recipesCount = getUserRecipesCount(user._id);
+    const cookingTimesCount = getRecipesCount(user._id);
     saveSearch({
       label: user.name,
       type: "user",
       slug: user.slug!,
       recipesCount,
+      cookingTimesCount,
     });
     navigate(`/chef/${user.slug}`);
     setQuery("");
@@ -115,9 +151,11 @@ export const useSearchBar = (
     navigate(
       search.type === "recipe"
         ? `/recipe/${search.slug}`
-        : search.type === "category"
-          ? `/category/${search.slug}`
-          : `/chef/${search.slug}`,
+        : search.type === "cooking-time"
+          ? `/cooking-time/${search.slug}`
+          : search.type === "category"
+            ? `/category/${search.slug}`
+            : `/chef/${search.slug}`,
     );
     setOpen(false);
   };
@@ -143,16 +181,21 @@ export const useSearchBar = (
     open,
     setOpen,
     filteredRecipes,
+    filteredCookingTimes,
     filteredCategories,
     filteredUsers,
     hasResults,
     randomRecipes,
+    randomCookingTimes,
     randomCategories,
     randomUsers,
     recentSearches,
     getRecipesCount,
+    getCookingTimesCount,
     getUserRecipesCount,
+    getUserCookingTimesCount,
     handleRecipeSelect,
+    handleCookingTimeSelect,
     handleCategorySelect,
     handleUserSelect,
     handleRecentSelect,

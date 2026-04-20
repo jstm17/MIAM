@@ -48,7 +48,6 @@ export const CategoriesRecipeContent = () => {
       <div>
         <EmptyCard
           className="p-0"
-          title="0 catégorie disponible"
           description="Personne n'a ajouté de recette."
           buttonText="Ajouter une recette"
           onButtonClick={() => navigate("/add")}

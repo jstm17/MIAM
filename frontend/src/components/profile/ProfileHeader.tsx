@@ -54,7 +54,7 @@ export const ProfileHeader = () => {
   if (isLoading) return <ProfileHeaderSkeleton />;
 
   return (
-    <div className="flex items-center justify-between w-full p-4 gap-2 max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
+    <div className="flex items-center justify-between w-full p-4 pb-2 gap-2 max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
       <Button variant="outline" size="icon-lg">
         <Link to="/add">
           <Plus />

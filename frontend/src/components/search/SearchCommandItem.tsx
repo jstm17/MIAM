@@ -4,7 +4,8 @@ type SearchCommandItemProps = {
   id: string;
   label: string;
   icon: React.ReactNode;
-  meta?: { icon: React.ReactNode; value: string | number };
+  metaRecipe?: { icon: React.ReactNode; value: string | number };
+  metaCookingTime?: { icon: React.ReactNode; value: string | number };
   onSelect: () => void;
 };
 
@@ -12,17 +13,26 @@ export const SearchCommandItem = ({
   id,
   label,
   icon,
-  meta,
+  metaRecipe,
+  metaCookingTime,
   onSelect,
 }: SearchCommandItemProps) => (
   <CommandItem key={id} onSelect={onSelect}>
     {icon}
     <span className="flex-1">{label}</span>
-    {meta && (
-      <span className="text-xs text-muted-foreground -mr-6 flex items-center gap-1">
-        {meta.icon}
-        {meta.value}
-      </span>
-    )}
+    <div className="flex gap-2  -mr-6">
+      {metaRecipe && (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          {metaRecipe.icon}
+          {metaRecipe.value}
+        </span>
+      )}
+      {metaCookingTime && (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          {metaCookingTime.icon}
+          {metaCookingTime.value}
+        </span>
+      )}
+    </div>
   </CommandItem>
 );

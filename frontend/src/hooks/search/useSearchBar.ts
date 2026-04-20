@@ -119,7 +119,7 @@ export const useSearchBar = (
 
   const handleCategorySelect = (category: Category) => {
     const recipesCount = getRecipesCount(category._id);
-    const cookingTimesCount = getRecipesCount(category._id);
+    const cookingTimesCount = getCookingTimesCount(category._id);
     saveSearch({
       label: category.name,
       type: "category",
@@ -134,7 +134,7 @@ export const useSearchBar = (
 
   const handleUserSelect = (user: User) => {
     const recipesCount = getUserRecipesCount(user._id);
-    const cookingTimesCount = getRecipesCount(user._id);
+    const cookingTimesCount = getUserCookingTimesCount(user._id);
     saveSearch({
       label: user.name,
       type: "user",

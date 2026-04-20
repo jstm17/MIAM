@@ -8,7 +8,7 @@ import { UserAvatar } from "../user/UserAvatar";
 const navLinks = [
   { to: "/", icon: Home },
   { to: "/search", icon: Search },
-  { to: "/recipe-add", icon: Plus },
+  { to: "/add", icon: Plus },
   { to: "/shopping-list", icon: ShoppingBasket },
   { to: "/profile", icon: UserRound },
 ];

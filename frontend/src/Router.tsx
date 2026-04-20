@@ -8,6 +8,8 @@ import { AdminRecipesPage } from "./pages/AdminRecipesPage.js";
 import { AdminUsersPage } from "./pages/AdminUsersPage.js";
 import { CategoriesPage } from "./pages/CategoriesPage.js";
 import { CategoryPage } from "./pages/CategoryPage.js";
+import { CookingTimeDetailsPage } from "./pages/CookingTimeDetailsPage.js";
+import { CookingTimeUpdatePage } from "./pages/CookingTimeUpdatePage.js";
 import { HomePage } from "./pages/HomePage.js";
 import IngredientsPage from "./pages/IngredientsPage.js";
 import { LoginPage } from "./pages/LoginPage.js";
@@ -48,7 +50,7 @@ export const Router = () => {
         />
         <Route path="/search" element={<SearchPage />} />
         <Route
-          path="/recipe-add"
+          path="/add"
           element={
             <ProtectedRoute>
               <RecipeAddPage />
@@ -64,6 +66,14 @@ export const Router = () => {
           }
         />
         <Route
+          path="/cooking-time-edit/:id"
+          element={
+            <ProtectedRoute>
+              <CookingTimeUpdatePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/shopping-list"
           element={
             <ProtectedRoute>
@@ -72,6 +82,10 @@ export const Router = () => {
           }
         />
         <Route path="/recipe/:slug" element={<RecipeDetailsPage />} />
+        <Route
+          path="/cooking-time/:slug"
+          element={<CookingTimeDetailsPage />}
+        />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/chef/:slug" element={<UserPage />} />
         <Route path="/categories" element={<CategoriesPage />} />

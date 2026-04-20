@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGetTopAllUsers } from "@/hooks/users/useGetTopAllUsers";
 import { ChevronRight, UsersRound } from "lucide-react";
 import { Link } from "react-router-dom";
-import { EmptyCard } from "../recipe-card/EmptyCard";
+import { EmptyCard } from "../shared/EmptyCard";
 import { Typography } from "../shared/Typography";
 import { Skeleton } from "../ui/skeleton";
 import { UserCard } from "../user/UserCard";

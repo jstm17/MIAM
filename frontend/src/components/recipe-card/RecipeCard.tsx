@@ -69,7 +69,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
                 </Badge>
               ))}
             </CardDescription>
-            <CardAction className="flex-col flex items-end justify-between h-full max-h-13">
+            <CardAction className="flex-col flex items-end h-full max-h-13">
               <div className="text-muted-foreground/80 flex gap-1 p-0 items-center">
                 <ChefHat size={12} />
                 <span className="text-xs mt-px">{addedBy.name}</span>

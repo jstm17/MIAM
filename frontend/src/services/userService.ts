@@ -5,9 +5,15 @@ const USER_URL = "/users";
 export const userService = {
   getTopAllUsers: () => axiosInstance.get(`${USER_URL}/top`),
 
+  getTopAllUsersCookingTime: () =>
+    axiosInstance.get(`${USER_URL}/cooking-times-top`),
+
   getAllUsers: () => axiosInstance.get(`${USER_URL}/all`),
 
   getAllUsersVisibles: () => axiosInstance.get(`${USER_URL}/visible`),
+
+  getAllUsersVisiblesCookingTime: () =>
+    axiosInstance.get(`${USER_URL}/cooking-time-visible`),
 
   getUserBySlug: (slug: string) => axiosInstance.get(`${USER_URL}/${slug}`),
 
@@ -16,6 +22,12 @@ export const userService = {
 
   unsaveRecipe: (recipeId: string) =>
     axiosInstance.delete(`${USER_URL}/saved-recipes/${recipeId}`),
+
+  saveCookingTime: (cookingTimeId: string) =>
+    axiosInstance.post(`${USER_URL}/saved-cooking-times/${cookingTimeId}`),
+
+  unsaveCookingTime: (cookingTimeId: string) =>
+    axiosInstance.delete(`${USER_URL}/saved-cooking-times/${cookingTimeId}`),
 
   addIngredientToCart: (recipeId: string, ingredientId: string) =>
     axiosInstance.post(`${USER_URL}/saved-ingredients/${recipeId}`, {

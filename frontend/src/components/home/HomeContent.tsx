@@ -1,9 +1,9 @@
 import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
+import { EmptyCard } from "../shared/EmptyCard";
 import { HomeContentSkeleton } from "./skeletons/HomeContentSkeleton";
 
 export const HomeContent = () => {
@@ -49,7 +49,7 @@ export const HomeContent = () => {
         title="0 recette disponible"
         description="Personne n'a ajouté de recette."
         buttonText="Ajouter une recette"
-        onButtonClick={() => navigate("/recipe-add")}
+        onButtonClick={() => navigate("/add")}
       />
     );
   }

@@ -1,26 +1,28 @@
-import { useGetAllCategoriesVisibles } from "@/hooks/categories/useGetAllCategoriesVisibles";
+import { useGetAllCategoriesVisiblesCookingTime } from "@/hooks/categories/useGetAllCategoriesVisiblesCookingTime";
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { EmptyCard } from "../recipe-card/EmptyCard";
+import { EmptyCard } from "../shared/EmptyCard";
 import { Typography } from "../shared/Typography";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { Card } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import { CategoryFilters } from "./CategoryFilters";
 
-export const CategoriesContent = () => {
+export const CategoriesCookingTimeContent = () => {
   const navigate = useNavigate();
 
   const { categories, totalCategories, isLoading } =
-    useGetAllCategoriesVisibles();
+    useGetAllCategoriesVisiblesCookingTime();
   const [sort, setSort] = useState("name");
 
   const sortedCategories = useMemo(() => {
     const items = [...categories];
-    if (sort === "recipes") {
+    if (sort === "cookingTimes") {
       return items
         .sort((a, b) => a.name.localeCompare(b.name))
-        .sort((a, b) => (b.recipesCount ?? 0) - (a.recipesCount ?? 0));
+        .sort(
+          (a, b) => (b.cookingTimesCount ?? 0) - (a.cookingTimesCount ?? 0),
+        );
     }
     return items.sort((a, b) => a.name.localeCompare(b.name));
   }, [categories, sort]);
@@ -51,7 +53,7 @@ export const CategoriesContent = () => {
           title="0 catégorie disponible"
           description="Personne n'a ajouté de recette."
           buttonText="Ajouter une recette"
-          onButtonClick={() => navigate("/recipe-add")}
+          onButtonClick={() => navigate("/add")}
         />
       </div>
     );
@@ -70,7 +72,7 @@ export const CategoriesContent = () => {
       />
       <div className="grid grid-cols-3 gap-2">
         {sortedCategories.map((cat) => (
-          <Link to={`/category/${cat.slug}`} key={cat._id}>
+          <Link to={`/category/${cat.slug}?tab=cooking-time`} key={cat._id}>
             <div>
               <Card className="p-0 active:brightness-95">
                 <AspectRatio ratio={1}>
@@ -84,7 +86,11 @@ export const CategoriesContent = () => {
                   )}
                 </AspectRatio>
               </Card>
-              <Typography weight="semibold" size="sm" className="text-center">
+              <Typography
+                weight="semibold"
+                size="sm"
+                className="text-center truncate"
+              >
                 {cat.name}
               </Typography>
             </div>

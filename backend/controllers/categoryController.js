@@ -1,6 +1,7 @@
 const Category = require("../models/Category");
 const Recipe = require("../models/Recipe");
 const { cloudinary } = require("../config/cloudinary");
+const CookingTime = require("../models/CookingTime");
 
 exports.GetAllCategories = async (req, res) => {
   try {
@@ -69,6 +70,59 @@ exports.GetAllCategoriesVisibles = async (req, res) => {
   }
 };
 
+exports.GetAllCategoriesVisiblesCookingTimes = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
+      : { visible: true };
+
+    const categories = await CookingTime.aggregate([
+      { $match: filter },
+      { $unwind: "$categories" },
+      {
+        $group: {
+          _id: "$categories",
+          cookingTimesCount: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              "$category",
+              { cookingTimesCount: "$cookingTimesCount" },
+            ],
+          },
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      message: "Catégories récupérées avec succès",
+      data: categories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
 exports.GetTopCategoriesVisibles = async (req, res) => {
   try {
     const userId = req.user?.id;
@@ -102,6 +156,61 @@ exports.GetTopCategoriesVisibles = async (req, res) => {
         $replaceRoot: {
           newRoot: {
             $mergeObjects: ["$category", { recipesCount: "$recipesCount" }],
+          },
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      message: "Catégories récupérées avec succès",
+      data: categories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
+exports.GetTopCategoriesVisiblesCookingTimes = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const filter = userId
+      ? {
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
+      : { visible: true };
+
+    const categories = await CookingTime.aggregate([
+      { $match: filter },
+      { $unwind: "$categories" },
+      {
+        $group: {
+          _id: "$categories",
+          cookingTimesCount: { $sum: 1 },
+        },
+      },
+      { $sort: { cookingTimesCount: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      { $unwind: "$category" },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              "$category",
+              { cookingTimesCount: "$cookingTimesCount" },
+            ],
           },
         },
       },

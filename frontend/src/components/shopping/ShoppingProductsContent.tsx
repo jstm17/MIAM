@@ -145,7 +145,7 @@ export const ShoppingProductsContent = () => {
                 <button
                   type="button"
                   onClick={() => handleStartEditing(product._id, product.name)}
-                  className={`text-sm text-left block w-full rounded-sm h-6 ${
+                  className={`text-sm text-left block w-full rounded-sm min-h-6 ${
                     isChecked ? "line-through text-muted-foreground/50" : ""
                   }`}
                 >

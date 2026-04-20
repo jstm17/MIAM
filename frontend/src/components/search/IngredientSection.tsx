@@ -107,7 +107,11 @@ export const IngredientSection = () => {
                       <ComboboxChip key={value}>{value}</ComboboxChip>
                     ))}
                     <ComboboxChipsInput
-                      placeholder={`${selectedIngredients.length > 0 ? "" : "Rechercher un ingrédient"}`}
+                      placeholder={`${
+                        selectedIngredients.length > 0
+                          ? ""
+                          : "Recherche par ingrédients"
+                      }`}
                     />
                   </>
                 )}

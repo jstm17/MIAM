@@ -1,6 +1,5 @@
 import { useGetAllIngredients } from "@/hooks/ingredients/useGetAllIngredients";
-import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
-import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
+import type { RecipeFormData } from "@/schemas/recipeForm.schemas";
 import { Carrot, MinusCircle, Plus } from "lucide-react";
 import { useState } from "react";
 import {
@@ -17,10 +16,10 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 
 type IngredientsSectionFormProps = {
-  control: Control<AddRecipeFormData | UpdateRecipeFormData>;
-  register: UseFormRegister<AddRecipeFormData | UpdateRecipeFormData>;
-  setValue: UseFormSetValue<AddRecipeFormData | UpdateRecipeFormData>;
-  errors: FieldErrors<AddRecipeFormData | UpdateRecipeFormData>;
+  control: Control<RecipeFormData>;
+  register: UseFormRegister<RecipeFormData>;
+  setValue: UseFormSetValue<RecipeFormData>;
+  errors: FieldErrors<RecipeFormData>;
 };
 export const IngredientsSectionForm = ({
   control,
@@ -46,7 +45,7 @@ export const IngredientsSectionForm = ({
       </div>
       <div className="flex flex-col gap-2 max-w-lg">
         <div className="grid grid-cols-[1fr_2fr_36px] gap-4">
-          <Label>Quantité *</Label>
+          <Label>Quantité</Label>
           <Label>Ingrédient *</Label>
           <span />
         </div>

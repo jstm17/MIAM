@@ -12,11 +12,11 @@ export const RecipeDetailsContent = ({ recipe }: { recipe: Recipe }) => {
   return (
     <div className="bg-background rounded-t-4xl -mt-12 relative z-10 min-h-[calc(100dvh-42px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center">
       <span className="bg-muted w-25 h-1 block rounded-full mt-4"></span>
-      <div className="text-center">
+      <div className="text-center px-4">
         <Typography variant="h1" size="lg" weight="semibold">
           {recipe.name}
         </Typography>
-        <span className="text-muted-foreground/60 text-xs">
+        <span className="text-muted-foreground/60 text-xs px-4">
           Ajouté le {formatDate(recipe.createdAt)} par {recipe.addedBy.name}
         </span>
       </div>

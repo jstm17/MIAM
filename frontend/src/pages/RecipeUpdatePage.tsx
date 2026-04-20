@@ -13,9 +13,9 @@ import { useGetRecipeById } from "@/hooks/recipes/useGetRecipeById";
 import { useUpdateRecipe } from "@/hooks/recipes/useUpdateRecipe";
 import { useAuth } from "@/hooks/useAuth";
 import {
-  updateRecipeSchema,
-  type UpdateRecipeFormData,
-} from "@/schemas/updateRecipeForm.schemas";
+  recipeSchema,
+  type RecipeFormData
+} from "@/schemas/recipeForm.schemas";
 import type { ApiError } from "@/types/error.types";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import { useQueryClient } from "@tanstack/react-query";
@@ -43,8 +43,8 @@ export function RecipeUpdatePage() {
     reset,
     watch,
     formState: { errors },
-  } = useForm<UpdateRecipeFormData>({
-    resolver: zodResolver(updateRecipeSchema),
+  } = useForm<RecipeFormData>({
+    resolver: zodResolver(recipeSchema),
     defaultValues: {
       ingredients: [{ ingredient: "", quantity: "" }],
       instructions: [{ content: "" }],
@@ -74,7 +74,7 @@ export function RecipeUpdatePage() {
 
   const isPublic = watch("visible");
 
-  const onSubmit = async (formData: UpdateRecipeFormData) => {
+  const onSubmit = async (formData: RecipeFormData) => {
     try {
       const res = await updateRecipe(id!, {
         ...formData,

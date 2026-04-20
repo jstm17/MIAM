@@ -54,13 +54,13 @@ export const ProfileHeader = () => {
   if (isLoading) return <ProfileHeaderSkeleton />;
 
   return (
-    <div className="flex items-center justify-between w-full p-4">
+    <div className="flex items-center justify-between w-full p-4 gap-2 max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
       <Button variant="outline" size="icon-lg">
-        <Link to="/recipe-add">
+        <Link to="/add">
           <Plus />
         </Link>
       </Button>
-      <Typography variant="h1" weight="bold">
+      <Typography variant="h1" weight="bold" className="text-center truncate">
         {user?.name}
       </Typography>
 

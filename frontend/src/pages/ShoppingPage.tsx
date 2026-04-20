@@ -1,4 +1,4 @@
-import { EmptyCard } from "@/components/recipe-card/EmptyCard";
+import { EmptyCard } from "@/components/shared/EmptyCard";
 import { Layout } from "@/components/shared/Layout";
 import { Loading } from "@/components/shared/Loading";
 import { ShoppingHeader } from "@/components/shopping/ShoppingHeader";

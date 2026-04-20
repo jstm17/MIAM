@@ -3,14 +3,15 @@ import { z } from "zod";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-export const updateRecipeSchema = z.object({
+export const cookingTimeSchema = z.object({
   name: z.string().min(1, "Champ requis"),
-  timePrep: z
+  device: z.string().optional(),
+  degreeCook: z
     .number()
     .optional()
     .nullable()
     .refine((val) => val === null || val === undefined || val >= 0, {
-      message: "Le temps doit être supérieure à 0",
+      message: "La température doit être supérieure à 0",
     }),
   timeCook: z
     .number()
@@ -19,31 +20,11 @@ export const updateRecipeSchema = z.object({
     .refine((val) => val === null || val === undefined || val >= 0, {
       message: "Le temps doit être supérieure à 0",
     }),
-  personsNumber: z
-    .number()
-    .optional()
-    .nullable()
-    .refine((val) => val === null || val === undefined || val >= 0, {
-      message: "Le nombre de personnes doit être supérieure à 0",
-    }),
+  methodCook: z.string().optional(),
+  notes: z.string().optional(),
   categories: z
     .array(z.string(), { error: "Au moins une catégorie est requise" })
     .min(1, "Au moins une catégorie est requise"),
-  ingredients: z
-    .array(
-      z.object({
-        ingredient: z.string().min(1, "Champ requis"),
-        quantity: z.string().min(1, "Champ requis"),
-      }),
-    )
-    .min(1, "Au moins un ingrédient est requis"),
-  instructions: z
-    .array(
-      z.object({
-        content: z.string().min(1, "Champ requis"),
-      }),
-    )
-    .min(1, "Au moins une instruction est requise"),
   image: z
     .any()
     .transform((val) => {
@@ -79,4 +60,4 @@ export const updateRecipeSchema = z.object({
   visible: z.boolean(),
 });
 
-export type UpdateRecipeFormData = z.infer<typeof updateRecipeSchema>;
+export type CookingTimeFormData = z.infer<typeof cookingTimeSchema>;

@@ -71,12 +71,7 @@ export const UsersTable = ({ users, onDelete, onResetPassword }: Props) => {
                 </TableCell>
 
                 {/* Nom */}
-                <TableCell className="font-medium">
-                  {user.name}
-                  <div className="text-xs text-muted-foreground">
-                    {user.email}
-                  </div>
-                </TableCell>
+                <TableCell className="font-medium">{user.name}</TableCell>
 
                 {/* Nb recettes */}
                 <TableCell>{user.recipesCount}</TableCell>

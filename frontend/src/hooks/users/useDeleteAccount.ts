@@ -11,6 +11,7 @@ export const useDeleteAccount = () => {
       queryClient.removeQueries({ queryKey: ["me"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["recipes"] });
+      queryClient.invalidateQueries({ queryKey: ["cooking-times"] });
       queryClient.invalidateQueries({ queryKey: ["ingredients"] });
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },

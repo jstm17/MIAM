@@ -18,7 +18,7 @@ export const ProfileUpdateHeader = () => {
       {isLoading ? (
         <Skeleton className="h-5 w-24" />
       ) : (
-        <Typography variant="h1" weight="bold">
+        <Typography variant="h1" weight="bold" className="text-center">
           {user?.name}
         </Typography>
       )}

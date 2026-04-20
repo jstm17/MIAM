@@ -80,9 +80,9 @@ export const ShoppingIngredientsContent = () => {
       {groupedRecipes.map(({ recipe, ingredients }) => (
         <div key={recipe._id} className="space-y-4">
           <div className="mb-4 p-1 pr-0 pl-3 flex gap-2 items-center justify-between bg-primary/10 rounded-t-xl border-b border-primary">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
               <UtensilsCrossed size={20} />
-              <Typography className="text-lg" weight="semibold">
+              <Typography className="text-lg truncate" weight="semibold">
                 {recipe.name}
               </Typography>
             </div>

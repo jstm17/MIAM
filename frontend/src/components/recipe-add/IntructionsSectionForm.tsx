@@ -1,5 +1,4 @@
-import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
-import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
+import type { RecipeFormData } from "@/schemas/recipeForm.schemas";
 import { ClipboardList, MinusCircle, Plus } from "lucide-react";
 import {
   useFieldArray,
@@ -13,9 +12,9 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 
 type InstructionsSectionFormProps = {
-  control: Control<AddRecipeFormData | UpdateRecipeFormData>;
-  register: UseFormRegister<AddRecipeFormData | UpdateRecipeFormData>;
-  errors: FieldErrors<AddRecipeFormData | UpdateRecipeFormData>;
+  control: Control<RecipeFormData>;
+  register: UseFormRegister<RecipeFormData>;
+  errors: FieldErrors<RecipeFormData>;
 };
 export const InstructionsSectionForm = ({
   control,

@@ -2,12 +2,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGetAllUsersVisibles } from "@/hooks/users/useGetAllUsersVisibles";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { EmptyCard } from "../recipe-card/EmptyCard";
+import { EmptyCard } from "../shared/EmptyCard";
 import { Skeleton } from "../ui/skeleton";
 import { UserCard } from "./UserCard";
 import { UserFilters } from "./UserFilters";
 
-export const UsersContent = () => {
+export const UsersRecipeContent = () => {
   const { users, isLoading } = useGetAllUsersVisibles();
   const { user: authUser } = useAuth();
   const [sort, setSort] = useState("name");

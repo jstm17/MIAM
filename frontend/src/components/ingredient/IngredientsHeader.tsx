@@ -18,7 +18,12 @@ export const IngredientsHeader = () => {
         <Reply />
       </Button>
 
-      <Typography variant="body" weight="bold" size="lg">
+      <Typography
+        variant="body"
+        weight="bold"
+        size="lg"
+        className="text-center"
+      >
         Recherche par ingrédients
       </Typography>
       <span className="w-[38.88px] h-[38.88px]"></span>

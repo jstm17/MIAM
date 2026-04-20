@@ -1,5 +1,3 @@
-import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
-import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
 import imageCompression from "browser-image-compression";
 import { Image, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -10,18 +8,21 @@ import { Typography } from "../shared/Typography";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { Button } from "../ui/button";
 
-type ImageSectionFormProps = {
-  register: UseFormRegister<AddRecipeFormData | UpdateRecipeFormData>;
-  setValue: UseFormSetValue<AddRecipeFormData | UpdateRecipeFormData>;
+import type { FieldValues } from "react-hook-form";
+
+type ImageSectionFormProps<T extends FieldValues> = {
+  register: UseFormRegister<T>;
+  setValue: UseFormSetValue<T>;
   existingImage?: string;
   error?: string;
 };
-export const ImageSectionForm = ({
+
+export const ImageSectionForm = <T extends FieldValues>({
   register,
   setValue,
   existingImage,
   error,
-}: ImageSectionFormProps) => {
+}: ImageSectionFormProps<T>) => {
   const [fileSize, setFileSize] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(existingImage ?? null);
   const [inputKey, setInputKey] = useState(0);
@@ -30,13 +31,13 @@ export const ImageSectionForm = ({
   const handleRemoveImage = () => {
     setPreview(null);
     setFileSize(null);
-    setValue("image", undefined);
+    setValue("image" as Parameters<typeof setValue>[0], undefined as never);
     setInputKey((k) => k + 1);
     if (inputRef.current) inputRef.current.value = "";
   };
 
   useEffect(() => {
-    register("image");
+    register("image" as Parameters<typeof register>[0]);
   }, [register]);
 
   return (
@@ -93,7 +94,10 @@ export const ImageSectionForm = ({
 
               setFileSize((compressed.size / 1024).toFixed(1) + " Ko");
               setPreview(URL.createObjectURL(compressed));
-              setValue("image", compressed);
+              setValue(
+                "image" as Parameters<typeof setValue>[0],
+                compressed as never,
+              );
             } catch {
               toast.error("Erreur lors de la compression de l'image");
             }

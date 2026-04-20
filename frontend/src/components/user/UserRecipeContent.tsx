@@ -1,47 +1,40 @@
-import { useGetAllVisiblesByCategory } from "@/hooks/recipes/useGetAllRecipesVibsiblesByCategory";
-import type { Category } from "@/types/category.types";
+import { useGetAllRecipesVisiblesByUserId } from "@/hooks/recipes/useGetAllRecipesVisiblesByUserId";
+import type { User } from "@/types/user.types";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
 
-type CategoryContentProps = {
-  category: Category;
+type UserRecipeContentProps = {
+  user: User;
 };
 
-export const CategoryContent = ({ category }: CategoryContentProps) => {
-  const { recipes, totalRecipes, isLoading } = useGetAllVisiblesByCategory(
-    category.slug,
+export const UserRecipeContent = ({ user }: UserRecipeContentProps) => {
+  const { recipes, totalRecipes, isLoading } = useGetAllRecipesVisiblesByUserId(
+    user._id,
   );
   const [sort, setSort] = useState("recent");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   useEffect(() => {
     const allCategories = Array.from(
       new Set(recipes.flatMap((r) => r.categories).map((c) => c.name)),
     );
     setSelectedCategories(allCategories);
-
-    const allUsers = Array.from(
-      new Set(recipes.map((recipe) => recipe.addedBy?._id).filter(Boolean)),
-    );
-    setSelectedUsers(allUsers as string[]);
   }, [recipes]);
 
   const filteredRecipes = useMemo(() => {
     return recipes
-      .filter(
-        (recipe) =>
-          recipe.categories.some((c) => selectedCategories.includes(c.name)) &&
-          selectedUsers.includes(recipe.addedBy?._id ?? ""),
+      .filter((recipe) =>
+        recipe.categories.some((c) => selectedCategories.includes(c.name)),
       )
       .sort((a, b) =>
         sort === "recent"
           ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       );
-  }, [recipes, selectedCategories, selectedUsers, sort]);
+  }, [recipes, selectedCategories, sort]);
 
   if (isLoading) {
     return <HomeContentSkeleton />;
@@ -55,11 +48,13 @@ export const CategoryContent = ({ category }: CategoryContentProps) => {
         totalElement={filteredRecipes.length}
         sort={sort}
         setSort={setSort}
-        selectedUsers={selectedUsers}
-        setSelectedUsers={setSelectedUsers}
+        selectedCategories={selectedCategories}
+        setSelectedCategories={setSelectedCategories}
       />
       {filteredRecipes.map((recipe) => (
-        <RecipeCard recipe={recipe} key={recipe.slug} />
+        <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
+          <RecipeCard recipe={recipe} />
+        </Link>
       ))}
     </div>
   );

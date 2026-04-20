@@ -15,6 +15,21 @@ const savedRecipeSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const savedCookingTimeSchema = new mongoose.Schema(
+  {
+    cookingTime: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CookingTime",
+      required: true,
+    },
+    savedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false },
+);
+
 const savedIngredientSchema = new mongoose.Schema(
   {
     ingredient: {
@@ -69,6 +84,7 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
     savedRecipes: [savedRecipeSchema],
+    savedCookingTimes: [savedCookingTimeSchema],
     savedIngredients: [savedIngredientSchema],
     savedProducts: [savedProductSchema],
     role: {

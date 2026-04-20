@@ -2,9 +2,9 @@ import type { Recipe } from "@/types/recipe.types";
 import { Frown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
+import { EmptyCard } from "../shared/EmptyCard";
 
 type ProfileSavedRecipesContentProps = {
   recipes: Recipe[];

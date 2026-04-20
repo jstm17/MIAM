@@ -14,7 +14,7 @@ export const CategoryHeader = ({ category }: CategoryHeaderProps) => {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   return (
-    <div className="flex items-center justify-between w-full mb-4 gap-2">
+    <div className="flex items-center justify-between w-full px-4 gap-2 max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
       <Button
         size="icon-lg"
         variant="outline"
@@ -24,7 +24,12 @@ export const CategoryHeader = ({ category }: CategoryHeaderProps) => {
         <Reply />
       </Button>
 
-      <Typography variant="body" weight="bold" size="lg">
+      <Typography
+        variant="body"
+        weight="bold"
+        size="lg"
+        className="text-center truncate"
+      >
         {category?.name}
       </Typography>
       <Button

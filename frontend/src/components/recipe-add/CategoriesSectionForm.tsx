@@ -1,6 +1,4 @@
 import { useGetAllCategories } from "@/hooks/categories/useGetAllCategories";
-import type { AddRecipeFormData } from "@/schemas/addRecipeForm.schemas";
-import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
 import { ChevronsUpDown, Plus, Tags, X } from "lucide-react";
 import { useState } from "react";
 import {
@@ -16,39 +14,46 @@ import { Typography } from "../shared/Typography";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 
-type CategoriesSectionFormProps = {
-  control: Control<AddRecipeFormData | UpdateRecipeFormData>;
-  trigger: UseFormTrigger<AddRecipeFormData | UpdateRecipeFormData>;
-  setValue: UseFormSetValue<AddRecipeFormData | UpdateRecipeFormData>;
-  errors: FieldErrors<AddRecipeFormData | UpdateRecipeFormData>;
+import type {
+  FieldValues,
+  Path
+} from "react-hook-form";
+
+type CategoriesSectionFormProps<T extends FieldValues> = {
+  control: Control<T>;
+  trigger: UseFormTrigger<T>;
+  setValue: UseFormSetValue<T>;
+  errors: FieldErrors<T>;
 };
-export const CategoriesSectionForm = ({
+
+export const CategoriesSectionForm = <T extends FieldValues>({
   control,
   setValue,
   errors,
   trigger,
-}: CategoriesSectionFormProps) => {
+}: CategoriesSectionFormProps<T>) => {
+  const categories = useWatch({ control, name: "categories" as Path<T> }) as string[] || [];
   const { categories: allCategories } = useGetAllCategories();
   const [categoryInput, setCategoryInput] = useState("");
-  const categories = useWatch({ control, name: "categories" }) || [];
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const addCategory = (val: string) => {
     if (!val.trim()) return;
     if (!categories.includes(val)) {
-      setValue("categories", [...categories, val]);
-      trigger("categories");
+      setValue("categories" as Path<T>, [...categories, val] as never);
+      trigger("categories" as Path<T>);
     }
     setCategoryInput("");
   };
 
   const removeCategory = (cat: string) => {
     setValue(
-      "categories",
-      categories.filter((c) => c !== cat),
+      "categories" as Path<T>,
+      categories.filter((c) => c !== cat) as never,
     );
-    trigger("categories");
+    trigger("categories" as Path<T>);
   };
+  
   return (
     <div className="">
       <div className="border-b border-primary mb-4 py-1 rounded-t-xl flex gap-2 items-center justify-center bg-primary/10">
@@ -99,7 +104,7 @@ export const CategoriesSectionForm = ({
                   addCategory(categoryInput);
                 }
               }}
-              error={errors.categories?.message}
+              error={(errors as FieldErrors<{ categories: string[] }>).categories?.message}
               placeholder="Ex. Dessert"
               inputGroupAddon={
                 <ChevronsUpDown

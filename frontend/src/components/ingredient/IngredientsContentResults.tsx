@@ -2,9 +2,9 @@ import type { Recipe } from "@/types/recipe.types";
 import { Carrot } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
-import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
+import { EmptyCard } from "../shared/EmptyCard";
 type IngredientsContentResultsProps = {
   selectedIngredients: string[];
   resultRecipes: Recipe[];

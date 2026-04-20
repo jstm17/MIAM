@@ -6,6 +6,7 @@ export type Category = {
   createdAt: string;
   updatedAt: string;
   recipesCount?: number;
+  cookingTimesCount?: number;
 };
 
 export type CreateCategoryDto = {

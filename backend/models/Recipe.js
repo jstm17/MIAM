@@ -10,7 +10,6 @@ const ingredientSchema = new mongoose.Schema(
     },
     quantity: {
       type: String,
-      required: true,
     },
   },
   { _id: false },

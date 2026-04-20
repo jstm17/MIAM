@@ -7,7 +7,7 @@ import {
 import { useGetTopCategoriesVisibles } from "@/hooks/categories/useGetTopCategoriesVisibles";
 import { ChevronRight, Tags } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { EmptyCard } from "../recipe-card/EmptyCard";
+import { EmptyCard } from "../shared/EmptyCard";
 import { Typography } from "../shared/Typography";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { Skeleton } from "../ui/skeleton";
@@ -71,7 +71,7 @@ export function CategoryCarousel() {
           title="0 catégorie disponible"
           description="Personne n'a ajouté de recette."
           buttonText="Ajouter une recette"
-          onButtonClick={() => navigate("/recipe-add")}
+          onButtonClick={() => navigate("/add")}
         />
       </div>
     );
@@ -83,7 +83,10 @@ export function CategoryCarousel() {
       <Carousel opts={{ align: "start" }} className="w-[110%]">
         <CarouselContent>
           {categories.map((cat) => (
-            <CarouselItem key={cat._id} className="basis-1/3">
+            <CarouselItem
+              key={cat._id}
+              className="basis-1/3 max-w-full overflow-hidden whitespace-nowrap text-ellipsis"
+            >
               <Link to={`/category/${cat.slug}`}>
                 <div className="py-2 ">
                   <Card className="p-0 active:brightness-95">
@@ -101,7 +104,7 @@ export function CategoryCarousel() {
                   <Typography
                     weight="semibold"
                     size="sm"
-                    className="text-center"
+                    className="text-center truncate"
                   >
                     {cat.name}
                   </Typography>

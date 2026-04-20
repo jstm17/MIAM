@@ -3,7 +3,7 @@ import { z } from "zod";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-export const addRecipeSchema = z.object({
+export const recipeSchema = z.object({
   name: z.string().min(1, "Champ requis"),
   timePrep: z
     .number()
@@ -33,7 +33,7 @@ export const addRecipeSchema = z.object({
     .array(
       z.object({
         ingredient: z.string().min(1, "Champ requis"),
-        quantity: z.string().min(1, "Champ requis"),
+        quantity: z.string().optional(),
       }),
     )
     .min(1, "Au moins un ingrédient est requis"),
@@ -79,4 +79,4 @@ export const addRecipeSchema = z.object({
   visible: z.boolean(),
 });
 
-export type AddRecipeFormData = z.infer<typeof addRecipeSchema>;
+export type RecipeFormData = z.infer<typeof recipeSchema>;

@@ -1,8 +1,8 @@
 import type { Recipe } from "@/types/recipe.types";
 import { useNavigate } from "react-router-dom";
-import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
+import { EmptyCard } from "../shared/EmptyCard";
 
 import { useMemo, useState } from "react";
 
@@ -48,7 +48,7 @@ export const ProfileMyRecipesContent = ({
         title="0 recette disponible"
         description="Vous n'avez ajouté aucune recette."
         buttonText="Ajouter une recette"
-        onButtonClick={() => navigate("/recipe-add")}
+        onButtonClick={() => navigate("/add")}
       />
     );
   }

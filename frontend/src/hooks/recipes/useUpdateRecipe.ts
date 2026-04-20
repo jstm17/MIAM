@@ -1,4 +1,4 @@
-import type { UpdateRecipeFormData } from "@/schemas/updateRecipeForm.schemas";
+import type { RecipeFormData } from "@/schemas/recipeForm.schemas";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { recipeService } from "../../services/recipeService";
@@ -7,13 +7,7 @@ export const useUpdateRecipe = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending, error } = useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: UpdateRecipeFormData;
-    }) => {
+    mutationFn: async ({ id, data }: { id: string; data: RecipeFormData }) => {
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("timePrep", data.timePrep?.toString() ?? "");
@@ -51,7 +45,7 @@ export const useUpdateRecipe = () => {
     },
   });
 
-  const updateRecipe = (id: string, data: UpdateRecipeFormData) =>
+  const updateRecipe = (id: string, data: RecipeFormData) =>
     mutateAsync({ id, data });
 
   return { updateRecipe, isPending, error };

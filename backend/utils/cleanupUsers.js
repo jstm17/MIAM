@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Recipe = require("../models/Recipe");
 const Ingredient = require("../models/Ingredient");
+const CookingTime = require("../models/CookingTime");
 
 exports.CleanUsersOrphanData = async () => {
   try {
@@ -8,6 +9,7 @@ exports.CleanUsersOrphanData = async () => {
 
     // 1️⃣ récupérer les ids encore existants
     const existingRecipeIds = await Recipe.distinct("_id");
+    const existingCookingTimeIds = await CookingTime.distinct("_id");
     const existingIngredientIds = await Ingredient.distinct("_id");
 
     // 2️⃣ supprimer recettes sauvegardées inexistantes
@@ -41,6 +43,17 @@ exports.CleanUsersOrphanData = async () => {
         $pull: {
           savedIngredients: {
             ingredient: { $nin: existingIngredientIds },
+          },
+        },
+      },
+    );
+    // 5️⃣ supprimer temps de cuisson sauvegardés inexistants
+    await User.updateMany(
+      {},
+      {
+        $pull: {
+          savedCookingTimes: {
+            cookingTime: { $nin: existingCookingTimeIds },
           },
         },
       },

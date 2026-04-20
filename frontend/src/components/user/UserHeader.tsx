@@ -14,7 +14,7 @@ export const UserHeader = ({ user }: UserHeaderProps) => {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   return (
-    <div className="flex items-center justify-between w-full mb-4 gap-2">
+    <div className="flex items-center justify-between w-full px-4gap-2  max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
       <Button
         size="icon-lg"
         variant="outline"
@@ -24,7 +24,7 @@ export const UserHeader = ({ user }: UserHeaderProps) => {
         <Reply />
       </Button>
 
-      <Typography variant="body" weight="bold">
+      <Typography variant="body" weight="bold" className="text-center truncate">
         {user?.name}
       </Typography>
       <Button

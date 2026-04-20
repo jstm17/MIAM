@@ -10,17 +10,13 @@ const cloudinary = require("cloudinary").v2;
 const { CleanUsersOrphanData } = require("../utils/cleanupUsers");
 const { compressAndUploadImage } = require("../utils/imageUpload");
 const { deleteImageFromCloudinary } = require("../utils/cloudinaryUtils");
+const CookingTime = require("../models/CookingTime");
 
 const sanitizeSavedLists = (user) => {
-  if (!Array.isArray(user.savedRecipes)) {
-    user.savedRecipes = [];
-  }
-  if (!Array.isArray(user.savedIngredients)) {
-    user.savedIngredients = [];
-  }
-  if (!Array.isArray(user.savedProducts)) {
-    user.savedProducts = [];
-  }
+  if (!Array.isArray(user.savedRecipes)) user.savedRecipes = [];
+  if (!Array.isArray(user.savedIngredients)) user.savedIngredients = [];
+  if (!Array.isArray(user.savedProducts)) user.savedProducts = [];
+  if (!Array.isArray(user.savedCookingTimes)) user.savedCookingTimes = [];
 
   user.savedRecipes = user.savedRecipes.filter(
     (savedRecipe) => savedRecipe && savedRecipe.recipe,
@@ -28,6 +24,9 @@ const sanitizeSavedLists = (user) => {
   user.savedIngredients = user.savedIngredients.filter(
     (savedIngredient) =>
       savedIngredient && savedIngredient.ingredient && savedIngredient.recipe,
+  );
+  user.savedCookingTimes = user.savedCookingTimes.filter(
+    (savedCookingTime) => savedCookingTime && savedCookingTime.cookingTime,
   );
 };
 
@@ -146,6 +145,10 @@ exports.GetMe = async (req, res) => {
           { path: "categories" },
           { path: "addedBy" },
         ],
+      })
+      .populate({
+        path: "savedCookingTimes.cookingTime",
+        populate: [{ path: "categories" }, { path: "addedBy", select: "name" }],
       });
 
     if (!user) {
@@ -202,6 +205,39 @@ exports.SaveRecipe = async (req, res) => {
     res.status(500).json({
       error: true,
       message: "Erreur Server - La recette n'a pas pu être sauvegardée",
+    });
+  }
+};
+
+// Save CookingTime
+exports.SaveCookingTime = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $push: {
+          savedCookingTimes: {
+            cookingTime: req.params.cookingTimeId,
+            savedAt: new Date(),
+          },
+        },
+      },
+      { returnDocument: "after" },
+    ).populate({
+      path: "savedCookingTimes.cookingTime",
+      populate: [{ path: "categories" }, { path: "addedBy", select: "name" }],
+    });
+
+    return res.status(200).json({
+      error: false,
+      message: "Temps de cuisson sauvegardé",
+      data: user.savedCookingTimes,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - Le temps de cuisson n'a pas pu être sauvegardé",
     });
   }
 };
@@ -392,6 +428,29 @@ exports.UnsaveRecipe = async (req, res) => {
   }
 };
 
+// Unsave CookingTime
+exports.UnsaveCookingTime = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $pull: { savedCookingTimes: { recipe: req.params.recipeId } } },
+      { returnDocument: "after" },
+    );
+
+    return res.status(200).json({
+      error: false,
+      message: "Temps de cuisson retiré des favoris",
+      data: user.savedCookingTimes,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - Le temps de cuisson n'a pas pu être retiré",
+    });
+  }
+};
+
 // Update User Profile
 exports.UpdateUserProfile = async (req, res) => {
   try {
@@ -547,7 +606,7 @@ exports.UpdatePassword = async (req, res) => {
   }
 };
 
-exports.DeleteUser = async (req, res) => {
+exports.DeleteAccount = async (req, res) => {
   try {
     if (!req.user?.id) {
       return res.status(401).json({
@@ -584,18 +643,121 @@ exports.DeleteUser = async (req, res) => {
 
     // 4️⃣ supprimer les recettes du user
     await Recipe.deleteMany({ addedBy: userId });
+    await CookingTime.deleteMany({ addedBy: userId });
 
     // 5️⃣ identifier les ingrédients et catégories orphelins
     const stillUsedIngredients = await Recipe.distinct(
       "ingredients.ingredient",
     );
-    const stillUsedCategories = await Recipe.distinct("categories");
+    const stillUsedCategoriesRecipe = await Recipe.distinct("categories");
+    const stillUsedCategoriesCookingTime = await CookingTime.distinct(
+      "categories",
+    );
 
     const orphanIngredients = ingredientIds.filter(
       (id) => !stillUsedIngredients.some((used) => used.equals(id)),
     );
     const orphanCategories = categoryIds.filter(
-      (id) => !stillUsedCategories.some((used) => used.equals(id)),
+      (id) =>
+        !stillUsedCategoriesRecipe.some((used) => used.equals(id)) &&
+        !stillUsedCategoriesCookingTime.some((used) => used.equals(id)),
+    );
+
+    // 6️⃣ récupérer les images des orphelins avant suppression
+    const orphanIngredientImages = (
+      await Ingredient.find({ _id: { $in: orphanIngredients } }).select("url")
+    )
+      .map((i) => i.url)
+      .filter(Boolean);
+
+    const orphanCategoryImages = (
+      await Category.find({ _id: { $in: orphanCategories } }).select("image")
+    )
+      .map((c) => c.image)
+      .filter(Boolean);
+
+    // 7️⃣ supprimer les orphelins de la DB
+    await Ingredient.deleteMany({ _id: { $in: orphanIngredients } });
+    await Category.deleteMany({ _id: { $in: orphanCategories } });
+
+    // 8️⃣ supprimer l'utilisateur de la DB
+    await User.findByIdAndDelete(userId);
+
+    // 9️⃣ Nettoyage Cloudinary en arrière-plan (ou attendre, ici on attend pour être sûr)
+    const allImagesToDelete = [
+      userToDelete.avatar,
+      ...recipeImages,
+      ...orphanIngredientImages,
+      ...orphanCategoryImages,
+    ].filter(Boolean);
+
+    for (const imageUrl of allImagesToDelete) {
+      await deleteImageFromCloudinary(imageUrl);
+    }
+
+    await CleanUsersOrphanData();
+
+    res.status(200).json({
+      error: false,
+      message: "Compte supprimé avec succès",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur - suppression échouée",
+    });
+  }
+};
+
+exports.DeleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // 1️⃣ récupérer le user et son avatar
+    const userToDelete = await User.findById(userId);
+    if (!userToDelete) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Utilisateur non trouvé" });
+    }
+
+    // 2️⃣ récupérer les recettes du user (avec leurs images)
+    const userRecipes = await Recipe.find({ addedBy: userId })
+      .select("_id ingredients categories image")
+      .lean();
+
+    const recipeIds = userRecipes.map((r) => r._id);
+    const recipeImages = userRecipes.map((r) => r.image).filter(Boolean);
+
+    // 3️⃣ récupérer IDs uniques ingrédients + catégories
+    const ingredientIds = [
+      ...new Set(
+        userRecipes.flatMap((r) => r.ingredients.map((i) => i.ingredient)),
+      ),
+    ];
+    const categoryIds = [...new Set(userRecipes.flatMap((r) => r.categories))];
+
+    // 4️⃣ supprimer les recettes du user
+    await Recipe.deleteMany({ addedBy: userId });
+    await CookingTime.deleteMany({ addedBy: userId });
+
+    // 5️⃣ identifier les ingrédients et catégories orphelins
+    const stillUsedIngredients = await Recipe.distinct(
+      "ingredients.ingredient",
+    );
+    const stillUsedCategoriesRecipe = await Recipe.distinct("categories");
+    const stillUsedCategoriesCookingTime = await CookingTime.distinct(
+      "categories",
+    );
+
+    const orphanIngredients = ingredientIds.filter(
+      (id) => !stillUsedIngredients.some((used) => used.equals(id)),
+    );
+    const orphanCategories = categoryIds.filter(
+      (id) =>
+        !stillUsedCategoriesRecipe.some((used) => used.equals(id)) &&
+        !stillUsedCategoriesCookingTime.some((used) => used.equals(id)),
     );
 
     // 6️⃣ récupérer les images des orphelins avant suppression
@@ -763,6 +925,54 @@ exports.GetAllUsersVisibles = async (req, res) => {
   }
 };
 
+exports.GetAllUsersVisiblesCookingTime = async (req, res) => {
+  try {
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "cookingtimes",
+          let: { userId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$addedBy", "$$userId"] },
+                    { $eq: ["$visible", true] },
+                  ],
+                },
+              },
+            },
+            { $count: "count" },
+          ],
+          as: "cookingTimesCountData",
+        },
+      },
+      {
+        $addFields: {
+          cookingTimesCount: {
+            $ifNull: [{ $arrayElemAt: ["$cookingTimesCountData.count", 0] }, 0],
+          },
+        },
+      },
+      { $project: { password: 0, cookingTimesCountData: 0 } },
+      { $sort: { name: 1 } },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      message: "Utilisateurs récupérés avec succès",
+      data: users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
 // Get top users by visible recipe count
 exports.GetTopAllUsers = async (req, res) => {
   try {
@@ -809,6 +1019,55 @@ exports.GetTopAllUsers = async (req, res) => {
   }
 };
 
+// Get top users by visible cooking time count
+exports.GetTopAllUsersCookingTime = async (req, res) => {
+  try {
+    const topUsers = await CookingTime.aggregate([
+      { $match: { visible: true, addedBy: { $exists: true, $ne: null } } },
+      {
+        $group: {
+          _id: "$addedBy",
+          cookingTimesCount: { $sum: 1 },
+        },
+      },
+      { $sort: { cookingTimesCount: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              "$user",
+              { cookingTimesCount: "$cookingTimesCount" },
+            ],
+          },
+        },
+      },
+      { $project: { password: 0 } },
+    ]);
+
+    return res.status(200).json({
+      error: false,
+      message: "Top utilisateurs récupérés avec succès",
+      data: topUsers,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur serveur",
+    });
+  }
+};
+
 // Get user by slug
 exports.GetUserBySlug = async (req, res) => {
   try {
@@ -821,6 +1080,13 @@ exports.GetUserBySlug = async (req, res) => {
         populate: [
           { path: "categories" },
           { path: "ingredients.ingredient" },
+          { path: "addedBy", select: "name slug" },
+        ],
+      })
+      .populate({
+        path: "savedCookingTimes.cookingTime",
+        populate: [
+          { path: "categories" },
           { path: "addedBy", select: "name slug" },
         ],
       });
@@ -975,15 +1241,20 @@ module.exports = {
   GetMe: exports.GetMe,
   SaveRecipe: exports.SaveRecipe,
   UnsaveRecipe: exports.UnsaveRecipe,
+  SaveCookingTime: exports.SaveCookingTime,
+  UnsaveCookingTime: exports.UnsaveCookingTime,
   AddIngredientToCart: exports.AddIngredientToCart,
   RemoveIngredientFromCart: exports.RemoveIngredientFromCart,
   ClearShoppingList: exports.ClearShoppingList,
   UpdateUserProfile: exports.UpdateUserProfile,
   UpdatePassword: exports.UpdatePassword,
+  DeleteAccount: exports.DeleteAccount,
   DeleteUser: exports.DeleteUser,
   GetAllUsers: exports.GetAllUsers,
   GetAllUsersVisibles: exports.GetAllUsersVisibles,
+  GetAllUsersVisiblesCookingTime: exports.GetAllUsersVisiblesCookingTime,
   GetTopAllUsers: exports.GetTopAllUsers,
+  GetTopAllUsersCookingTime: exports.GetTopAllUsersCookingTime,
   GetUserBySlug: exports.GetUserBySlug,
   AddProductToCart: exports.AddProductToCart,
   UpdateProductInCart: exports.UpdateProductInCart,

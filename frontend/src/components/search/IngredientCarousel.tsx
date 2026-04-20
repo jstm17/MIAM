@@ -1,7 +1,7 @@
 import type { Recipe } from "@/types/recipe.types";
 import { Carrot } from "lucide-react";
-import { EmptyCard } from "../recipe-card/EmptyCard";
 import { RecipeCard } from "../recipe-card/RecipeCard";
+import { EmptyCard } from "../shared/EmptyCard";
 import { Typography } from "../shared/Typography";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";

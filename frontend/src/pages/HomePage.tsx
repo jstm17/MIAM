@@ -2,15 +2,12 @@ import { HomeCookingTimeContent } from "@/components/home/HomeCookingTimeContent
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { HomeRecipeContent } from "@/components/home/HomeRecipeContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/useAuth";
 import { Timer, UtensilsCrossed } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "../components/shared/Layout";
 
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const { isAdmin } = useAuth();
 
   const defaultTab =
     searchParams.get("tab") === "cooking-time" ? "cooking-time" : "recipe";

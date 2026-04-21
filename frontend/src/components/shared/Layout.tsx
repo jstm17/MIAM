@@ -10,7 +10,6 @@ type LayoutProps = {
   title?: string;
   titleSize?: "lg" | "sm" | "md" | undefined;
   className?: string;
-  style?: string;
   navBar?: boolean;
   header?: boolean;
 };
@@ -19,7 +18,6 @@ export const Layout = ({
   title,
   titleSize = "lg",
   className = "p-4 pb-[calc(78px+env(safe-area-inset-bottom))]",
-  style,
   navBar = true,
   header = false,
 }: LayoutProps) => {

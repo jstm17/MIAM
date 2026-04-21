@@ -1,5 +1,6 @@
 const { generateJwt } = require("../utils/jwtUtils");
 const { hashPassword, verifyPassword } = require("../utils/passwordUtils");
+const crypto = require("crypto");
 
 const User = require("../models/User");
 const Ingredient = require("../models/Ingredient");
@@ -1252,6 +1253,78 @@ exports.UpdateProductInCart = async (req, res) => {
   }
 };
 
+exports.ResetPassword = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Utilisateur non trouvé" });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Save token to user
+    user.resetToken = resetToken;
+    user.resetTokenExpires = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+    // Generate reset link
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${resetToken}`;
+
+    // In real app, send email here
+    console.log(`Reset link for ${user.name}: ${resetLink}`);
+
+    return res.status(200).json({
+      error: false,
+      message: "Lien de réinitialisation généré et envoyé par email",
+      data: { resetLink },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
+exports.ResetPasswordWithToken = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({
+        error: true,
+        message: "Token et nouveau mot de passe requis",
+      });
+    }
+
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        error: true,
+        message: "Token invalide ou expiré",
+      });
+    }
+
+    user.password = await hashPassword(newPassword);
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Mot de passe réinitialisé avec succès",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
 module.exports = {
   Register: exports.Register,
   Login: exports.Login,
@@ -1276,4 +1349,6 @@ module.exports = {
   AddProductToCart: exports.AddProductToCart,
   UpdateProductInCart: exports.UpdateProductInCart,
   RemoveProductFromCart: exports.RemoveProductFromCart,
+  ResetPassword: exports.ResetPassword,
+  ResetPasswordWithToken: exports.ResetPasswordWithToken,
 };

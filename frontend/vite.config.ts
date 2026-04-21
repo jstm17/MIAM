@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        "/api": `http://192.0.0.2:5173:${PORT}`,
+        "/api": `http://localhost:${PORT}`,
       },
     },
   };

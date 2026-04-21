@@ -29,8 +29,10 @@ export type Recipe = {
   savedAt?: string;
 };
 
-export type CreateRecipeDto = {
+export type AdminRecipe = {
+  _id: string;
   name: string;
+  slug: string;
   ingredients: RecipeIngredient[];
   timePrep: number;
   timeCook: number;
@@ -38,6 +40,6 @@ export type CreateRecipeDto = {
   instructions: RecipeInstruction[];
   personsNumber: number;
   visible: boolean;
+  addedBy: User;
+  createdAt: string;
 };
-
-export type UpdateRecipeDto = Partial<CreateRecipeDto>;

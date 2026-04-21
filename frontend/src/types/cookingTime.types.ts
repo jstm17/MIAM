@@ -18,3 +18,11 @@ export type CookingTime = {
   updatedAt: string;
   savedAt?: string;
 };
+
+export type AdminCookingTime = {
+  _id: string;
+  name: string;
+  slug: string;
+  addedBy: User;
+  createdAt: string;
+};

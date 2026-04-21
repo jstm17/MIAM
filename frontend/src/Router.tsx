@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { AdminRoute } from "./AdminRoute.js";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute.js";
+import { AdminCookingTimesPage } from "./pages/AdminCookingTimesPage.js";
 import { AdminIngredientsPage } from "./pages/AdminIngredientsPage.js";
 import { AdminPage } from "./pages/AdminPage.js";
 import { AdminRecipesPage } from "./pages/AdminRecipesPage.js";
@@ -20,6 +21,7 @@ import { RecipeAddPage } from "./pages/RecipeAddPage.js";
 import { RecipeDetailsPage } from "./pages/RecipeDetailsPage.js";
 import { RecipeUpdatePage } from "./pages/RecipeUpdatePage.js";
 import { RegisterPage } from "./pages/RegisterPage.js";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage.js";
 import { SearchPage } from "./pages/SearchPage.js";
 import { ShoppingPage } from "./pages/ShoppingPage.js";
 import { UserPage } from "./pages/UserPage";
@@ -32,6 +34,7 @@ export const Router = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route
           path="/profile"
           element={
@@ -113,6 +116,14 @@ export const Router = () => {
           element={
             <AdminRoute>
               <AdminRecipesPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/cooking-times"
+          element={
+            <AdminRoute>
+              <AdminCookingTimesPage />
             </AdminRoute>
           }
         />

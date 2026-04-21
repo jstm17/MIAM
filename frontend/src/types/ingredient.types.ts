@@ -6,7 +6,10 @@ export type Ingredient = {
   updatedAt: string;
 };
 
-export type CreateIngredientDto = {
+export type AdminIngredient = {
+  _id: string;
   name: string;
   url?: string;
+  createdAt: string;
+  recipesCount: number;
 };

@@ -52,6 +52,9 @@ export const userService = {
 
   deleteUser: (id: string) => axiosInstance.delete(`${USER_URL}/${id}`),
 
+  deleteMany: (ids: string[]) =>
+    axiosInstance.delete(`${USER_URL}`, { data: { ids } }),
+
   deleteAccount: () => axiosInstance.delete(USER_URL),
 
   addProductToCart: (name: string) =>

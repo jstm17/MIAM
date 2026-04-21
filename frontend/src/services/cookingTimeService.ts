@@ -19,6 +19,8 @@ export const cookingTimeService = {
   update: (slug: string, data: unknown) =>
     axiosInstance.put(`${COOKING_TIME_URL}/${slug}`, data),
   delete: (id: string) => axiosInstance.delete(`${COOKING_TIME_URL}/${id}`),
+  deleteMany: (ids: string[]) =>
+    axiosInstance.delete(`${COOKING_TIME_URL}`, { data: { ids } }),
   show: (id: string) => axiosInstance.patch(`${COOKING_TIME_URL}/${id}/show`),
   hide: (id: string) => axiosInstance.patch(`${COOKING_TIME_URL}/${id}/hide`),
 };

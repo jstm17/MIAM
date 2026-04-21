@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { recipeService } from "../../services/recipeService";
-import type { Recipe } from "../../types/recipe.types";
+import type { AdminRecipe } from "../../types/recipe.types";
 
 export const useGetAllRecipes = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["recipes"],
     queryFn: () =>
-      recipeService.getAll().then((res) => res.data.data as Recipe[]),
+      recipeService.getAll().then((res) => res.data.data as AdminRecipe[]),
     staleTime: 0,
   });
 

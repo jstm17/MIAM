@@ -17,6 +17,8 @@ export const recipeService = {
   update: (slug: string, data: unknown) =>
     axiosInstance.put(`${RECIPE_URL}/${slug}`, data),
   delete: (id: string) => axiosInstance.delete(`${RECIPE_URL}/${id}`),
+  deleteMany: (ids: string[]) =>
+    axiosInstance.delete(`${RECIPE_URL}`, { data: { ids } }),
   show: (id: string) => axiosInstance.patch(`${RECIPE_URL}/${id}/show`),
   hide: (id: string) => axiosInstance.patch(`${RECIPE_URL}/${id}/hide`),
 };

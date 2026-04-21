@@ -12,16 +12,22 @@ import {
 } from "@/components/ui/table";
 import type { AdminUser } from "@/types/user.types";
 import { formatDateShort } from "@/utils/formatDate";
-import { Mail, Trash2 } from "lucide-react";
+import { Mail, Trash2, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 
-type Props = {
+type UsersTableProps = {
   users: AdminUser[];
   onDelete: (id: string) => void;
+  onDeleteMany: (ids: string[]) => void;
   onResetPassword: (id: string) => void;
 };
 
-export const UsersTable = ({ users, onDelete, onResetPassword }: Props) => {
+export const UsersTable = ({
+  users,
+  onDelete,
+  onDeleteMany,
+  onResetPassword,
+}: UsersTableProps) => {
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggleAll = () => {
@@ -39,6 +45,23 @@ export const UsersTable = ({ users, onDelete, onResetPassword }: Props) => {
 
   return (
     <div className="rounded-2xl border bg-card shadow-sm">
+      {selected.length > 0 && (
+        <div className="flex items-center gap-2 p-3 border-b bg-muted/50 rounded-t-2xl">
+          <span className="text-sm text-muted-foreground flex-1">
+            {selected.length} sélectionné(s)
+          </span>
+          <Button
+            size="icon-lg"
+            variant="destructive"
+            onClick={() => {
+              onDeleteMany(selected);
+              setSelected([]);
+            }}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -50,7 +73,9 @@ export const UsersTable = ({ users, onDelete, onResetPassword }: Props) => {
             </TableHead>
 
             <TableHead>Nom</TableHead>
-            <TableHead>Recettes</TableHead>
+            <TableHead>
+              <UtensilsCrossed size={16} />
+            </TableHead>
             <TableHead>Créé le</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>

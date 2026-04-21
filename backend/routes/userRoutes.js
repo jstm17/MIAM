@@ -48,6 +48,7 @@ router.put(
 );
 router.put("/update-password", auth, userController.UpdatePassword);
 router.put("/product", auth, userController.UpdateProductInCart);
+router.post("/reset-password", userController.ResetPasswordWithToken);
 router.post("/product", auth, userController.AddProductToCart);
 router.delete("/product", auth, userController.RemoveProductFromCart);
 router.delete("/:id", auth, userController.DeleteUser);

@@ -37,9 +37,9 @@ export const Layout = ({
         className={`w-screen flex flex-col max-w-lg mx-auto ${className} gap-4`}
         style={{
           minHeight: `calc(100dvh - 58px - env(safe-area-inset-bottom)${header ? " - 54px" : ""})`,
-          paddingBottom: `calc(${
-            isAdmin ? "108px" : "0"
-          } + env(safe-area-inset-bottom))`,
+          ...(isAdmin && {
+            paddingBottom: `calc(108px + env(safe-area-inset-bottom))`,
+          }),
         }}
       >
         {title && (

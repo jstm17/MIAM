@@ -3,6 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Table,
   TableBody,
   TableCell,
@@ -13,6 +20,7 @@ import {
 import type { AdminIngredient } from "@/types/ingredient.types";
 import { ImageUp, Trash2, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
+import { TextInput } from "../shared/TextInput";
 import { Skeleton } from "../ui/skeleton";
 
 type Props = {
@@ -21,6 +29,7 @@ type Props = {
   onResetUrl: (id: string) => void;
   onDeleteMany: (ids: string[]) => void;
   onResetUrlMany: (ids: string[]) => void;
+  onUpdateUrl?: (id: string, url: string) => Promise<void>;
 };
 
 export const IngredientsTable = ({
@@ -29,8 +38,12 @@ export const IngredientsTable = ({
   onResetUrl,
   onDeleteMany,
   onResetUrlMany,
+  onUpdateUrl,
 }: Props) => {
   const [selected, setSelected] = useState<string[]>([]);
+  const [urlInput, setUrlInput] = useState<{ [key: string]: string }>({});
+  const [openPopover, setOpenPopover] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const toggleAll = () => {
     if (selected.length === ingredients.length) setSelected([]);
@@ -41,6 +54,20 @@ export const IngredientsTable = ({
     setSelected((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
+  };
+
+  const handleUpdateUrl = async (id: string) => {
+    const url = urlInput[id];
+    if (!url || !onUpdateUrl) return;
+
+    setIsUpdating(true);
+    try {
+      await onUpdateUrl(id, url);
+      setUrlInput((prev) => ({ ...prev, [id]: "" }));
+      setOpenPopover(null);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
@@ -114,13 +141,50 @@ export const IngredientsTable = ({
                 {/* Nb recettes */}
                 <TableCell>{ingredient.recipesCount}</TableCell>
 
-                <TableCell>
-                  {ingredient.url ? (
-                    <img src={ingredient.url} className="max-h-8" />
-                  ) : (
-                    <Skeleton className="h-8 w-8" />
-                  )}
-                </TableCell>
+                <Popover
+                  open={openPopover === ingredient._id}
+                  onOpenChange={(open) =>
+                    setOpenPopover(open ? ingredient._id : null)
+                  }
+                >
+                  <PopoverTrigger asChild>
+                    <TableCell>
+                      {ingredient.url ? (
+                        <img src={ingredient.url} className="max-h-8" />
+                      ) : (
+                        <Skeleton className="h-8 w-8" />
+                      )}
+                    </TableCell>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64" align="end">
+                    <PopoverHeader>
+                      <PopoverTitle className="font-semibold">
+                        Changer l'url
+                      </PopoverTitle>
+                    </PopoverHeader>
+                    <div className="space-y-2">
+                      <TextInput
+                        placeholder="https://..."
+                        value={urlInput[ingredient._id] || ""}
+                        onChange={(e) =>
+                          setUrlInput((prev) => ({
+                            ...prev,
+                            [ingredient._id]: e.target.value,
+                          }))
+                        }
+                        disabled={isUpdating}
+                      />
+                      <Button
+                        size="lg"
+                        onClick={() => handleUpdateUrl(ingredient._id)}
+                        disabled={!urlInput[ingredient._id] || isUpdating}
+                        className="w-full"
+                      >
+                        {isUpdating ? "Mise à jour..." : "Valider"}
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
 
                 {/* Actions */}
                 <TableCell className="text-right space-x-2">

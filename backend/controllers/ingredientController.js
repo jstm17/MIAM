@@ -168,16 +168,92 @@ exports.ResetIngredientUrl = async (req, res) => {
       }
     }
 
-    // Remettre l'url à null
-    await Ingredient.findByIdAndUpdate(req.params.id, { url: null });
+    // Fetch et upload une nouvelle image
+    const {
+      fetchAndUploadIngredientImage,
+    } = require("../utils/fetchAndUploadIngredientImage");
+    const newUrl = await fetchAndUploadIngredientImage(ingredient.name);
+
+    // Mettre à jour l'ingrédient avec la nouvelle URL
+    const updatedIngredient = await Ingredient.findByIdAndUpdate(
+      req.params.id,
+      { url: newUrl },
+      { new: true },
+    );
 
     return res.status(200).json({
       error: false,
       message: "URL réinitialisée avec succès",
+      data: updatedIngredient,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
+exports.UpdateIngredientUrl = async (req, res) => {
+  try {
+    const { url } = req.body;
+
+    if (!url) {
+      return res.status(400).json({ error: true, message: "URL requise" });
+    }
+
+    const ingredient = await Ingredient.findById(req.params.id);
+
+    if (!ingredient) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Ingrédient non trouvé" });
+    }
+
+    // Supprimer l'ancienne image Cloudinary si elle existe
+    if (ingredient.url) {
+      try {
+        const urlParts = ingredient.url.split("/");
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = `ingredients/${filename.split(".")[0]}`;
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudinaryError) {
+        console.error("Erreur suppression image:", cloudinaryError);
+      }
+    }
+
+    // Télécharger la nouvelle image
+    const axios = require("axios");
+    const imageResponse = await axios.get(url, {
+      responseType: "arraybuffer",
+      timeout: 10000,
+    });
+
+    const base64 = Buffer.from(imageResponse.data).toString("base64");
+    const mimeType = imageResponse.headers["content-type"] || "image/jpeg";
+
+    // Upload en Cloudinary
+    const cloudinaryRes = await cloudinary.uploader.upload(
+      `data:${mimeType};base64,${base64}`,
+      { folder: "ingredients" },
+    );
+
+    // Mettre à jour l'ingrédient
+    const updatedIngredient = await Ingredient.findByIdAndUpdate(
+      req.params.id,
+      { url: cloudinaryRes.secure_url },
+      { new: true },
+    );
+
+    return res.status(200).json({
+      error: false,
+      message: "URL mise à jour avec succès",
+      data: updatedIngredient,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: error.message || "Erreur serveur",
+    });
   }
 };
 
@@ -253,11 +329,26 @@ exports.ResetIngredientsUrl = async (req, res) => {
       }
     }
 
-    await Ingredient.updateMany({ _id: { $in: ids } }, { url: null });
+    // Fetch et upload de nouvelles images
+    const {
+      fetchAndUploadIngredientImage,
+    } = require("../utils/fetchAndUploadIngredientImage");
+
+    const updatedIngredients = [];
+    for (const ingredient of ingredients) {
+      const newUrl = await fetchAndUploadIngredientImage(ingredient.name);
+      const updated = await Ingredient.findByIdAndUpdate(
+        ingredient._id,
+        { url: newUrl },
+        { new: true },
+      );
+      updatedIngredients.push(updated);
+    }
 
     return res.status(200).json({
       error: false,
-      message: `URL réinitialisée pour ${ingredients.length} ingrédient(s)`,
+      message: `URL réinitialisée pour ${updatedIngredients.length} ingrédient(s)`,
+      data: updatedIngredients,
     });
   } catch (error) {
     console.error(error);

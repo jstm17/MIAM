@@ -7,9 +7,15 @@ export const useResetIngredientUrl = () => {
 
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: (id: string) =>
-      ingredientService.resetUrl(id).then((res) => res.data),
-    onSuccess: () => {
+      ingredientService.resetUrl(id).then((res) => res.data.data),
+    onSuccess: (updatedIngredient) => {
+      // Invalider la query pour refetch les ingrédients
       queryClient.invalidateQueries({ queryKey: ["ingredients"] });
+      // Optionnel: mettre à jour le cache directement
+      queryClient.setQueryData(
+        ["ingredient", updatedIngredient._id],
+        updatedIngredient,
+      );
     },
     onError: (err: AxiosError<{ message: string }>) => {
       throw new Error(err.response?.data?.message || err.message);

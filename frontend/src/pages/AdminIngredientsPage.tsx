@@ -9,6 +9,7 @@ import { useDeleteIngredients } from "@/hooks/ingredients/useDeleteIngredients";
 import { useGetAllIngredients } from "@/hooks/ingredients/useGetAllIngredients";
 import { useResetIngredientsUrl } from "@/hooks/ingredients/useResetIngredientsUrl";
 import { useResetIngredientUrl } from "@/hooks/ingredients/useResetIngredientUrl";
+import { useUpdateIngredientUrl } from "@/hooks/ingredients/useUpdateIngredientUrl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -22,6 +23,7 @@ export const AdminIngredientsPage = () => {
   const { resetUrl } = useResetIngredientUrl();
   const { deleteIngredients } = useDeleteIngredients();
   const { resetUrlMany } = useResetIngredientsUrl();
+  const { updateUrl } = useUpdateIngredientUrl();
 
   const handleDeleteMany = async (ids: string[]) => {
     deleteIngredients(ids)
@@ -49,6 +51,16 @@ export const AdminIngredientsPage = () => {
     resetUrl(id)
       .then((data) => {
         toast.success(data.message || "Image refétchée avec succès");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+
+  const handleUpdateUrl = async (id: string, url: string) => {
+    updateUrl({ id, url })
+      .then(() => {
+        toast.success("URL mise à jour avec succès");
       })
       .catch((error) => {
         toast.error(error.message);
@@ -83,6 +95,7 @@ export const AdminIngredientsPage = () => {
         onResetUrl={handleResetUrl}
         onDeleteMany={(ids) => setDeleteDialog({ open: true, ids })}
         onResetUrlMany={handleResetUrlMany}
+        onUpdateUrl={handleUpdateUrl}
       />
       <DeleteIngredientDialog
         open={deleteDialog.open}

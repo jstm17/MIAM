@@ -21,6 +21,7 @@ import type { AdminIngredient } from "@/types/ingredient.types";
 import { ImageUp, Trash2, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { TextInput } from "../shared/TextInput";
+import { AspectRatio } from "../ui/aspect-ratio";
 import { Skeleton } from "../ui/skeleton";
 
 type Props = {
@@ -149,11 +150,19 @@ export const IngredientsTable = ({
                 >
                   <PopoverTrigger asChild>
                     <TableCell>
-                      {ingredient.url ? (
-                        <img src={ingredient.url} className="max-h-8" />
-                      ) : (
-                        <Skeleton className="h-8 w-8" />
-                      )}
+                      <AspectRatio
+                        ratio={1}
+                        className="rounded-xl overflow-hidden border bg-white"
+                      >
+                        {ingredient.url ? (
+                          <img
+                            src={ingredient.url}
+                            className="object-contain h-full w-full"
+                          />
+                        ) : (
+                          <Skeleton className="h-full w-full" />
+                        )}
+                      </AspectRatio>
                     </TableCell>
                   </PopoverTrigger>
                   <PopoverContent className="w-64" align="end">

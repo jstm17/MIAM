@@ -50,7 +50,7 @@ export const IngredientCard = ({
           <img
             src={ingredient.url}
             alt={ingredient.name}
-            className="object-cover h-full w-full"
+            className="object-contain h-full w-full"
           />
         ) : (
           <Skeleton className="h-full w-full" />

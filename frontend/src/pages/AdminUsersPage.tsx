@@ -41,7 +41,7 @@ export const AdminUsersPage = () => {
       const resetLink = response.data.data.resetLink;
       await navigator.clipboard.writeText(resetLink);
       toast.success("Lien copié dans le presse-papiers !");
-    } catch (error) {
+    } catch {
       toast.error("Erreur lors de la génération du lien");
     }
   };

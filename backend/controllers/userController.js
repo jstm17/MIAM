@@ -1267,7 +1267,7 @@ exports.ResetPassword = async (req, res) => {
 
     // Save token to user
     user.resetToken = resetToken;
-    user.resetTokenExpires = Date.now() + 3600000; // 1 hour
+    user.resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour
     await user.save();
 
     // Generate reset link

@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { AdminCategory } from "@/types/category.types";
-import { ImageUp, Trash2, UtensilsCrossed } from "lucide-react";
+import { ImageUp, Timer, Trash2, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { TextInput } from "../shared/TextInput";
 import { AspectRatio } from "../ui/aspect-ratio";
@@ -116,6 +116,9 @@ export const CategoriesTable = ({
             <TableHead>
               <UtensilsCrossed size={16} />
             </TableHead>
+            <TableHead>
+              <Timer size={16} />
+            </TableHead>
             <TableHead>Image</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -140,6 +143,8 @@ export const CategoriesTable = ({
 
                 {/* Nb recettes */}
                 <TableCell>{category.recipesCount}</TableCell>
+
+                <TableCell>{category.cookingTimesCount}</TableCell>
 
                 <Popover
                   open={openPopover === category._id}

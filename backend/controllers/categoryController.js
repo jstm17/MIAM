@@ -9,9 +9,12 @@ exports.GetAllCategories = async (req, res) => {
     const categoriesWithCount = await Promise.all(
       categories.map(async (category) => {
         const recipesCount = await Recipe.countDocuments({
-          "categories.category": category._id,
+          categories: category._id,
         });
-        return { ...category.toObject(), recipesCount };
+        const cookingTimesCount = await CookingTime.countDocuments({
+          categories: category._id,
+        });
+        return { ...category.toObject(), recipesCount, cookingTimesCount };
       }),
     );
     return res.status(200).json({
@@ -361,9 +364,9 @@ exports.ResetCategoryUrl = async (req, res) => {
     }
 
     // Supprimer l'ancienne image Cloudinary
-    if (category.url) {
+    if (category.image) {
       try {
-        const urlParts = category.url.split("/");
+        const urlParts = category.image.split("/");
         const filename = urlParts[urlParts.length - 1];
         const publicId = `categories/${filename.split(".")[0]}`;
         await cloudinary.uploader.destroy(publicId);
@@ -381,7 +384,7 @@ exports.ResetCategoryUrl = async (req, res) => {
     // Mettre à jour l'catégorie avec la nouvelle URL
     const updatedCategory = await Category.findByIdAndUpdate(
       req.params.id,
-      { url: newUrl },
+      { image: newUrl },
       { new: true },
     );
 
@@ -413,9 +416,9 @@ exports.UpdateCategoryUrl = async (req, res) => {
     }
 
     // Supprimer l'ancienne image Cloudinary si elle existe
-    if (category.url) {
+    if (category.image) {
       try {
-        const urlParts = category.url.split("/");
+        const urlParts = category.image.split("/");
         const filename = urlParts[urlParts.length - 1];
         const publicId = `categories/${filename.split(".")[0]}`;
         await cloudinary.uploader.destroy(publicId);
@@ -443,7 +446,7 @@ exports.UpdateCategoryUrl = async (req, res) => {
     // Mettre à jour de la catégorie
     const updatedCategory = await Category.findByIdAndUpdate(
       req.params.id,
-      { url: cloudinaryRes.secure_url },
+      { image: cloudinaryRes.secure_url },
       { new: true },
     );
 
@@ -517,9 +520,9 @@ exports.ResetCategoriesUrl = async (req, res) => {
 
     // Supprimer les anciennes images Cloudinary
     for (const category of categories) {
-      if (category.url) {
+      if (category.image) {
         try {
-          const urlParts = category.url.split("/");
+          const urlParts = category.image.split("/");
           const filename = urlParts[urlParts.length - 1];
           const publicId = `categories/${filename.split(".")[0]}`;
           await cloudinary.uploader.destroy(publicId);
@@ -543,7 +546,7 @@ exports.ResetCategoriesUrl = async (req, res) => {
       const newUrl = await fetchAndUploadCategoryImage(category.name);
       const updated = await Category.findByIdAndUpdate(
         category._id,
-        { url: newUrl },
+        { image: newUrl },
         { new: true },
       );
       updatedCategories.push(updated);

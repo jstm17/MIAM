@@ -16,11 +16,12 @@ export const AdminUsersPage = () => {
     open: boolean;
     ids: string[];
   }>({ open: false, ids: [] });
+  const [resetLinks, setResetLinks] = useState<Record<string, string>>({});
+  const [resetLoadingId, setResetLoadingId] = useState<string | null>(null);
   const { users, totalUsers, isLoading } = useGetAllUsers();
   const { deleteUser } = useDeleteUser();
   const { deleteUsers } = useDeleteUsers();
-  const { resetPassword, isPending: isResetting } = useResetPasswordAdmin();
-  const [resetLinks, setResetLinks] = useState<Record<string, string>>({});
+  const { resetPassword } = useResetPasswordAdmin();
 
   const handleDeleteUser = async (id: string) => {
     deleteUser(id)
@@ -57,17 +58,19 @@ export const AdminUsersPage = () => {
 
   const handleResetPassword = async (id: string) => {
     try {
+      setResetLoadingId(id);
+
       const link = await resetPassword(id);
 
-      // on stocke le lien pour CE user
       setResetLinks((prev) => ({ ...prev, [id]: link }));
 
-      // tentative auto copy (desktop + android)
       copyToClipboard(link).catch(() => {});
 
       toast.success("Lien généré !");
     } catch {
       toast.error("Erreur lors de la génération du lien");
+    } finally {
+      setResetLoadingId(null);
     }
   };
 
@@ -105,7 +108,7 @@ export const AdminUsersPage = () => {
       <UsersTable
         users={users}
         resetLinks={resetLinks}
-        isResetting={isResetting}
+        resetLoadingId={resetLoadingId}
         onCopyLink={copyLink}
         onDelete={(id) => setDeleteDialog({ open: true, ids: [id] })}
         onDeleteMany={(ids) => setDeleteDialog({ open: true, ids })}

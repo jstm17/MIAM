@@ -19,7 +19,7 @@ import { Spinner } from "../ui/spinner";
 type UsersTableProps = {
   users: AdminUser[];
   resetLinks: Record<string, string>;
-  isResetting: boolean;
+  resetLoadingId: string | null;
   onDelete: (id: string) => void;
   onDeleteMany: (ids: string[]) => void;
   onResetPassword: (id: string) => void;
@@ -29,7 +29,7 @@ type UsersTableProps = {
 export const UsersTable = ({
   users,
   resetLinks,
-  isResetting,
+  resetLoadingId,
   onDelete,
   onDeleteMany,
   onResetPassword,
@@ -113,7 +113,7 @@ export const UsersTable = ({
 
                 {/* Actions */}
                 <TableCell className="text-right space-x-2">
-                  {isResetting ? (
+                  {resetLoadingId === user._id ? (
                     <Button size="icon" variant="outline" disabled>
                       <Spinner />
                     </Button>

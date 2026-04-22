@@ -12,21 +12,28 @@ import {
 } from "@/components/ui/table";
 import type { AdminUser } from "@/types/user.types";
 import { formatDateShort } from "@/utils/formatDate";
-import { Mail, Trash2, UtensilsCrossed } from "lucide-react";
+import { Copy, Mail, Trash2, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
+import { Spinner } from "../ui/spinner";
 
 type UsersTableProps = {
   users: AdminUser[];
+  resetLinks: Record<string, string>;
+  isResetting: boolean;
   onDelete: (id: string) => void;
   onDeleteMany: (ids: string[]) => void;
   onResetPassword: (id: string) => void;
+  onCopyLink: (id: string) => void;
 };
 
 export const UsersTable = ({
   users,
+  resetLinks,
+  isResetting,
   onDelete,
   onDeleteMany,
   onResetPassword,
+  onCopyLink,
 }: UsersTableProps) => {
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -106,13 +113,29 @@ export const UsersTable = ({
 
                 {/* Actions */}
                 <TableCell className="text-right space-x-2">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => onResetPassword(user._id)}
-                  >
-                    <Mail className="size-4" />
-                  </Button>
+                  {isResetting ? (
+                    <Button size="icon" variant="outline" disabled>
+                      <Spinner />
+                    </Button>
+                  ) : resetLinks[user._id] ? (
+                    // 🔵 bouton COPY (iOS friendly)
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => onCopyLink(user._id)}
+                    >
+                      <Copy className="size-4" />
+                    </Button>
+                  ) : (
+                    // ✉️ bouton GENERER LIEN
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => onResetPassword(user._id)}
+                    >
+                      <Mail className="size-4" />
+                    </Button>
+                  )}
 
                   <Button
                     size="icon"

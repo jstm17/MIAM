@@ -4,10 +4,10 @@ import { EmptyCard } from "@/components/shared/EmptyCard";
 import { Layout } from "@/components/shared/Layout";
 import { Loading } from "@/components/shared/Loading";
 import { Empty } from "@/components/ui/empty";
+import { useResetPasswordAdmin } from "@/hooks/admins/useResetPasswordAdmin";
 import { useDeleteUser } from "@/hooks/users/useDeleteUser";
 import { useDeleteUsers } from "@/hooks/users/useDeleteUsers";
 import { useGetAllUsers } from "@/hooks/users/useGetAllUsers";
-import api from "@/lib/axiosInstance";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -19,6 +19,9 @@ export const AdminUsersPage = () => {
   const { users, totalUsers, isLoading } = useGetAllUsers();
   const { deleteUser } = useDeleteUser();
   const { deleteUsers } = useDeleteUsers();
+  const { resetPassword, isPending: isResetting } = useResetPasswordAdmin();
+  const [resetLinks, setResetLinks] = useState<Record<string, string>>({});
+
   const handleDeleteUser = async (id: string) => {
     deleteUser(id)
       .then((data) => {
@@ -35,14 +38,45 @@ export const AdminUsersPage = () => {
       .catch((error) => toast.error(error.message));
   };
 
-  const sendResetMail = async (id: string) => {
+  const copyToClipboard = async (text: string) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      // Fallback pour HTTP
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+  };
+
+  const handleResetPassword = async (id: string) => {
     try {
-      const response = await api.post(`/admins/users/${id}/reset-password`);
-      const resetLink = response.data.data.resetLink;
-      await navigator.clipboard.writeText(resetLink);
-      toast.success("Lien copié dans le presse-papiers !");
+      const link = await resetPassword(id);
+
+      // on stocke le lien pour CE user
+      setResetLinks((prev) => ({ ...prev, [id]: link }));
+
+      // tentative auto copy (desktop + android)
+      copyToClipboard(link).catch(() => {});
+
+      toast.success("Lien généré !");
     } catch {
       toast.error("Erreur lors de la génération du lien");
+    }
+  };
+
+  const copyLink = async (id: string) => {
+    try {
+      await copyToClipboard(resetLinks[id]);
+      toast.success("Lien copié !");
+    } catch {
+      toast.error("Impossible de copier");
     }
   };
 
@@ -70,9 +104,12 @@ export const AdminUsersPage = () => {
     <Layout title={`${totalUsers} chefs`}>
       <UsersTable
         users={users}
+        resetLinks={resetLinks}
+        isResetting={isResetting}
+        onCopyLink={copyLink}
         onDelete={(id) => setDeleteDialog({ open: true, ids: [id] })}
         onDeleteMany={(ids) => setDeleteDialog({ open: true, ids })}
-        onResetPassword={sendResetMail}
+        onResetPassword={handleResetPassword}
       />
 
       <DeleteUserDialog

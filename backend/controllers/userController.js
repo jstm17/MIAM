@@ -1278,7 +1278,7 @@ exports.ResetPassword = async (req, res) => {
 
     return res.status(200).json({
       error: false,
-      message: "Lien de réinitialisation généré et envoyé par email",
+      message: "Lien de réinitialisation généré",
       data: { resetLink },
     });
   } catch (error) {

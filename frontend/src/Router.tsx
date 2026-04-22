@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { AdminRoute } from "./AdminRoute.js";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute.js";
+import { AdminCategoriesPage } from "./pages/AdminCategoriesPage.js";
 import { AdminCookingTimesPage } from "./pages/AdminCookingTimesPage.js";
 import { AdminIngredientsPage } from "./pages/AdminIngredientsPage.js";
 import { AdminPage } from "./pages/AdminPage.js";
@@ -124,6 +125,14 @@ export const Router = () => {
           element={
             <AdminRoute>
               <AdminCookingTimesPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/categories"
+          element={
+            <AdminRoute>
+              <AdminCategoriesPage />
             </AdminRoute>
           }
         />

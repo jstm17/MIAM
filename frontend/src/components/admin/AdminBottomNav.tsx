@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Carrot, Home, Timer, UsersRound, UtensilsCrossed } from "lucide-react";
+import { Carrot, Home, Tags, Timer, UsersRound, UtensilsCrossed } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
@@ -7,6 +7,7 @@ const navLinks = [
   { to: "/admin/users", icon: UsersRound },
   { to: "/admin/recipes", icon: UtensilsCrossed },
   { to: "/admin/cooking-times", icon: Timer },
+  { to: "/admin/categories", icon: Tags },
   { to: "/admin/ingredients", icon: Carrot },
 ];
 

@@ -9,8 +9,12 @@ export type Category = {
   cookingTimesCount?: number;
 };
 
-export type CreateCategoryDto = {
+export type AdminCategory = {
+  _id: string;
   name: string;
   slug: string;
   image: string;
+  createdAt: string;
+  recipesCount?: number;
+  cookingTimesCount?: number;
 };

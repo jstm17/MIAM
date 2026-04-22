@@ -1,5 +1,5 @@
 import { categoryService } from "@/services/categoryService";
-import type { Category } from "@/types/category.types";
+import type { AdminCategory } from "@/types/category.types";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
@@ -7,7 +7,7 @@ export const useGetAllCategories = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["categories"],
     queryFn: () =>
-      categoryService.getAll().then((res) => res.data.data as Category[]),
+      categoryService.getAll().then((res) => res.data.data as AdminCategory[]),
     staleTime: 0,
   });
 

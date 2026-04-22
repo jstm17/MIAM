@@ -8,6 +8,11 @@ const {
   GetTopCategoriesVisiblesCookingTimes,
   CreateCategory,
   GetCategoryBySlug,
+  DeleteCategory,
+  ResetCategoryUrl,
+  UpdateCategoryUrl,
+  DeleteCategories,
+  ResetCategoriesUrl,
 } = require("../controllers/categoryController");
 const { auth, authOptional } = require("../middlewares/authMiddleware");
 
@@ -26,5 +31,11 @@ router.get(
 );
 router.get("/slug/:slug", GetCategoryBySlug);
 router.post("/", auth, CreateCategory);
+
+router.delete("/:id", auth, DeleteCategory);
+router.patch("/:id/reset-url", auth, ResetCategoryUrl);
+router.patch("/:id/url", auth, UpdateCategoryUrl);
+router.delete("/", auth, DeleteCategories);
+router.patch("/reset-url", auth, ResetCategoriesUrl);
 
 module.exports = router;

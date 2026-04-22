@@ -37,7 +37,7 @@ export const AdminUsersPage = () => {
 
   const sendResetMail = async (id: string) => {
     try {
-      const response = await api.post(`/admin/users/${id}/reset-password`);
+      const response = await api.post(`/admins/users/${id}/reset-password`);
       const resetLink = response.data.data.resetLink;
       await navigator.clipboard.writeText(resetLink);
       toast.success("Lien copié dans le presse-papiers !");

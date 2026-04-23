@@ -41,6 +41,7 @@ jobs:
 
       - name: Upload to Google Drive
         run: |
+          echo "Folder ID: '${{ secrets.DRIVE_FOLDER_ID }}'"
           node <<EOF
           const { google } = require("googleapis");
           const fs = require("fs");

@@ -1,4 +1,4 @@
-name: Weekly Mongo Backup
+name: MongoDB Backup to Drive
 
 on:
   schedule:
@@ -13,26 +13,23 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install MongoDB tools
+      - name: Install MongoDB Database Tools
         run: |
-          # Add MongoDB's official apt repository
-          curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
-            sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
-          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] \
-            https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
-            sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
-          sudo apt-get update
-          sudo apt-get install -y mongodb-database-tools
+          wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.tgz
+          tar -xvzf mongodb-database-tools-*.tgz
+          sudo mv mongodb-database-tools-*/bin/* /usr/local/bin/
 
-      - name: Dump MongoDB
+      - name: Dump MongoDB Atlas
         run: |
-          mongodump --uri="${{ secrets.MONGO_URI }}" \
-            --archive=backup.gz --gzip
+          mongodump \
+            --uri="${{ secrets.MONGO_URI }}" \
+            --archive=backup.gz \
+            --gzip
 
       - name: Install Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20  # bump to 22 before June 2026 (see note below)
+          node-version: 22
 
       - name: Install Google API
         run: npm install googleapis
@@ -41,6 +38,28 @@ jobs:
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: printenv GOOGLE_CREDENTIALS > credentials.json
+
+      - name: Create Drive folder (run once)
+        run: |
+          node <<EOF
+          const { google } = require("googleapis");
+
+          async function createFolder() {
+            const auth = new google.auth.GoogleAuth({
+              keyFile: "credentials.json",
+              scopes: ["https://www.googleapis.com/auth/drive.file"],
+            });
+            const drive = google.drive({ version: "v3", auth });
+            const folder = await drive.files.create({
+              requestBody: {
+                name: "MongoDB Backups",
+                mimeType: "application/vnd.google-apps.folder",
+              },
+            });
+            console.log("Folder ID:", folder.data.id);
+          }
+          createFolder();
+          EOF
 
       - name: Upload to Google Drive
         run: |
@@ -53,9 +72,7 @@ jobs:
               keyFile: "credentials.json",
               scopes: ["https://www.googleapis.com/auth/drive.file"],
             });
-
             const drive = google.drive({ version: "v3", auth });
-
             await drive.files.create({
               requestBody: {
                 name: "backup-" + new Date().toISOString() + ".gz",
@@ -66,7 +83,7 @@ jobs:
                 body: fs.createReadStream("backup.gz"),
               },
             });
+            console.log("Upload OK !");
           }
-
           upload();
           EOF

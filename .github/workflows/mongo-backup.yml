@@ -1,8 +1,8 @@
-name: MongoDB Backup to Drive
+name: Weekly Mongo Backup
 
 on:
   schedule:
-    - cron: "0 3 * * 0"   # tous les dimanches à 3h
+    - cron: "0 3 * * 0"
   workflow_dispatch:
 
 jobs:
@@ -13,29 +13,58 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 🔥 INSTALLER MONGODB TOOLS (la pièce manquante)
-      - name: Install MongoDB Database Tools
+      - name: Install MongoDB tools
         run: |
-          wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.tgz
-          tar -xvzf mongodb-database-tools-*.tgz
-          sudo mv mongodb-database-tools-*/bin/* /usr/local/bin/
+          # Add MongoDB's official apt repository
+          curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
+            sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] \
+            https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
+            sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-database-tools
 
-      # Test que mongodump existe
-      - name: Check mongodump version
-        run: mongodump --version
-
-      # Backup MongoDB Atlas
-      - name: Dump MongoDB Atlas
+      - name: Dump MongoDB
         run: |
-          mongodump \
-            --uri="${{ secrets.MONGO_URI }}" \
-            --archive=backup.gz \
-            --gzip
+          mongodump --uri="${{ secrets.MONGO_URI }}" \
+            --archive=backup.gz --gzip
 
-      # Upload vers Google Drive
-      - name: Upload to Google Drive
-        uses: mathisve/gdrive-upload-action@v1
+      - name: Install Node
+        uses: actions/setup-node@v4
         with:
-          filename: backup.gz
-          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-          credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
+          node-version: 20  # bump to 22 before June 2026 (see note below)
+
+      - name: Install Google API
+        run: npm install googleapis
+
+      - name: Create credentials.json
+        run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
+
+      - name: Upload to Google Drive
+        run: |
+          node <<EOF
+          const { google } = require("googleapis");
+          const fs = require("fs");
+
+          async function upload() {
+            const auth = new google.auth.GoogleAuth({
+              keyFile: "credentials.json",
+              scopes: ["https://www.googleapis.com/auth/drive.file"],
+            });
+
+            const drive = google.drive({ version: "v3", auth });
+
+            await drive.files.create({
+              requestBody: {
+                name: "backup-" + new Date().toISOString() + ".gz",
+                parents: ["${{ secrets.DRIVE_FOLDER_ID }}"],
+              },
+              media: {
+                mimeType: "application/gzip",
+                body: fs.createReadStream("backup.gz"),
+              },
+            });
+          }
+
+          upload();
+          EOF

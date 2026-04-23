@@ -1,9 +1,9 @@
-name: Weekly Mongo Backup
+name: MongoDB Backup to Drive
 
 on:
   schedule:
-    - cron: "0 3 * * 0" # dimanche 3h
-  workflow_dispatch: # bouton manuel
+    - cron: "0 3 * * 0"   # tous les dimanches à 3h
+  workflow_dispatch:
 
 jobs:
   backup:
@@ -13,52 +13,29 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install MongoDB tools
+      # 🔥 INSTALLER MONGODB TOOLS (la pièce manquante)
+      - name: Install MongoDB Database Tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mongodb-database-tools
+          wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2204-x86_64-100.9.4.tgz
+          tar -xvzf mongodb-database-tools-*.tgz
+          sudo mv mongodb-database-tools-*/bin/* /usr/local/bin/
 
-      - name: Dump MongoDB
+      # Test que mongodump existe
+      - name: Check mongodump version
+        run: mongodump --version
+
+      # Backup MongoDB Atlas
+      - name: Dump MongoDB Atlas
         run: |
-          mongodump --uri="${{ secrets.MONGO_URI }}" \
-          --archive=backup.gz --gzip
+          mongodump \
+            --uri="${{ secrets.MONGO_URI }}" \
+            --archive=backup.gz \
+            --gzip
 
-      - name: Install Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Google API
-        run: npm install googleapis
-
-      - name: Create credentials.json
-        run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
-
+      # Upload vers Google Drive
       - name: Upload to Google Drive
-        run: |
-          node <<EOF
-          const { google } = require("googleapis");
-          const fs = require("fs");
-
-          async function upload() {
-            const auth = new google.auth.GoogleAuth({
-              keyFile: "credentials.json",
-              scopes: ["https://www.googleapis.com/auth/drive.file"],
-            });
-
-            const drive = google.drive({ version: "v3", auth });
-
-            await drive.files.create({
-              requestBody: {
-                name: "backup-" + new Date().toISOString() + ".gz",
-                parents: ["${{ secrets.DRIVE_FOLDER_ID }}"],
-              },
-              media: {
-                mimeType: "application/gzip",
-                body: fs.createReadStream("backup.gz"),
-              },
-            });
-          }
-
-          upload();
-          EOF
+        uses: mathisve/gdrive-upload-action@v1
+        with:
+          filename: backup.gz
+          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
+          credentials: ${{ secrets.GDRIVE_CREDENTIALS }}

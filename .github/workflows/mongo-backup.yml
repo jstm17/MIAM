@@ -1,4 +1,4 @@
-name: MongoDB Backup to Drive
+name: Weekly Mongo Backup
 
 on:
   schedule:
@@ -26,44 +26,9 @@ jobs:
             --archive=backup.gz \
             --gzip
 
-      - name: Install Node
-        uses: actions/setup-node@v4
+      - name: Upload backup as artifact
+        uses: actions/upload-artifact@v4
         with:
-          node-version: 22
-
-      - name: Install Google API
-        run: npm install googleapis
-
-      - name: Create credentials.json
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-        run: printenv GOOGLE_CREDENTIALS > credentials.json
-
-      - name: Upload to Google Drive
-        run: |
-          echo "Folder ID: '${{ secrets.DRIVE_FOLDER_ID }}'"
-          node <<EOF
-          const { google } = require("googleapis");
-          const fs = require("fs");
-
-          async function upload() {
-            const auth = new google.auth.GoogleAuth({
-              keyFile: "credentials.json",
-              scopes: ["https://www.googleapis.com/auth/drive.file"],
-            });
-            const drive = google.drive({ version: "v3", auth });
-            await drive.files.create({
-              supportsAllDrives: true,
-              requestBody: {
-                name: "backup-" + new Date().toISOString() + ".gz",
-                parents: ["${{ secrets.DRIVE_FOLDER_ID }}"],
-              },
-              media: {
-                mimeType: "application/gzip",
-                body: fs.createReadStream("backup.gz"),
-              },
-            });
-            console.log("Upload OK !");
-          }
-          upload();
-          EOF
+          name: backup-${{ github.run_id }}
+          path: backup.gz
+          retention-days: 30

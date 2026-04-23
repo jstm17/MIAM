@@ -39,28 +39,6 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: printenv GOOGLE_CREDENTIALS > credentials.json
 
-      - name: Create Drive folder (run once)
-        run: |
-          node <<EOF
-          const { google } = require("googleapis");
-
-          async function createFolder() {
-            const auth = new google.auth.GoogleAuth({
-              keyFile: "credentials.json",
-              scopes: ["https://www.googleapis.com/auth/drive.file"],
-            });
-            const drive = google.drive({ version: "v3", auth });
-            const folder = await drive.files.create({
-              requestBody: {
-                name: "MongoDB Backups",
-                mimeType: "application/vnd.google-apps.folder",
-              },
-            });
-            console.log("Folder ID:", folder.data.id);
-          }
-          createFolder();
-          EOF
-
       - name: Upload to Google Drive
         run: |
           node <<EOF

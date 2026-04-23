@@ -53,6 +53,7 @@ jobs:
             });
             const drive = google.drive({ version: "v3", auth });
             await drive.files.create({
+              supportsAllDrives: true,
               requestBody: {
                 name: "backup-" + new Date().toISOString() + ".gz",
                 parents: ["${{ secrets.DRIVE_FOLDER_ID }}"],

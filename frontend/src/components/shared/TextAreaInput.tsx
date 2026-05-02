@@ -16,6 +16,7 @@ type TextAreaInputProps = {
   description?: string | null;
   ref?: React.Ref<HTMLTextAreaElement>;
   onInput?: (event: React.FormEvent<HTMLTextAreaElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
 export const TextAreaInput = forwardRef<
@@ -64,6 +65,11 @@ export const TextAreaInput = forwardRef<
       props.onInput?.(event);
     };
 
+    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      resizeTextarea(event.currentTarget);
+      props.onChange?.(event);
+    };
+
     return (
       <Field>
         {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
@@ -76,6 +82,7 @@ export const TextAreaInput = forwardRef<
           aria-invalid={!!error}
           className={className}
           onInput={handleInput}
+          onChange={handleChange}
           {...props}
         />
         {error && (

@@ -42,13 +42,13 @@ export const ImageSectionForm = <T extends FieldValues>({
 
   return (
     <div className="">
-      <div className="border-b border-primary mb-4 py-1 flex gap-2 items-center justify-center bg-primary/10 rounded-t-xl">
+      <div className="border-t border-primary mb-4 py-1 flex gap-2 items-center justify-center bg-primary/10">
         <Image size={20} />
         <Typography className="text-lg" weight="semibold">
           Photo
         </Typography>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 px-4">
         {preview && (
           <div className="relative">
             <AspectRatio ratio={21 / 9} className="bg-muted mb-2 rounded-xl">

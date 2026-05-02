@@ -14,10 +14,7 @@ import { Typography } from "../shared/Typography";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 
-import type {
-  FieldValues,
-  Path
-} from "react-hook-form";
+import type { FieldValues, Path } from "react-hook-form";
 
 type CategoriesSectionFormProps<T extends FieldValues> = {
   control: Control<T>;
@@ -32,7 +29,8 @@ export const CategoriesSectionForm = <T extends FieldValues>({
   errors,
   trigger,
 }: CategoriesSectionFormProps<T>) => {
-  const categories = useWatch({ control, name: "categories" as Path<T> }) as string[] || [];
+  const categories =
+    (useWatch({ control, name: "categories" as Path<T> }) as string[]) || [];
   const { categories: allCategories } = useGetAllCategories();
   const [categoryInput, setCategoryInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -53,16 +51,16 @@ export const CategoriesSectionForm = <T extends FieldValues>({
     );
     trigger("categories" as Path<T>);
   };
-  
+
   return (
     <div className="">
-      <div className="border-b border-primary mb-4 py-1 rounded-t-xl flex gap-2 items-center justify-center bg-primary/10">
+      <div className="border-t border-primary mb-4 py-1 flex gap-2 items-center justify-center bg-primary/10">
         <Tags size={20} />
         <Typography className="text-lg" weight="semibold">
           Catégories
         </Typography>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 px-4">
         <Label>Catégories *</Label>
         {categories.length > 0 && (
           <div className="flex flex-wrap my-1 gap-1">
@@ -104,7 +102,10 @@ export const CategoriesSectionForm = <T extends FieldValues>({
                   addCategory(categoryInput);
                 }
               }}
-              error={(errors as FieldErrors<{ categories: string[] }>).categories?.message}
+              error={
+                (errors as FieldErrors<{ categories: string[] }>).categories
+                  ?.message
+              }
               placeholder="Ex. Dessert"
               inputGroupAddon={
                 <ChevronsUpDown

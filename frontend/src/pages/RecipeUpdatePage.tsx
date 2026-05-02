@@ -59,13 +59,17 @@ export function RecipeUpdatePage() {
         timeCook: recipe.timeCook === 0 ? null : recipe.timeCook,
         personsNumber: recipe.personsNumber === 0 ? null : recipe.personsNumber,
         categories: recipe.categories.map((c) => c.name),
-        ingredients: recipe.ingredients.map((i) => ({
-          ingredient: i.ingredient.name,
-          quantity: i.quantity,
-        })),
-        instructions: recipe.instructions.map((i) => ({
-          content: i.content,
-        })),
+        ingredients:
+          recipe.ingredients.length > 0
+            ? recipe.ingredients.map((i) => ({
+                ingredient: i.ingredient.name,
+                quantity: i.quantity,
+              }))
+            : [{ ingredient: "", quantity: "" }],
+        instructions:
+          recipe.instructions.length > 0
+            ? recipe.instructions.map((i) => ({ content: i.content }))
+            : [{ content: "" }],
         image: recipe.image,
         visible: recipe.visible,
       });
@@ -125,7 +129,7 @@ export function RecipeUpdatePage() {
     <Layout
       title="Modifier une recette"
       titleSize="md"
-      className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
+      className="items-center py-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -136,7 +140,7 @@ export function RecipeUpdatePage() {
       >
         <FieldGroup className="relative">
           <div className="pb-20 flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 px-4">
               <TextInput
                 capitalize
                 label="Nom *"
@@ -239,7 +243,7 @@ export function RecipeUpdatePage() {
           </div>
 
           <Field
-            className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4"
+            className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4 z-10"
             style={{
               bottom: `calc(${isAdmin ? "108px" : "58px"} + env(safe-area-inset-bottom))`,
             }}

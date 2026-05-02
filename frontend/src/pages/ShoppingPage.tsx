@@ -26,7 +26,7 @@ export const ShoppingPage = () => {
     (!savedProducts || savedProducts.length === 0)
   ) {
     return (
-      <Layout>
+      <Layout className="pt-4 pb-[calc(env(safe-area-inset-bottom)+58px)]">
         <ShoppingHeader empty={true} />
         <ShoppingSearchBar />
 
@@ -42,7 +42,7 @@ export const ShoppingPage = () => {
   }
 
   return (
-    <Layout>
+    <Layout className="pt-4 pb-[calc(env(safe-area-inset-bottom)+74px)]">
       <ShoppingHeader />
       <ShoppingSearchBar />
       <ShoppingProductsContent />

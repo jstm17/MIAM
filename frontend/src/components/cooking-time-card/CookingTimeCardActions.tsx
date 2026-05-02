@@ -14,7 +14,7 @@ import {
   EyeOff,
   Pencil,
   Share,
-  Trash,
+  Trash2,
 } from "lucide-react";
 
 import type { CookingTime } from "@/types/cookingTime.types";
@@ -129,7 +129,7 @@ export const CookingTimeCardActions = ({
               className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <Ellipsis color="white" />
+              <Ellipsis fill="currentColor" color="white" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-fit">
@@ -200,7 +200,7 @@ export const CookingTimeCardActions = ({
                 }}
                 variant="destructive"
               >
-                <Trash />
+                <Trash2 />
                 Supprimer
               </DropdownMenuItem>
             </DropdownMenuGroup>

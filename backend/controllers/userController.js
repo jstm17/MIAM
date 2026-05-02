@@ -1151,7 +1151,7 @@ exports.AddProductToCart = async (req, res) => {
     }
 
     sanitizeSavedLists(user);
-    user.savedProducts.push({ name, addedAt: new Date() });
+    user.savedProducts.unshift({ name, addedAt: new Date() });
     await user.save();
 
     return res.status(200).json({
@@ -1325,6 +1325,29 @@ exports.ResetPasswordWithToken = async (req, res) => {
   }
 };
 
+exports.ReorderProducts = async (req, res) => {
+  try {
+    const { orderedNames } = req.body; // tableau de noms dans le nouvel ordre
+
+    const user = await User.findById(req.user.id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: true, message: "Utilisateur non trouvé" });
+
+    user.savedProducts = orderedNames
+      .map((name) => user.savedProducts.find((p) => p.name === name))
+      .filter(Boolean);
+
+    await user.save();
+
+    return res.status(200).json({ error: false, message: "Ordre mis à jour" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: "Erreur serveur" });
+  }
+};
+
 module.exports = {
   Register: exports.Register,
   Login: exports.Login,
@@ -1351,4 +1374,5 @@ module.exports = {
   RemoveProductFromCart: exports.RemoveProductFromCart,
   ResetPassword: exports.ResetPassword,
   ResetPasswordWithToken: exports.ResetPasswordWithToken,
+  ReorderProducts: exports.ReorderProducts,
 };

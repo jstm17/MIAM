@@ -14,7 +14,7 @@ import {
   EyeOff,
   Pencil,
   Share,
-  Trash,
+  Trash2,
 } from "lucide-react";
 
 import type { Recipe } from "@/types/recipe.types";
@@ -127,7 +127,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
               className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <Ellipsis color="white" />
+              <Ellipsis fill="currentColor" color="white" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-fit">
@@ -196,7 +196,7 @@ export const RecipeCardActions = ({ recipe }: RecipeCardActionsProps) => {
                 }}
                 variant="destructive"
               >
-                <Trash />
+                <Trash2 />
                 Supprimer
               </DropdownMenuItem>
             </DropdownMenuGroup>

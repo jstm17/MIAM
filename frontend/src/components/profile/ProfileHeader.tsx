@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { Ellipsis, LogOut, Pencil, Plus, Share, Trash } from "lucide-react";
+import { Ellipsis, LogOut, Pencil, Plus, Share, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -71,7 +71,7 @@ export const ProfileHeader = () => {
       >
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon-lg" aria-label="More Options">
-            <Ellipsis />
+            <Ellipsis fill="currentColor" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-fit">
@@ -90,7 +90,7 @@ export const ProfileHeader = () => {
               onSelect={() => setDeleteDialogOpen(true)}
               variant="destructive"
             >
-              <Trash />
+              <Trash2 />
               Supprimer mon compte
             </DropdownMenuItem>
           </DropdownMenuGroup>

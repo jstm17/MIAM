@@ -11,7 +11,7 @@ export const CookingTimeDetailsSkeleton = () => {
         />
       </AspectRatio>
 
-      <div className="bg-background rounded-t-4xl -mt-8 relative z-10 min-h-[calc(100dvh-42px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center px-4">
+      <div className="bg-background rounded-t-4xl -mt-8 relative z-10 min-h-[calc(100dvh-100px-env(safe-area-inset-bottom))] flex flex-col gap-4 items-center px-4">
         <div className="bg-muted w-25 h-1 block rounded-full mt-4" />
         <Skeleton className="h-5 w-3/4" />
         <Skeleton className="h-4 w-1/3 -mt-1" />

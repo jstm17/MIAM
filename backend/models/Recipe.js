@@ -6,7 +6,6 @@ const ingredientSchema = new mongoose.Schema(
     ingredient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Ingredient",
-      required: true,
     },
     quantity: {
       type: String,
@@ -19,7 +18,6 @@ const instructionSchema = new mongoose.Schema(
   {
     content: {
       type: String,
-      required: true,
     },
   },
   { _id: false },

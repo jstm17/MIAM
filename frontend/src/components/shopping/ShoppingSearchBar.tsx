@@ -43,7 +43,7 @@ export const ShoppingSearchBar = () => {
     setInputValue(formatProductName(inputValue));
   };
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 px-4">
       <GroupInput
         type="text"
         value={inputValue}

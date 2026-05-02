@@ -8,7 +8,7 @@ export const ShoppingHeader = ({ empty }: { empty?: boolean }) => {
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
 
   return (
-    <div className="relative flex items-center justify-between w-full mb-4 gap-2">
+    <div className="relative flex items-center justify-between w-full mb-4 gap-2 px-4">
       <span className="w-[38.88px] h-[38.88px]"></span>
       <Typography
         variant="h1"

@@ -46,10 +46,10 @@ export function RecipeAddPage() {
             <Timer className="size-5 stroke-current text-muted-foreground group-data-[state=active]:text-foreground" />
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="add-recipe" className="p-4">
+        <TabsContent value="add-recipe" className="py-4">
           <RecipeAddContent />
         </TabsContent>
-        <TabsContent value="add-cooking-time" className="p-4">
+        <TabsContent value="add-cooking-time" className="py-4">
           <CookingTimeAddContent />
         </TabsContent>
       </Tabs>

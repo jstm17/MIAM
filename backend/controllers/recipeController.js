@@ -25,19 +25,18 @@ exports.CreateRecipe = async (req, res) => {
   try {
     const { name, timePrep, timeCook, personsNumber, visible } = req.body;
     const categories = JSON.parse(req.body.categories);
-    const ingredients = JSON.parse(req.body.ingredients);
-    const instructions = JSON.parse(req.body.instructions);
+    const ingredients = JSON.parse(
+      req.body.ingredients && req.body.ingredients !== "undefined"
+        ? req.body.ingredients
+        : "[]",
+    ).filter((i) => i.ingredient && i.ingredient.trim() !== "");
+    const instructions = JSON.parse(
+      req.body.instructions && req.body.instructions !== "undefined"
+        ? req.body.instructions
+        : "[]",
+    ).filter((i) => i.content && i.content.trim() !== "");
 
-    if (
-      !name ||
-      !timePrep ||
-      !timeCook ||
-      !personsNumber ||
-      !categories ||
-      !ingredients ||
-      !instructions ||
-      !visible
-    ) {
+    if (!name || !categories || !visible) {
       return res.status(400).json({
         error: true,
         message: "Tous les champs sont requis",
@@ -326,8 +325,16 @@ exports.UpdateRecipe = async (req, res) => {
   try {
     const { name, timePrep, timeCook, personsNumber, visible } = req.body;
     const categories = JSON.parse(req.body.categories);
-    const ingredients = JSON.parse(req.body.ingredients);
-    const instructions = JSON.parse(req.body.instructions);
+    const ingredients = JSON.parse(
+      req.body.ingredients && req.body.ingredients !== "undefined"
+        ? req.body.ingredients
+        : "[]",
+    ).filter((i) => i.ingredient && i.ingredient.trim() !== "");
+    const instructions = JSON.parse(
+      req.body.instructions && req.body.instructions !== "undefined"
+        ? req.body.instructions
+        : "[]",
+    ).filter((i) => i.content && i.content.trim() !== "");
 
     const recipe = await Recipe.findOne({ slug: req.params.slug });
 

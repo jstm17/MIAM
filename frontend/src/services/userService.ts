@@ -67,4 +67,7 @@ export const userService = {
 
   removeProductFromCart: (name: string) =>
     axiosInstance.delete(`${USER_URL}/product`, { data: { name } }),
+
+  reorderProducts: (orderedNames: string[]) =>
+    axiosInstance.patch(`${USER_URL}/product/reorder`, { orderedNames }),
 };

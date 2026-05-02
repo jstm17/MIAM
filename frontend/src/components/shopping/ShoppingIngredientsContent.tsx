@@ -79,7 +79,7 @@ export const ShoppingIngredientsContent = () => {
     <div className="flex flex-col gap-6 mt-4">
       {groupedRecipes.map(({ recipe, ingredients }) => (
         <div key={recipe._id} className="space-y-4">
-          <div className="mb-4 p-1 pr-0 pl-3 flex gap-2 items-center justify-between bg-primary/10 rounded-t-xl border-b border-primary">
+          <div className="mb-4 p-1 px-4 flex gap-2 items-center justify-between bg-primary/10 border-t border-primary">
             <div className="flex items-center gap-2 max-w-full overflow-hidden whitespace-nowrap text-ellipsis">
               <UtensilsCrossed size={20} />
               <Typography className="text-lg truncate" weight="semibold">
@@ -96,7 +96,7 @@ export const ShoppingIngredientsContent = () => {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-3 gap-4 text-sm px-4">
             {ingredients.map(({ ingredient, quantity }) => (
               <IngredientCard
                 key={ingredient._id}

@@ -59,6 +59,12 @@ export function RecipeAddContent() {
     try {
       const res = await addRecipe({
         ...formData,
+        ingredients: formData.ingredients?.map((item) => ({
+          ingredient: item.ingredient
+            ? item.ingredient.charAt(0).toUpperCase() + item.ingredient.slice(1)
+            : "",
+          quantity: item.quantity,
+        })),
         personsNumber: formData.personsNumber ?? 0,
         timePrep: formData.timePrep ?? 0,
         timeCook: formData.timeCook ?? 0,
@@ -87,7 +93,7 @@ export function RecipeAddContent() {
     >
       <FieldGroup className="relative">
         <div className="pb-20 flex flex-col gap-8">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 px-4">
             <TextInput
               capitalize
               label="Nom *"
@@ -189,7 +195,7 @@ export function RecipeAddContent() {
         </div>
 
         <Field
-          className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4"
+          className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4 z-10"
           style={{
             bottom: `calc(${
               isAdmin ? "108px" : "58px"

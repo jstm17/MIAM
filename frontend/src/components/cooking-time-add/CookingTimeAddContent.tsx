@@ -84,7 +84,7 @@ export function CookingTimeAddContent() {
     >
       <FieldGroup className="relative">
         <div className="pb-20 flex flex-col gap-8">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 px-4">
             <DeviceSectionForm setValue={setValue} errors={errors} />
             <TextInput
               capitalize

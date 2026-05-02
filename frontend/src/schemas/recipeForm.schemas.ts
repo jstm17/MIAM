@@ -32,18 +32,18 @@ export const recipeSchema = z.object({
   ingredients: z
     .array(
       z.object({
-        ingredient: z.string().min(1, "Champ requis"),
+        ingredient: z.string().optional(),
         quantity: z.string().optional(),
       }),
     )
-    .min(1, "Au moins un ingrédient est requis"),
+    .optional(),
   instructions: z
     .array(
       z.object({
-        content: z.string().min(1, "Champ requis"),
+        content: z.string().optional(),
       }),
     )
-    .min(1, "Au moins une instruction est requise"),
+    .optional(),
   image: z
     .any()
     .transform((val) => {

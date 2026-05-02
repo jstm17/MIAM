@@ -1,13 +1,15 @@
 import { IngredientCard } from "@/components/ingredient/IngredientCard";
 import { useRemoveIngredientFromCart } from "@/hooks/users/useRemoveIngredientFromCart";
 import type { Recipe } from "@/types/recipe.types";
+import { Carrot } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../../hooks/useAuth";
 import { useAddIngredientToCart } from "../../hooks/users/useAddIngredientToCart";
+import { EmptyCard } from "../shared/EmptyCard";
 
 export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
-  const { ingredients } = recipe;
+  const { ingredients, addedBy } = recipe;
   const { user, isLoading } = useAuth();
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
   const { addIngredientToCart } = useAddIngredientToCart();
@@ -38,6 +40,18 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
       });
     }
   };
+
+  if (ingredients.length === 0) {
+    return (
+      <div>
+        <EmptyCard
+          icon={<Carrot />}
+          title="0 ingrédient ajouté"
+          description={`${addedBy.name} n'a ajouté aucun ingrédient pour cette recette.`}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-3 gap-4">

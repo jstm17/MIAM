@@ -111,7 +111,7 @@ export function CookingTimeUpdatePage() {
     <Layout
       title="Modifier un temps de cuisson"
       titleSize="md"
-      className="items-center p-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
+      className="items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+48px)]"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -122,7 +122,7 @@ export function CookingTimeUpdatePage() {
       >
         <FieldGroup className="relative">
           <div className="pb-20 flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mx-4">
               <DeviceSectionForm
                 defaultValue={cookingTime.device ?? undefined}
                 setValue={setValue}

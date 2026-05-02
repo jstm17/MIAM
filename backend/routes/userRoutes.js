@@ -51,6 +51,7 @@ router.put("/product", auth, userController.UpdateProductInCart);
 router.post("/reset-password", userController.ResetPasswordWithToken);
 router.post("/product", auth, userController.AddProductToCart);
 router.delete("/product", auth, userController.RemoveProductFromCart);
+router.patch("/product/reorder", auth, userController.ReorderProducts);
 router.delete("/:id", auth, userController.DeleteUser);
 router.delete("/", auth, userController.DeleteAccount);
 

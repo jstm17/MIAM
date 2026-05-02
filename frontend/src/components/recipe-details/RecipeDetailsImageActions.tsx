@@ -22,7 +22,7 @@ import {
   Pencil,
   Reply,
   Share,
-  Trash,
+  Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -160,7 +160,7 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
                 aria-label="More Options"
                 className={buttonClass}
               >
-                <Ellipsis color="white" />
+                <Ellipsis fill="currentColor" color="white" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-fit">
@@ -211,7 +211,7 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
                   }}
                   variant="destructive"
                 >
-                  <Trash />
+                  <Trash2 />
                   Supprimer
                 </DropdownMenuItem>
               </DropdownMenuGroup>

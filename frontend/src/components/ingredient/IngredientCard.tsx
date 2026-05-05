@@ -1,3 +1,4 @@
+import lidlLogo from "@/assets/lidl-logo.png";
 import type { Ingredient } from "@/types/ingredient.types";
 import { ShoppingBasket } from "lucide-react";
 import { AspectRatio } from "../ui/aspect-ratio";
@@ -12,6 +13,7 @@ type IngredientCardProps = {
   showButton?: boolean;
   onToggleCart?: () => void;
   icon?: React.ReactNode;
+  lidl?: boolean;
 };
 
 export const IngredientCard = ({
@@ -27,9 +29,23 @@ export const IngredientCard = ({
     />
   ),
   onToggleCart,
+  lidl = false,
 }: IngredientCardProps) => {
+  const searchProduct = (product: string) => {
+    const url = `https://www.lidl.fr/q/search?q=${encodeURIComponent(product)}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <div className="flex flex-col items-center gap-1 relative">
+      {lidl && (
+        <img
+          src={lidlLogo}
+          alt="Lidl"
+          className="w-8 h-8 object-contain absolute top-2 right-2 z-10 cursor-pointer rounded-md"
+          onClick={() => searchProduct(ingredient.name)}
+        />
+      )}
       {showButton && onToggleCart && (
         <Button
           variant="outline"
@@ -37,11 +53,12 @@ export const IngredientCard = ({
           size="icon"
           disabled={disabled}
           onClick={onToggleCart}
-          className="absolute top-2 right-2 z-10 backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
+          className={`absolute top-2 ${lidl ? "left-2" : "right-2"} z-10 backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10`}
         >
           {icon}
         </Button>
       )}
+
       <AspectRatio
         ratio={1}
         className="rounded-xl overflow-hidden border bg-white"

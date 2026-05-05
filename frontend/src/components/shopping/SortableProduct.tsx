@@ -1,3 +1,4 @@
+import lidlLogo from "@/assets/lidl-logo.png";
 import { cn } from "@/lib/utils";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -6,7 +7,6 @@ import { Check, GripVertical, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { TextInput } from "../shared/TextInput";
 import { Button } from "../ui/button";
-import lidlLogo from "@/assets/lidl-logo.png";
 
 const SWIPE_THRESHOLD = 60;
 const MAX_OFFSET = 80;
@@ -74,9 +74,9 @@ export const SortableProduct = ({
   };
 
   const searchProduct = (product: string) => {
-  const url = `https://www.lidl.fr/q/search?q=${encodeURIComponent(product)}`;
-  window.open(url, '_blank');
-};
+    const url = `https://www.lidl.fr/q/search?q=${encodeURIComponent(product)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <div
@@ -161,17 +161,18 @@ export const SortableProduct = ({
             onClick={() => {
               onSaveEdit();
               isClickingSave.current = false;
-            }}>
-                        <Check className="size-4" />
-
+            }}
+            className="mr-2"
+          >
+            <Check className="size-4" />
           </Button>
         ) : (
-            <img
-              src={lidlLogo}
-              alt="Lidl"
-              className="w-6 h-6 object-contain mr-2"
+          <img
+            src={lidlLogo}
+            alt="Lidl"
+            className="w-6 h-6 object-contain mr-2 rounded-sm cursor-pointer"
             onClick={() => searchProduct(product.name)}
-            />
+          />
         )}
       </motion.div>
     </div>

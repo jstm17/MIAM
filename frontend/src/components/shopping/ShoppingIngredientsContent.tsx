@@ -110,6 +110,7 @@ export const ShoppingIngredientsContent = () => {
                 onToggleCart={() =>
                   handleRemoveIngredientFromCart(recipe._id, ingredient._id)
                 }
+                lidl
               />
             ))}
           </div>

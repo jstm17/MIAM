@@ -7,7 +7,6 @@ import { useState } from "react";
 import { TextInput } from "../shared/TextInput";
 import { Button } from "../ui/button";
 import lidlLogo from "@/assets/lidl-logo.png";
-import { AspectRatio } from "../ui/aspect-ratio";
 
 const SWIPE_THRESHOLD = 60;
 const MAX_OFFSET = 80;

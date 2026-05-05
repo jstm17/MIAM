@@ -1,5 +1,5 @@
 import { useAddProductToCart } from "@/hooks/users/useAddProductToCart";
-import { Carrot, Cookie, Hamburger, Plus } from "lucide-react";
+import { Hamburger, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { GroupInput } from "../shared/GroupInput";

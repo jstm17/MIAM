@@ -69,7 +69,7 @@ export const ShoppingProductsContent = () => {
       const oldIndex = prev.findIndex((p) => p._id === active.id);
       const newIndex = prev.findIndex((p) => p._id === over.id);
       const reordered = arrayMove(prev, oldIndex, newIndex);
-      reorderProducts(reordered.map((p) => p.name)); // 👈 sauvegarde auto
+      reorderProducts(reordered.map((p) => p.name));
       return reordered;
     });
   };

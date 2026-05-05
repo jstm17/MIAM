@@ -1,5 +1,5 @@
 import { useAddProductToCart } from "@/hooks/users/useAddProductToCart";
-import { Carrot, Plus } from "lucide-react";
+import { Carrot, Cookie, Hamburger, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { GroupInput } from "../shared/GroupInput";
@@ -48,7 +48,7 @@ export const ShoppingSearchBar = () => {
         type="text"
         value={inputValue}
         placeholder="Ex. 1kg de carrottes"
-        inputGroupAddon={<Carrot className="size-4 shrink-0 text-foreground" />}
+        inputGroupAddon={<Hamburger className="size-4 shrink-0 text-foreground" />}
         groupAddonAlign="inline-start"
         inputGroupAddonClassName="pl-2!"
         onChange={(e) => setInputValue(e.target.value)}

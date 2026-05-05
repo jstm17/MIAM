@@ -6,5 +6,6 @@ export const formatTime = (minutes: number, short: boolean = false) => {
 
   if (remainingMinutes === 0) return `${hours}h`;
 
-  return `${hours}h${remainingMinutes}`;
+  const paddedMinutes = remainingMinutes.toString().padStart(2, "0");
+  return `${hours}h${paddedMinutes}`;
 };

@@ -21,7 +21,7 @@ export const CookingTimeDetailsContent = ({
           {cookingTime.name}
         </Typography>
         <span className="text-muted-foreground/60 text-xs px-4">
-          Ajouté le {formatDate(cookingTime.createdAt)} par{" "}
+          Ajouté le {formatDate(cookingTime.createdAt)} par 
           {cookingTime.addedBy.name}
         </span>
       </div>

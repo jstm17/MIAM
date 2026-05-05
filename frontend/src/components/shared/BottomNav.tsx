@@ -36,7 +36,7 @@ export const BottomNav = () => {
                   size="sm"
                   className={cn(
                     "text-muted-foreground active:text-foreground",
-                    pathname === to && "ring-2 ring-primary!",
+                    pathname === to && "ring-[1.5px] ring-primary!",
                   )}
                   classNameFallback={cn(pathname === to && "border-0!")}
                 />

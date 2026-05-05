@@ -35,12 +35,12 @@ export const ShoppingIngredientsContent = () => {
   );
 
   savedIngredients
-    .filter((item) => item.recipe)
+    .filter((item) => item.recipe && item.ingredient)
     .forEach((item) => {
       const entry = recipesMap.get(item.recipe!._id);
       const savedIngredientQuantity = item.recipe!.ingredients.find(
         (recipeIngredient) =>
-          recipeIngredient.ingredient._id === item.ingredient._id,
+          recipeIngredient.ingredient?._id === item.ingredient._id,
       )?.quantity;
 
       if (entry) {
@@ -76,7 +76,7 @@ export const ShoppingIngredientsContent = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 mt-4">
+    <div className="flex flex-col gap-6 my-4">
       {groupedRecipes.map(({ recipe, ingredients }) => (
         <div key={recipe._id} className="space-y-4">
           <div className="mb-4 p-1 px-4 flex gap-2 items-center justify-between bg-primary/10 border-t border-primary">

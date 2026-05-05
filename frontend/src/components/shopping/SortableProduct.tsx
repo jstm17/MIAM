@@ -3,8 +3,11 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { Check, GripVertical, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { TextInput } from "../shared/TextInput";
 import { Button } from "../ui/button";
+import lidlLogo from "@/assets/lidl-logo.png";
+import { AspectRatio } from "../ui/aspect-ratio";
 
 const SWIPE_THRESHOLD = 60;
 const MAX_OFFSET = 80;
@@ -53,21 +56,28 @@ export const SortableProduct = ({
     isDragging,
   } = useSortable({ id: product._id });
 
+  const [isSwiping, setIsSwiping] = useState(false);
   const x = useMotionValue(0);
   const isChecked = Boolean(product.checked);
 
   const backgroundColor = useTransform(
     x,
     [-MAX_OFFSET, -SWIPE_THRESHOLD, 0, SWIPE_THRESHOLD, MAX_OFFSET],
-    ["#ef4444", "#ef4444", "#ffffff", "#22c55e", "#22c55e"],
+    ["#ef4444", "#ef4444", "transparent", "#22c55e", "#22c55e"],
   );
 
   const handleSwipeEnd = () => {
+    setIsSwiping(false);
     const currentX = x.get();
     if (currentX < -SWIPE_THRESHOLD) onRemove();
     else if (currentX > SWIPE_THRESHOLD) onToggleChecked();
     animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
   };
+
+  const searchProduct = (product: string) => {
+  const url = `https://www.lidl.fr/q/search?q=${encodeURIComponent(product)}`;
+  window.open(url, '_blank');
+};
 
   return (
     <div
@@ -93,10 +103,11 @@ export const SortableProduct = ({
         dragConstraints={{ left: -MAX_OFFSET, right: MAX_OFFSET }}
         dragElastic={0.1}
         style={{ x }}
+        onDragStart={() => setIsSwiping(true)}
         onDragEnd={handleSwipeEnd}
         className={cn(
-          "relative grid grid-cols-[auto_1fr_auto] items-center gap-2 py-2 pr-2 bg-background rounded-md",
-          isDragging && "bg-background2 rounded-none",
+          "relative grid grid-cols-[auto_1fr_auto] items-center gap-2 py-2 pr-2 bg-background focus:rounded-md",
+          (isDragging || isSwiping) && "bg-background2 rounded-md",
         )}
       >
         <GripVertical
@@ -140,7 +151,7 @@ export const SortableProduct = ({
             </button>
           )}
         </div>
-        {isEditing && (
+        {isEditing ? (
           <Button
             variant="ghost"
             size="icon"
@@ -151,10 +162,17 @@ export const SortableProduct = ({
             onClick={() => {
               onSaveEdit();
               isClickingSave.current = false;
-            }}
-          >
-            <Check className="size-4" />
+            }}>
+                        <Check className="size-4" />
+
           </Button>
+        ) : (
+            <img
+              src={lidlLogo}
+              alt="Lidl"
+              className="w-6 h-6 object-contain mr-2"
+            onClick={() => searchProduct(product.name)}
+            />
         )}
       </motion.div>
     </div>

@@ -129,7 +129,7 @@ export const CookingTimeCardActions = ({
               className="backdrop-blur-xs bg-black/10 dark:bg-black/10 hover:bg-muted/10 active:bg-muted/10 aria-expanded:bg-muted/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <Ellipsis fill="currentColor" color="white" />
+              <Ellipsis fill="currentColor" className="text-white"/>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-fit">

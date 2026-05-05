@@ -160,7 +160,7 @@ export const RecipeDetailsImageActions = ({ recipe }: { recipe: Recipe }) => {
                 aria-label="More Options"
                 className={buttonClass}
               >
-                <Ellipsis fill="currentColor" color="white" />
+                <Ellipsis fill="currentColor" className="text-white"/>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-fit">

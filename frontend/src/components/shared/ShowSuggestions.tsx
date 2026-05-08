@@ -23,7 +23,7 @@ export const ShowSuggestions = ({
     <div className="relative w-full">
       {children}
       {show && filtered.length > 0 && (
-        <ul className="absolute z-10 w-full bg-popover border border-input rounded-lg shadow-md max-h-40 overflow-y-auto">
+        <ul className="absolute z-50 w-full bg-popover border border-input rounded-lg shadow-md max-h-40 overflow-y-auto">
           {filtered.map((item) => (
             <li
               key={item._id}

@@ -189,13 +189,13 @@ exports.GetAllRecipesVisiblesByCategory = async (req, res) => {
     const userId = req.user?.id;
     const filter = userId
       ? {
-          categories: category._id,
-          $or: [{ visible: true }, { addedBy: userId }],
-        }
+        categories: category._id,
+        $or: [{ visible: true }, { addedBy: userId }],
+      }
       : {
-          categories: category._id,
-          visible: true,
-        };
+        categories: category._id,
+        visible: true,
+      };
 
     const recipes = await Recipe.find(filter)
       .populate("categories")
@@ -268,11 +268,11 @@ exports.GetAllRecipesVisibles = async (req, res) => {
     const userId = req.user?.id;
     const filter = userId
       ? {
-          $or: [
-            { visible: true, addedBy: { $ne: userId } },
-            { addedBy: userId },
-          ],
-        }
+        $or: [
+          { visible: true, addedBy: { $ne: userId } },
+          { addedBy: userId },
+        ],
+      }
       : { visible: true };
 
     const recipes = await Recipe.find(filter)
@@ -344,7 +344,7 @@ exports.UpdateRecipe = async (req, res) => {
         .json({ error: true, message: "Recette non trouvée" });
     }
 
-    if (recipe.addedBy.toString() !== req.user.id) {
+    if (recipe.addedBy.toString() !== req.user.id && req.user.role !== "admin") {
       return res.status(403).json({
         error: true,
         message: "Vous n'êtes pas autorisé à modifier cette recette",

@@ -17,6 +17,7 @@ export type SavedIngredient = {
   ingredient: Ingredient;
   recipe?: Recipe;
   addedAt: string;
+  label?: string;
 };
 
 export type User = {

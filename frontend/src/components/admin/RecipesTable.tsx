@@ -14,6 +14,7 @@ import type { AdminRecipe } from "@/types/recipe.types";
 import { formatDateShort } from "@/utils/formatDate";
 import { Pencil, Trash2, UserRound } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type RecipesTableProps = {
   recipes: AdminRecipe[];
@@ -28,6 +29,7 @@ export const RecipesTable = ({
   onDeleteMany,
   onEdit,
 }: RecipesTableProps) => {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggleAll = () => {
@@ -40,8 +42,6 @@ export const RecipesTable = ({
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
-
-  console.log(recipes);
 
   return (
     <div className="rounded-2xl border bg-card shadow-sm">
@@ -98,7 +98,7 @@ export const RecipesTable = ({
                 </TableCell>
 
                 {/* Nom */}
-                <TableCell className="font-medium">{recipe.name}</TableCell>
+                <TableCell className="font-medium cursor-pointer" onClick={() => navigate(`/recipe/${recipe.slug}`)}>{recipe.name}</TableCell>
 
                 {/* Nb recettes */}
                 <TableCell>{recipe.addedBy.name}</TableCell>

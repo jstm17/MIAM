@@ -62,9 +62,9 @@ export function RecipeUpdatePage() {
         ingredients:
           recipe.ingredients.length > 0
             ? recipe.ingredients.map((i) => ({
-                ingredient: i.ingredient.name,
-                quantity: i.quantity,
-              }))
+              ingredient: i.label,
+              quantity: i.quantity,
+            }))
             : [{ ingredient: "", quantity: "" }],
         instructions:
           recipe.instructions.length > 0
@@ -100,10 +100,7 @@ export function RecipeUpdatePage() {
     return <Loading />;
   }
 
-  console.log(recipe);
-  console.log(isPublic);
-
-  if (user!._id !== recipe?.addedBy._id) {
+  if (user!._id !== recipe?.addedBy._id && !isAdmin) {
     return (
       <NotFoundPage
         title="Accès refusé"

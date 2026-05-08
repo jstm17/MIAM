@@ -7,6 +7,7 @@ import { Skeleton } from "../ui/skeleton";
 
 type IngredientCardProps = {
   ingredient: Ingredient;
+  ingredientName?: string;
   quantity?: string;
   isSaved?: boolean;
   disabled?: boolean;
@@ -18,6 +19,7 @@ type IngredientCardProps = {
 
 export const IngredientCard = ({
   ingredient,
+  ingredientName,
   quantity,
   isSaved = false,
   disabled = false,
@@ -66,7 +68,7 @@ export const IngredientCard = ({
         {ingredient.url ? (
           <img
             src={ingredient.url}
-            alt={ingredient.name}
+            alt={ingredientName || ingredient.name}
             className="object-contain h-full w-full"
           />
         ) : (
@@ -77,7 +79,7 @@ export const IngredientCard = ({
         {quantity ? (
           <span className="font-semibold block">{quantity}</span>
         ) : null}
-        <span>{ingredient.name}</span>
+        <span>{ingredientName || ingredient.name}</span>
       </p>
     </div>
   );

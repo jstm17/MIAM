@@ -70,6 +70,7 @@ export const IngredientsSection = ({ recipe }: { recipe: Recipe }) => {
           <IngredientCard
             key={ingredient.ingredient._id}
             ingredient={ingredient.ingredient}
+            ingredientName={ingredient.label || ingredient.ingredient.name}
             quantity={ingredient.quantity}
             isSaved={Boolean(isSaved)}
             disabled={

@@ -72,7 +72,7 @@ export const SortableIngredient = ({
   });
 
   return (
-    <div ref={setNodeRef} style={style} className="relative overflow-hidden">
+    <div ref={setNodeRef} style={style} className="relative overflow-visible">
       {/* Delete background */}
       <div
         className={cn(

@@ -5,6 +5,7 @@ import type { User } from "./user.types";
 export type RecipeIngredient = {
   ingredient: Ingredient;
   quantity: string;
+  label?: string;
 };
 
 export type RecipeInstruction = {

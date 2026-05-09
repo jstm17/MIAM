@@ -46,7 +46,7 @@ export const PasteDialog = ({
         />
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary" size="lg">
+            <Button type="button" variant="outline" size="lg">
               Annuler
             </Button>
           </DialogClose>

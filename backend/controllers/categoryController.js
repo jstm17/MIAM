@@ -399,6 +399,64 @@ exports.ResetCategoryUrl = async (req, res) => {
   }
 };
 
+exports.UpdateCategoryName = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({ error: true, message: "Nom requis" });
+    }
+
+    const category = await Category.findById(req.params.id);
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Catégorie non trouvée" });
+    }
+
+    const normalizedName = String(name).trim();
+    const capitalizedName =
+      normalizedName.charAt(0).toUpperCase() + normalizedName.slice(1);
+
+    const nameQuery = {
+      name: new RegExp(
+        `^${String(capitalizedName).replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}$`,
+        "i",
+      ),
+    };
+
+    const existingCategory = await Category.findOne(nameQuery);
+    if (
+      existingCategory &&
+      existingCategory._id.toString() !== category._id.toString()
+    ) {
+      return res.status(400).json({
+        error: true,
+        message: "Une catégorie avec ce nom existe déjà",
+      });
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      req.params.id,
+      { name: capitalizedName },
+      { new: true },
+    );
+
+    return res.status(200).json({
+      error: false,
+      message: "Nom mis à jour avec succès",
+      data: updatedCategory,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: error.message || "Erreur serveur",
+    });
+  }
+};
+
 exports.UpdateCategoryUrl = async (req, res) => {
   try {
     const { url } = req.body;

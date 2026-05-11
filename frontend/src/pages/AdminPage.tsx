@@ -24,7 +24,7 @@ import { useGetAllIngredients } from "@/hooks/ingredients/useGetAllIngredients";
 import { useGetAllRecipes } from "@/hooks/recipes/useGetAllRecipes";
 import { useGetAllUsers } from "@/hooks/users/useGetAllUsers";
 import type { ApiError } from "@/types/error.types";
-import { Search } from "lucide-react";
+import { Carrot, ChefHat, Clock, Search, Tags, UsersRound, UtensilsCrossed } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -81,13 +81,20 @@ export const AdminPage = () => {
           <Typography size="xl" weight="bold" className="">
             {totalUsers}
           </Typography>
-          <span className="text-sm text-muted-foreground/80">Chefs</span>
+
+          <div className="flex gap-1 items-center">
+            <ChefHat size={14} className="text-muted-foreground/80" />
+            <span className="text-sm text-muted-foreground/80">Chefs</span>
+          </div>
         </Item>
         <Item className="bg-muted flex flex-col items-center gap-0">
           <Typography size="xl" weight="bold" className="">
             {totalAdmins}
           </Typography>
-          <span className="text-sm text-muted-foreground/80">Admins</span>
+            <div className="flex gap-1 items-center">
+            <UsersRound size={14} className="text-muted-foreground/80" />
+            <span className="text-sm text-muted-foreground/80">Admins</span>
+          </div>
         </Item>
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -95,27 +102,37 @@ export const AdminPage = () => {
           <Typography size="xl" weight="bold" className="">
             {totalRecipes}
           </Typography>
-          <span className="text-sm text-muted-foreground/80">Recettes</span>
+           <div className="flex gap-1 items-center">
+            <UtensilsCrossed size={14} className="text-muted-foreground/80" />
+            <span className="text-sm text-muted-foreground/80">Recettes</span>
+          </div>
         </Item>
         <Item className="bg-muted flex flex-col items-center gap-0">
           <Typography size="xl" weight="bold" className="">
             {totalCookingTimes}
           </Typography>
-          <span className="text-sm text-muted-foreground/80">
-            Temps de cuisson
-          </span>
+           <div className="flex gap-1 items-center">
+            <Clock size={14} className="text-muted-foreground/80" />
+            <span className="text-sm text-muted-foreground/80">Temps de cuisson</span>
+          </div>
         </Item>
         <Item className="bg-muted flex flex-col items-center gap-0">
           <Typography size="xl" weight="bold" className="">
             {totalCategories}
           </Typography>
-          <span className="text-sm text-muted-foreground/80">Catégories</span>
+           <div className="flex gap-1 items-center">
+            <Tags size={14} className="text-muted-foreground/80" />
+            <span className="text-sm text-muted-foreground/80">Catégories</span>
+          </div>
         </Item>
         <Item className="bg-muted flex flex-col items-center gap-0">
           <Typography size="xl" weight="bold" className="">
             {totalIngredients}
           </Typography>
-          <span className="text-sm text-muted-foreground/80">Ingrédients</span>
+         <div className="flex gap-1 items-center">
+            <Carrot size={14} className="text-muted-foreground/80" />
+            <span className="text-sm text-muted-foreground/80">Ingrédients</span>
+          </div>
         </Item>
       </div>
       <Separator className="h-px" />

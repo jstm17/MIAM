@@ -17,9 +17,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useUpdateCategoryName } from "@/hooks/categories/useUpdateCategoryName";
 import type { AdminCategory } from "@/types/category.types";
 import { ImageUp, Timer, Trash2, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { TextInput } from "../shared/TextInput";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { Skeleton } from "../ui/skeleton";
@@ -45,7 +47,9 @@ export const CategoriesTable = ({
   const [urlInput, setUrlInput] = useState<{ [key: string]: string }>({});
   const [openPopover, setOpenPopover] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string>("");
+  const { updateName, isPending: isUpdatingName } = useUpdateCategoryName();
   const toggleAll = () => {
     if (selected.length === categories.length) setSelected([]);
     else setSelected(categories.map((i) => i._id));
@@ -71,8 +75,40 @@ export const CategoriesTable = ({
     }
   };
 
+  const handleEditName = (id: string, currentName: string) => {
+    setEditingId(id);
+    setEditValue(currentName);
+  };
+
+  const handleSaveName = async (id: string) => {
+    const category = categories.find((c) => c._id === id);
+    if (!category || editValue.trim() === category.name) {
+      setEditingId(null);
+      return;
+    }
+
+    try {
+      const normalizedName =
+        editValue.trim().charAt(0).toUpperCase() + editValue.trim().slice(1);
+      await updateName({ id, name: normalizedName });
+      toast.success("Nom mis à jour avec succès");
+      setEditingId(null);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la mise à jour";
+      toast.error(message);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditValue("");
+  };
+
   return (
-    <div className="rounded-2xl border bg-card shadow-sm">
+    <div className="rounded-2xl border bg-card shadow-sm  mb-4">
       {selected.length > 0 && (
         <div className="flex items-center gap-2 p-3 border-b bg-muted/50 rounded-t-2xl">
           <span className="text-sm text-muted-foreground flex-1">
@@ -139,7 +175,43 @@ export const CategoriesTable = ({
                 </TableCell>
 
                 {/* Nom */}
-                <TableCell className="font-medium">{category.name}</TableCell>
+                <TableCell className="font-medium">
+                  {editingId === category._id ? (
+                    <div className="flex items-center">
+                      <TextInput
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        autoFocus
+                        className="h-8"
+                        disabled={isUpdatingName}
+                        onBlur={() => {
+                          handleSaveName(category._id);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveName(category._id);
+                          if (e.key === "Escape") handleCancelEdit();
+                        }}
+                      />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleCancelEdit}
+                        disabled={isUpdatingName}
+                      >
+                        ✕
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() =>
+                        handleEditName(category._id, category.name)
+                      }
+                      className="cursor-pointer hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                    >
+                      {category.name}
+                    </div>
+                  )}
+                </TableCell>
 
                 {/* Nb recettes */}
                 <TableCell>{category.recipesCount}</TableCell>

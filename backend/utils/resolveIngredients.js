@@ -34,30 +34,31 @@ const resolveIngredients = async (ingredients) => {
 const singularizeFrench = (word) => {
   if (!word) return "";
 
-  let name = word.toLowerCase().trim();
+  let name = word.trim();
 
   // 1. Exceptions courantes (Ingrédients)
   const exceptions = {
     'ails': 'ail',
     'choux': 'chou',
+    'couscous': 'couscous',
   };
 
-  if (exceptions[name]) return exceptions[name];
+ const singularizeWord = (w) => {
+    if (exceptions[w]) return exceptions[w];
 
-  // 2. Mots se terminant par -aux (ex: journaux -> journal)
-  if (name.endsWith('aux')) {
-    return name.slice(0, -3) + 'al';
-  }
+    if (w.endsWith('aux')) return w.slice(0, -3) + 'al';
 
-  // 3. Mots se terminant par -s ou -x (le plus courant : carottes, oignons)
-  // On vérifie que le mot est assez long pour ne pas tronquer des mots comme "os" или "riz"
-  if ((name.endsWith('s') || name.endsWith('x')) && name.length > 3) {
-    // Cas particulier : si le mot finit déjà par -es (ex: pommes), on enlève juste le -s
-    // Mais en français, l'ingrédient de base est souvent au singulier sans le s.
-    return name.slice(0, -1);
-  }
+    if ((w.endsWith('s') || w.endsWith('x')) && w.length > 3) {
+      return w.slice(0, -1);
+    }
 
-  return name;
+    return w;
+  };
+
+  const words = word.trim().split(' ');
+  const singularized = words.map((w) => singularizeWord(w)).join(' ');
+
+  return singularized[0].toUpperCase() + singularized.slice(1);
 };
 
 const normalizeIngredientName = (str) => {
@@ -67,15 +68,17 @@ const normalizeIngredientName = (str) => {
     str
       .toLowerCase()
       .trim()
-      // 1. Gérer les ligatures comme œ et æ
+      // 1. Retirer les parenthèses et leur contenu en premier
+      .replace(/\(.*?\)/g, '')
+      .trim()
+      // 2. Gérer les ligatures comme œ et æ
       .replace(/œ/g, "oe")
       .replace(/æ/g, "ae")
-      // 3. Gérer le pluriel simple (retrait du 's' final)
-      // On ne le fait que si le mot est assez long pour éviter de casser "os" ou "as"
-      .replace(/(.+)(s)$/, "$1")
-      // 4. Gérer les pluriels en -aux (ex: poireaux -> poireau)
+      // 3. Gérer les pluriels en -aux (ex: poireaux -> poireau) AVANT le -s
       .replace(/(.+)eaux$/, "$1eau")
       .replace(/(.+)aux$/, "$1al")
+      // 4. Gérer le pluriel simple (retrait du 's' final)
+      .replace(/(.{3,})s$/, "$1")
   );
 };
 

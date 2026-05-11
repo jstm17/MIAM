@@ -51,7 +51,7 @@ export const UsersTable = ({
   console.log(users);
 
   return (
-    <div className="rounded-2xl border bg-card shadow-sm">
+    <div className="rounded-2xl border bg-card shadow-sm mb-4">
       {selected.length > 0 && (
         <div className="flex items-center gap-2 p-3 border-b bg-muted/50 rounded-t-2xl">
           <span className="text-sm text-muted-foreground flex-1">

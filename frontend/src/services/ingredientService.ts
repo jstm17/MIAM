@@ -14,5 +14,7 @@ export const ingredientService = {
     axiosInstance.patch(`${INGREDIENT_URL}/reset-url`, { ids }),
   updateUrl: (id: string, url: string) =>
     axiosInstance.patch(`${INGREDIENT_URL}/${id}/url`, { url }),
+  updateName: (id: string, name: string) =>
+    axiosInstance.patch(`${INGREDIENT_URL}/${id}/name`, { name }),
   create: (data: { name: string }) => axiosInstance.post(INGREDIENT_URL, data),
 };

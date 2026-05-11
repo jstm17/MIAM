@@ -192,6 +192,66 @@ exports.ResetIngredientUrl = async (req, res) => {
   }
 };
 
+exports.UpdateIngredientName = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({ error: true, message: "Nom requis" });
+    }
+
+    const ingredient = await Ingredient.findById(req.params.id);
+
+    if (!ingredient) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Ingrédient non trouvé" });
+    }
+
+    const normalizedName = String(name).trim();
+    const capitalizedName =
+      normalizedName.charAt(0).toUpperCase() + normalizedName.slice(1);
+
+    const nameQuery = {
+      name: new RegExp(
+        `^${String(capitalizedName).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+        "i",
+      ),
+    };
+
+    // Vérifier si un ingrédient avec ce nom existe déjà (cas-insensible)
+    const existingIngredient = await Ingredient.findOne(nameQuery);
+    if (
+      existingIngredient &&
+      existingIngredient._id.toString() !== ingredient._id.toString()
+    ) {
+      return res.status(400).json({
+        error: true,
+        message: "Un ingrédient avec ce nom existe déjà",
+      });
+    }
+
+    // Mettre à jour le nom
+    const updatedIngredient = await Ingredient.findByIdAndUpdate(
+      req.params.id,
+      { name: capitalizedName },
+      { new: true },
+    );
+
+    return res.status(200).json({
+      error: false,
+      message: "Nom mis à jour avec succès",
+      data: updatedIngredient,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: error.message || "Erreur serveur",
+    });
+  }
+};
+
 exports.UpdateIngredientUrl = async (req, res) => {
   try {
     const { url } = req.body;

@@ -10,6 +10,7 @@ const {
   GetCategoryBySlug,
   DeleteCategory,
   ResetCategoryUrl,
+  UpdateCategoryName,
   UpdateCategoryUrl,
   DeleteCategories,
   ResetCategoriesUrl,
@@ -34,6 +35,7 @@ router.post("/", auth, CreateCategory);
 
 router.delete("/:id", auth, DeleteCategory);
 router.patch("/:id/reset-url", auth, ResetCategoryUrl);
+router.patch("/:id/name", auth, UpdateCategoryName);
 router.patch("/:id/url", auth, UpdateCategoryUrl);
 router.delete("/", auth, DeleteCategories);
 router.patch("/reset-url", auth, ResetCategoriesUrl);

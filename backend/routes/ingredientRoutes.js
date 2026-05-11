@@ -6,6 +6,7 @@ const {
   CreateIngredient,
   DeleteIngredient,
   ResetIngredientUrl,
+  UpdateIngredientName,
   UpdateIngredientUrl,
   DeleteIngredients,
   ResetIngredientsUrl,
@@ -17,6 +18,7 @@ router.get("/visibles", authOptional, GetAllIngredientsVisibles);
 router.post("/", auth, CreateIngredient);
 router.delete("/:id", auth, DeleteIngredient);
 router.patch("/:id/reset-url", auth, ResetIngredientUrl);
+router.patch("/:id/name", auth, UpdateIngredientName);
 router.patch("/:id/url", auth, UpdateIngredientUrl);
 router.delete("/", auth, DeleteIngredients);
 router.patch("/reset-url", auth, ResetIngredientsUrl);

@@ -32,4 +32,6 @@ export const categoryService = {
     axiosInstance.patch(`${CATEGORY_URL}/reset-url`, { ids }),
   updateUrl: (id: string, url: string) =>
     axiosInstance.patch(`${CATEGORY_URL}/${id}/url`, { url }),
+  updateName: (id: string, name: string) =>
+    axiosInstance.patch(`${CATEGORY_URL}/${id}/name`, { name }),
 };

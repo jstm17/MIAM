@@ -174,7 +174,7 @@ export const IngredientsTable = ({
                 </TableCell>
 
                 {/* Nom */}
-                <TableCell className="font-medium">
+                <TableCell className="font-medium min-w-52 whitespace-normal break-words">
                   {editingId === ingredient._id ? (
                     <div className="flex items-center">
                       <TextInput
@@ -205,7 +205,7 @@ export const IngredientsTable = ({
                       onClick={() =>
                         handleEditName(ingredient._id, ingredient.name)
                       }
-                      className="cursor-pointer hover:bg-muted/50 px-2 py-1 rounded transition-colors"
+                      className="cursor-pointer hover:bg-muted/50 px-2 py-1 rounded transition-colors "
                     >
                       {ingredient.name}
                     </div>

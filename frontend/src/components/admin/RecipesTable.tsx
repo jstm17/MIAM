@@ -98,10 +98,12 @@ export const RecipesTable = ({
                 </TableCell>
 
                 {/* Nom */}
-                <TableCell className="font-medium cursor-pointer" onClick={() => navigate(`/recipe/${recipe.slug}`)}>{recipe.name}</TableCell>
+                <TableCell className="font-medium cursor-pointer w-1/2 whitespace-normal break-words" onClick={() => navigate(`/recipe/${recipe.slug}`)}>
+                  {recipe.name}
+                </TableCell>
 
                 {/* Nb recettes */}
-                <TableCell>{recipe.addedBy.name}</TableCell>
+                <TableCell className="whitespace-normal break-words">{recipe.addedBy.name}</TableCell>
 
                 {/* Date création */}
                 <TableCell>{formatDateShort(recipe.createdAt)}</TableCell>

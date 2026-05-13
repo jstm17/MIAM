@@ -45,6 +45,7 @@ export const SortableIngredient = ({
   setInputValues,
 }: Props) => {
   const [showDelete, setShowDelete] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const {
     attributes,
@@ -62,7 +63,7 @@ export const SortableIngredient = ({
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
-      if (total > 1) setShowDelete(true);
+      if (total > 1 && !isFocused) setShowDelete(true);
     },
     onSwipedRight: () => setShowDelete(false),
     delta: 40,
@@ -102,10 +103,7 @@ export const SortableIngredient = ({
             {...listeners}
             className="cursor-grab active:cursor-grabbing text-muted-foreground p-2 w-full h-full"
           >
-            <GripVertical
-              className="size-4 m-auto"
-              fill="currentColor"
-            />
+            <GripVertical className="size-4 m-auto" fill="currentColor" />
           </button>
 
           {/* Swipe zone */}
@@ -121,6 +119,8 @@ export const SortableIngredient = ({
               error={errors.ingredients?.[index]?.quantity?.message}
               className="rounded-r-none focus:z-10"
               {...register(`ingredients.${index}.quantity`)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
             />
 
             <ShowSuggestions
@@ -148,7 +148,11 @@ export const SortableIngredient = ({
                   }));
                   setShowIndex(index);
                 }}
-                onBlur={() => setTimeout(() => setShowIndex(null), 150)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => {
+                  setIsFocused(false);
+                  setTimeout(() => setShowIndex(null), 150);
+                }}
               />
             </ShowSuggestions>
           </div>

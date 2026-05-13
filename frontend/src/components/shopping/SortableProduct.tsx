@@ -58,6 +58,7 @@ export const SortableProduct = ({
   const [isSwiping, setIsSwiping] = useState(false);
   const x = useMotionValue(0);
   const isChecked = Boolean(product.checked);
+  const [isFocused, setIsFocused] = useState(false);
 
   const backgroundColor = useTransform(
     x,
@@ -98,7 +99,7 @@ export const SortableProduct = ({
 
       {/* Contenu swipeable */}
       <motion.div
-        drag="x"
+        drag={isFocused ? false : "x"}
         dragConstraints={{ left: -MAX_OFFSET, right: MAX_OFFSET }}
         dragElastic={0.1}
         style={{ x }}
@@ -127,7 +128,9 @@ export const SortableProduct = ({
               type="text"
               value={editedName}
               onChange={(e) => setEditedName(e.target.value)}
+              onFocus={() => setIsFocused(true)}
               onBlur={() => {
+                setIsFocused(false);
                 if (isClickingSave.current) return;
                 onSaveEdit();
               }}

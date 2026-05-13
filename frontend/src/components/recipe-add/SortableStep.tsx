@@ -33,6 +33,7 @@ export const SortableStep = ({
   remove,
 }: Props) => {
   const [showDelete, setShowDelete] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const {
     attributes,
@@ -50,7 +51,7 @@ export const SortableStep = ({
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
-      if (total > 1) setShowDelete(true);
+      if (total > 1 && !isFocused) setShowDelete(true);
     },
     onSwipedRight: () => {
       setShowDelete(false);
@@ -103,6 +104,8 @@ export const SortableStep = ({
               placeholder="Ex. Mélanger les ingrédients..."
               {...register(`instructions.${index}.content`)}
               error={errors.instructions?.[index]?.content?.message}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
             />
           </div>
         </div>

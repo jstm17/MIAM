@@ -17,6 +17,8 @@ type TextAreaInputProps = {
   ref?: React.Ref<HTMLTextAreaElement>;
   onInput?: (event: React.FormEvent<HTMLTextAreaElement>) => void;
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onFocus?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
 };
 
 export const TextAreaInput = forwardRef<
@@ -70,6 +72,14 @@ export const TextAreaInput = forwardRef<
       props.onChange?.(event);
     };
 
+    const handleFocus = (event: React.FocusEvent<HTMLTextAreaElement>) => {
+      props.onFocus?.(event);
+    };
+
+    const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
+      props.onBlur?.(event);
+    };
+
     return (
       <Field>
         {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
@@ -83,6 +93,8 @@ export const TextAreaInput = forwardRef<
           className={className}
           onInput={handleInput}
           onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           {...props}
         />
         {error && (

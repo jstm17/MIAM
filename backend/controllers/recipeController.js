@@ -48,8 +48,9 @@ exports.CreateRecipe = async (req, res) => {
       : await fetchAndUploadRecipeImage(name);
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-    const { resolvedCategories, newCategoryIds } =
-      await resolveCategories(categories);
+    const { resolvedCategories, newCategoryIds } = await resolveCategories(
+      categories,
+    );
 
     const recipe = new Recipe({
       name,
@@ -189,13 +190,13 @@ exports.GetAllRecipesVisiblesByCategory = async (req, res) => {
     const userId = req.user?.id;
     const filter = userId
       ? {
-        categories: category._id,
-        $or: [{ visible: true }, { addedBy: userId }],
-      }
+          categories: category._id,
+          $or: [{ visible: true }, { addedBy: userId }],
+        }
       : {
-        categories: category._id,
-        visible: true,
-      };
+          categories: category._id,
+          visible: true,
+        };
 
     const recipes = await Recipe.find(filter)
       .populate("categories")
@@ -268,11 +269,11 @@ exports.GetAllRecipesVisibles = async (req, res) => {
     const userId = req.user?.id;
     const filter = userId
       ? {
-        $or: [
-          { visible: true, addedBy: { $ne: userId } },
-          { addedBy: userId },
-        ],
-      }
+          $or: [
+            { visible: true, addedBy: { $ne: userId } },
+            { addedBy: userId },
+          ],
+        }
       : { visible: true };
 
     const recipes = await Recipe.find(filter)
@@ -344,7 +345,10 @@ exports.UpdateRecipe = async (req, res) => {
         .json({ error: true, message: "Recette non trouvée" });
     }
 
-    if (recipe.addedBy.toString() !== req.user.id && req.user.role !== "admin") {
+    if (
+      recipe.addedBy.toString() !== req.user.id &&
+      req.user.role !== "admin"
+    ) {
       return res.status(403).json({
         error: true,
         message: "Vous n'êtes pas autorisé à modifier cette recette",
@@ -372,8 +376,9 @@ exports.UpdateRecipe = async (req, res) => {
     }
 
     const resolvedIngredients = await resolveIngredientsFast(ingredients);
-    const { resolvedCategories, newCategoryIds } =
-      await resolveCategories(categories);
+    const { resolvedCategories, newCategoryIds } = await resolveCategories(
+      categories,
+    );
 
     const newIngredientIds = resolvedIngredients.map((i) =>
       i.ingredient.toString(),
@@ -498,6 +503,54 @@ exports.DeleteRecipe = async (req, res) => {
     res.status(500).json({
       error: true,
       message: "Erreur Server - La suppression de la recette a échoué",
+    });
+  }
+};
+
+exports.DeleteRecipes = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        error: true,
+        message: "Aucune recette sélectionnée",
+      });
+    }
+
+    const recipes = await Recipe.find({ _id: { $in: ids } });
+
+    for (const recipe of recipes) {
+      if (recipe.image) {
+        await deleteImageFromCloudinary(recipe.image);
+      }
+    }
+
+    await Recipe.deleteMany({ _id: { $in: ids } });
+
+    await User.updateMany(
+      { "savedRecipes.recipe": { $in: ids } },
+      { $pull: { savedRecipes: { recipe: { $in: ids } } } },
+    );
+
+    await User.updateMany(
+      { "savedIngredients.recipe": { $in: ids } },
+      { $pull: { savedIngredients: { recipe: { $in: ids } } } },
+    );
+
+    await CleanUnusedIngredients();
+    await CleanUnusedCategories();
+    await CleanUsersOrphanData();
+
+    return res.status(200).json({
+      error: false,
+      message: `${recipes.length} recette(s) supprimée(s) avec succès`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - La suppression des recettes a échoué",
     });
   }
 };

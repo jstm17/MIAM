@@ -14,6 +14,7 @@ import type { AdminCookingTime } from "@/types/cookingTime.types";
 import { formatDateShort } from "@/utils/formatDate";
 import { Pencil, Trash2, UserRound } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type CookingTimesTableProps = {
   cookingTimes: AdminCookingTime[];
@@ -28,6 +29,7 @@ export const CookingTimesTable = ({
   onDeleteMany,
   onEdit,
 }: CookingTimesTableProps) => {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggleAll = () => {
@@ -40,8 +42,6 @@ export const CookingTimesTable = ({
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
-
-  console.log(cookingTimes);
 
   return (
     <div className="rounded-2xl border bg-card shadow-sm mb-4">
@@ -99,7 +99,10 @@ export const CookingTimesTable = ({
                 </TableCell>
 
                 {/* Nom */}
-                <TableCell className="font-medium">
+                <TableCell
+                  className="font-medium cursor-pointer w-1/2 whitespace-normal break-words"
+                  onClick={() => navigate(`/recipe/${cookingTime.slug}`)}
+                >
                   {cookingTime.name}
                 </TableCell>
 

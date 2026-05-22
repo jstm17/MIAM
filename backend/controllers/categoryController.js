@@ -260,7 +260,11 @@ exports.CreateCategory = async (req, res) => {
 
 exports.CleanUnusedCategories = async () => {
   try {
-    const usedCategoryIds = await Recipe.distinct("categories");
+    const recipeCategoryIds = await Recipe.distinct("categories");
+    const cookingTimeCategoryIds = await CookingTime.distinct("categories");
+    const usedCategoryIds = Array.from(
+      new Set([...recipeCategoryIds, ...cookingTimeCategoryIds]),
+    );
 
     // Récupérer les catégories qui vont être supprimées
     const categoriesToDelete = await Category.find({

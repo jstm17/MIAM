@@ -85,7 +85,7 @@ export function CookingTimeUpdatePage() {
   console.log(cookingTime);
   console.log(isPublic);
 
-  if (user!._id !== cookingTime?.addedBy._id) {
+  if (user!._id !== cookingTime?.addedBy._id && !isAdmin) {
     return (
       <NotFoundPage
         title="Accès refusé"

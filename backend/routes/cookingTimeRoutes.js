@@ -39,6 +39,7 @@ router.put(
   upload.single("image"),
   cookingTimeController.UpdateCookingTime,
 );
+router.delete("/", auth, cookingTimeController.DeleteCookingTimes);
 router.delete("/:id", auth, cookingTimeController.DeleteCookingTime);
 router.patch("/:id/show", auth, cookingTimeController.ShowCookingTime);
 router.patch("/:id/hide", auth, cookingTimeController.HideCookingTime);

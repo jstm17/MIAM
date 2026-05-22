@@ -35,8 +35,9 @@ exports.CreateCookingTime = async (req, res) => {
       ? await compressAndUploadImage(req.file.buffer, "cookingTimes")
       : await fetchAndUploadCookingTimeImage(name);
 
-    const { resolvedCategories, newCategoryIds } =
-      await resolveCategories(categories);
+    const { resolvedCategories, newCategoryIds } = await resolveCategories(
+      categories,
+    );
 
     const cookingTime = new CookingTime({
       name,
@@ -319,7 +320,10 @@ exports.UpdateCookingTime = async (req, res) => {
         .json({ error: true, message: "Temps de cuisson non trouvé" });
     }
 
-    if (cookingTime.addedBy.toString() !== req.user.id) {
+    if (
+      cookingTime.addedBy.toString() !== req.user.id &&
+      req.user.role !== "admin"
+    ) {
       return res.status(403).json({
         error: true,
         message: "Vous n'êtes pas autorisé à modifier ce temps de cuisson",
@@ -342,8 +346,9 @@ exports.UpdateCookingTime = async (req, res) => {
       }
     }
 
-    const { resolvedCategories, newCategoryIds } =
-      await resolveCategories(categories);
+    const { resolvedCategories, newCategoryIds } = await resolveCategories(
+      categories,
+    );
 
     const updateData = {
       name,
@@ -432,6 +437,48 @@ exports.DeleteCookingTime = async (req, res) => {
     res.status(500).json({
       error: true,
       message: "Erreur Server - La suppression de la temps de cuisson a échoué",
+    });
+  }
+};
+
+exports.DeleteCookingTimes = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        error: true,
+        message: "Aucun temps de cuisson sélectionné",
+      });
+    }
+
+    const cookingTimes = await CookingTime.find({ _id: { $in: ids } });
+
+    for (const cookingTime of cookingTimes) {
+      if (cookingTime.image) {
+        await deleteImageFromCloudinary(cookingTime.image);
+      }
+    }
+
+    await CookingTime.deleteMany({ _id: { $in: ids } });
+
+    await User.updateMany(
+      { "savedCookingTimes.cookingTime": { $in: ids } },
+      { $pull: { savedCookingTimes: { cookingTime: { $in: ids } } } },
+    );
+
+    await CleanUnusedCategories();
+    await CleanUsersOrphanData();
+
+    return res.status(200).json({
+      error: false,
+      message: `${cookingTimes.length} temps de cuisson supprimé(s) avec succès`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Erreur Server - La suppression des temps de cuisson a échoué",
     });
   }
 };

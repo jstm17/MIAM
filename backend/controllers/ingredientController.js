@@ -1,6 +1,7 @@
 const Ingredient = require("../models/Ingredient");
 const Recipe = require("../models/Recipe");
 const { cloudinary } = require("../config/cloudinary");
+const { translateToEnglish } = require("../utils/translate");
 
 exports.GetAllIngredients = async (req, res) => {
   try {
@@ -208,9 +209,10 @@ exports.UpdateIngredientName = async (req, res) => {
         .json({ error: true, message: "Ingrédient non trouvé" });
     }
 
-    const normalizedName = String(name).trim();
+    const normalizedName = String(name).trim().toLowerCase();
     const capitalizedName =
       normalizedName.charAt(0).toUpperCase() + normalizedName.slice(1);
+    const englishName = await translateToEnglish(capitalizedName);
 
     const nameQuery = {
       name: new RegExp(
@@ -231,10 +233,10 @@ exports.UpdateIngredientName = async (req, res) => {
       });
     }
 
-    // Mettre à jour le nom
+    // Mettre à jour le nom, le normalizedName et l'englishName
     const updatedIngredient = await Ingredient.findByIdAndUpdate(
       req.params.id,
-      { name: capitalizedName },
+      { name: capitalizedName, normalizedName, englishName },
       { new: true },
     );
 

@@ -45,16 +45,14 @@ export const CategoriesCookingTimeContent = () => {
     );
   }
 
-  if (sortedCategories.length === 0) {
+  if (totalCategories === 0) {
     return (
-      <div>
-        <EmptyCard
-          title="0 catégorie disponible"
-          description="Personne n'a ajouté de temps de cuisson."
-          buttonText="Ajouter un temps de cuisson"
-          onButtonClick={() => navigate("/add?tab=cooking-time")}
-        />
-      </div>
+      <EmptyCard
+        title="0 catégorie disponible"
+        description="Personne n'a ajouté de temps de cuisson."
+        buttonText="Ajouter un temps de cuisson"
+        onButtonClick={() => navigate("/add?tab=cooking-time")}
+      />
     );
   }
   return (

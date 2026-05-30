@@ -21,7 +21,7 @@ export const CookingTimeDetailsContent = ({
           {cookingTime.name}
         </Typography>
         <span className="text-muted-foreground/60 text-xs px-4">
-          Ajouté le {formatDate(cookingTime.createdAt)} par 
+          Ajouté le {formatDate(cookingTime.createdAt)} par{" "}
           {cookingTime.addedBy.name}
         </span>
       </div>
@@ -52,7 +52,7 @@ export const CookingTimeDetailsContent = ({
         {cookingTime.methodCook && (
           <Item variant={"muted"} size={"xs"} orientation="vertical">
             <Microwave />
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center text-center">
               <span>{cookingTime.methodCook || 0}</span>
               <span className="text-muted-foreground/80 text-xs text-center">
                 Méthode de cuisson

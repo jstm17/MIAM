@@ -43,16 +43,14 @@ export const CategoriesRecipeContent = () => {
     );
   }
 
-  if (sortedCategories.length === 0) {
+  if (totalCategories === 0) {
     return (
-      <div>
-        <EmptyCard
-          className="p-0"
-          description="Personne n'a ajouté de recette."
-          buttonText="Ajouter une recette"
-          onButtonClick={() => navigate("/add")}
-        />
-      </div>
+      <EmptyCard
+        className="p-0"
+        description="Personne n'a ajouté de recette."
+        buttonText="Ajouter une recette"
+        onButtonClick={() => navigate("/add")}
+      />
     );
   }
   return (

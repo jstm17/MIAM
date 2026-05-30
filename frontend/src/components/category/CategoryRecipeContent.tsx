@@ -50,14 +50,12 @@ export const CategoryRecipeContent = ({
     return <HomeContentSkeleton />;
   }
 
-  if (filteredRecipes.length === 0) {
+  if (totalRecipes === 0) {
     return (
-      <div>
-        <EmptyCard
-          title="0 temps de cuisson disponible"
-          description={`Personne n'a pas ajouté de recette dans cette catégorie.`}
-        />
-      </div>
+      <EmptyCard
+        title="0 recette disponible"
+        description={`Personne n'a pas ajouté de recette dans cette catégorie.`}
+      />
     );
   }
 

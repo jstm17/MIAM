@@ -8,7 +8,7 @@ import { UserCardCookingTime } from "./UserCardCookingTime";
 import { UserFilters } from "./UserFilters";
 
 export const UsersCookingTimeContent = () => {
-  const { users, isLoading } = useGetAllUsersVisiblesCookingTime();
+  const { users, totalUsers, isLoading } = useGetAllUsersVisiblesCookingTime();
   console.log(users);
   const { user: authUser } = useAuth();
   const [sort, setSort] = useState("name");
@@ -48,24 +48,20 @@ export const UsersCookingTimeContent = () => {
     );
   }
 
-  if (sortedUsers.length === 0) {
+  if (totalUsers === 0) {
     return (
-      <div>
-        <EmptyCard
-          title="0 chef disponible"
-          description="Les autres chefs n'ont pas ajouté de temps de cuisson."
-        />
-      </div>
+      <EmptyCard
+        title="0 chef disponible"
+        description="Les autres chefs n'ont pas ajouté de temps de cuisson."
+      />
     );
   }
 
   return (
     <div className="w-full flex flex-col gap-4">
       <UserFilters
-        title={
-          filteredUsers.length > 1 ? "chefs disponibles" : "chef disponible"
-        }
-        totalElement={filteredUsers.length}
+        title={totalUsers > 1 ? "chefs disponibles" : "chef disponible"}
+        totalElement={totalUsers}
         sort={sort}
         setSort={setSort}
       />

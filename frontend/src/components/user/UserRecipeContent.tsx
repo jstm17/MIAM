@@ -1,7 +1,6 @@
 import { useGetAllRecipesVisiblesByUserId } from "@/hooks/recipes/useGetAllRecipesVisiblesByUserId";
 import type { User } from "@/types/user.types";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
 import { RecipeCard } from "../recipe-card/RecipeCard";
 import { RecipesFilters } from "../recipe-card/RecipesFilters";
@@ -41,14 +40,12 @@ export const UserRecipeContent = ({ user }: UserRecipeContentProps) => {
     return <HomeContentSkeleton />;
   }
 
-  if (filteredRecipes.length === 0) {
+  if (totalRecipes === 0) {
     return (
-      <div>
-        <EmptyCard
-          title="0 recette disponible"
-          description={`${user.name} n'a pas ajouté de recette.`}
-        />
-      </div>
+      <EmptyCard
+        title="0 recette disponible"
+        description={`${user.name} n'a pas ajouté de recette.`}
+      />
     );
   }
 
@@ -64,9 +61,7 @@ export const UserRecipeContent = ({ user }: UserRecipeContentProps) => {
         setSelectedCategories={setSelectedCategories}
       />
       {filteredRecipes.map((recipe) => (
-        <Link to={`/recipe/${recipe.slug}`} key={recipe.slug}>
-          <RecipeCard recipe={recipe} />
-        </Link>
+        <RecipeCard recipe={recipe} />
       ))}
     </div>
   );

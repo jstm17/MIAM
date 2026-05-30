@@ -96,7 +96,7 @@ export function UserCarousel() {
   return (
     <div>
       <UserCarouselHeader />
-      <Carousel opts={{ align: "start" }} className="w-[110%] mt-2">
+      <Carousel opts={{ align: "start" }} className="w-[110%] mt-3">
         <CarouselContent>
           {sortedUsers.map((u) => (
             <CarouselItem key={u._id} className="basis-1/3">

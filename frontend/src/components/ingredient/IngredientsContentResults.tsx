@@ -84,7 +84,7 @@ export const IngredientsContentResults = ({
   } :`;
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4 pb-4">
       <RecipesFilters
         title={title}
         originalRecipes={resultRecipes}

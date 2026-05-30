@@ -39,7 +39,7 @@ export function CategoryCarousel() {
 
   if (isLoading) {
     return (
-      <>
+      <div>
         <CategoryCarouselHeader />
         <Carousel opts={{ align: "start" }} className="w-[110%]">
           <CarouselContent>
@@ -51,13 +51,13 @@ export function CategoryCarousel() {
                       <Skeleton className="h-full w-full" />
                     </AspectRatio>
                   </Card>
-                  <Skeleton className="h-4 w-2/3 m-auto mt-4" />
+                  <Skeleton className="h-4 w-2/3 m-auto mt-3" />
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
         </Carousel>
-      </>
+      </div>
     );
   }
 

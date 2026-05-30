@@ -1,7 +1,6 @@
 import { useGetAllCookingTimesVisiblesByUserId } from "@/hooks/cooking-times/useGetAllCookingTimesVisiblesByUserId";
 import type { User } from "@/types/user.types";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { CookingTimeCard } from "../cooking-time-card/CookingTimeCard";
 import { CookingTimesFilters } from "../cooking-time-card/CookingTimesFilters";
 import { HomeContentSkeleton } from "../home/skeletons/HomeContentSkeleton";
@@ -42,14 +41,12 @@ export const UserContentCookingTime = ({
     return <HomeContentSkeleton />;
   }
 
-  if (filteredCookingTimes.length === 0) {
+  if (totalCookingTimes === 0) {
     return (
-      <div>
-        <EmptyCard
-          title="0 temps de cuisson disponible"
-          description={`${user.name} n'a pas ajouté de temps de cuisson.`}
-        />
-      </div>
+      <EmptyCard
+        title="0 temps de cuisson disponible"
+        description={`${user.name} n'a pas ajouté de temps de cuisson.`}
+      />
     );
   }
 
@@ -69,9 +66,7 @@ export const UserContentCookingTime = ({
         setSelectedCategories={setSelectedCategories}
       />
       {filteredCookingTimes.map((cookingTime) => (
-        <Link to={`/cookingTime/${cookingTime.slug}`} key={cookingTime.slug}>
-          <CookingTimeCard cookingTime={cookingTime} />
-        </Link>
+        <CookingTimeCard cookingTime={cookingTime} />
       ))}
     </div>
   );

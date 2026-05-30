@@ -8,7 +8,7 @@ import { UserCard } from "./UserCard";
 import { UserFilters } from "./UserFilters";
 
 export const UsersRecipeContent = () => {
-  const { users, isLoading } = useGetAllUsersVisibles();
+  const { users, totalUsers, isLoading } = useGetAllUsersVisibles();
   const { user: authUser } = useAuth();
   const [sort, setSort] = useState("name");
 
@@ -47,24 +47,20 @@ export const UsersRecipeContent = () => {
     );
   }
 
-  if (sortedUsers.length === 0) {
+  if (totalUsers === 0) {
     return (
-      <div>
-        <EmptyCard
-          title="0 chef disponible"
-          description="Les autres chefs n'ont pas ajouté de recette."
-        />
-      </div>
+      <EmptyCard
+        title="0 chef disponible"
+        description="Les autres chefs n'ont pas ajouté de recette."
+      />
     );
   }
 
   return (
     <div className="w-full flex flex-col gap-4">
       <UserFilters
-        title={
-          filteredUsers.length > 1 ? "chefs disponibles" : "chef disponible"
-        }
-        totalElement={filteredUsers.length}
+        title={totalUsers > 1 ? "chefs disponibles" : "chef disponible"}
+        totalElement={totalUsers}
         sort={sort}
         setSort={setSort}
       />

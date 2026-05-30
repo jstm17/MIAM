@@ -54,14 +54,12 @@ export const CategoryCookingTimeContent = ({
     return <HomeContentSkeleton />;
   }
 
-  if (filteredCookingTimes.length === 0) {
+  if (totalCookingTimes === 0) {
     return (
-      <div>
-        <EmptyCard
-          title="0 temps de cuisson disponible"
-          description={`Personne n'a pas ajouté de temps de cuisson dans cette catégorie.`}
-        />
-      </div>
+      <EmptyCard
+        title="0 temps de cuisson disponible"
+        description={`Personne n'a pas ajouté de temps de cuisson dans cette catégorie.`}
+      />
     );
   }
 

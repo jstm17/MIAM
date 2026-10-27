@@ -8,11 +8,20 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { useAddCookingTime } from "@/hooks/cooking-times/useAddCookingTime";
 import { useAuth } from "@/hooks/useAuth";
+import { useKeyboardOpen } from "@/hooks/useKeyboardOpen";
+import { cn } from "@/lib/utils";
 import type { CookingTimeFormData } from "@/schemas/cookingTimeForm.schemas";
 import { cookingTimeSchema } from "@/schemas/cookingTimeForm.schemas";
 import type { ApiError } from "@/types/error.types";
+import {
+  clearCookingTimeFormDraft,
+  getCookingTimeDraftGeneration,
+  readCookingTimeFormDraft,
+  saveCookingTimeFormDraft,
+} from "@/utils/formDraft";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -23,6 +32,11 @@ export function CookingTimeAddContent() {
   const navigate = useNavigate();
   const { addCookingTime, isPending } = useAddCookingTime();
   const { isAdmin } = useAuth();
+  const [draft] = useState(() => readCookingTimeFormDraft());
+  const keepDraft = useRef(true);
+  const draftGeneration = useRef(getCookingTimeDraftGeneration());
+  const keyboardOpen = useKeyboardOpen();
+
   const {
     register,
     handleSubmit,
@@ -30,26 +44,30 @@ export function CookingTimeAddContent() {
     trigger,
     setValue,
     watch,
+    getValues,
     formState: { errors },
   } = useForm<CookingTimeFormData>({
     resolver: zodResolver(cookingTimeSchema),
-    defaultValues: {
+    defaultValues: draft?.values ?? {
+      name: "",
+      categories: [],
       visible: true,
-      // name: "Pain",
-      // timePrep: 30,
-      // personsNumber: 4,
-      // ingredients: [
-      //   { ingredient: "Poulet", quantity: "1" },
-      //   // { ingredient: "Sel", quantity: "1 pincée" },
-      //   // { ingredient: "Eau", quantity: "500 ml" },
-      //   // { ingredient: "Pâte", quantity: "500 ml" },
-      //   // { ingredient: "Pate", quantity: "500 ml" },
-      //   // { ingredient: "Pâte brisée", quantity: "500 ml" },
-      // ],
-      // instructions: [{ content: "1" }],
-      // categories: ["Italienne", "Rapide"],
     },
   });
+
+  useEffect(() => {
+    const stillCurrent = () =>
+      getCookingTimeDraftGeneration() === draftGeneration.current;
+    const subscription = watch(() => {
+      if (stillCurrent()) saveCookingTimeFormDraft(getValues());
+    });
+    return () => {
+      subscription.unsubscribe();
+      if (keepDraft.current && stillCurrent()) {
+        saveCookingTimeFormDraft(getValues());
+      }
+    };
+  }, [getValues, watch]);
 
   const isPublic = watch("visible");
 
@@ -60,6 +78,8 @@ export function CookingTimeAddContent() {
         degreeCook: formData.degreeCook ?? 0,
         timeCook: formData.timeCook ?? 0,
       });
+      keepDraft.current = false;
+      clearCookingTimeFormDraft();
       navigate("/cooking-time/" + res.data.slug);
       toast.success(res.message);
     } catch (err: unknown) {
@@ -77,15 +97,17 @@ export function CookingTimeAddContent() {
       onSubmit={handleSubmit(onSubmit, () => console.log(errors))}
       className="w-full max-w-lg"
       style={{
-        paddingBottom: `calc(${
-          isAdmin ? "16px" : "0"
-        } + env(safe-area-inset-bottom))`,
+        paddingBottom: `calc(${isAdmin ? "16px" : "0"} + env(safe-area-inset-bottom))}`,
       }}
     >
       <FieldGroup className="relative">
         <div className="pb-20 flex flex-col gap-8">
           <div className="flex flex-col gap-4 px-4">
-            <DeviceSectionForm setValue={setValue} errors={errors} />
+            <DeviceSectionForm
+              setValue={setValue}
+              errors={errors}
+              defaultValue={draft?.values.device}
+            />
             <TextInput
               capitalize
               label="Nom *"
@@ -165,6 +187,7 @@ export function CookingTimeAddContent() {
           <ImageSectionForm
             register={register}
             setValue={setValue}
+            existingImage={draft?.imagePreview}
             error={
               typeof errors.image?.message === "string"
                 ? errors.image.message
@@ -174,7 +197,10 @@ export function CookingTimeAddContent() {
         </div>
 
         <Field
-          className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4"
+          className={cn(
+            "fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4",
+            keyboardOpen && "hidden",
+          )}
           style={{
             bottom: `calc(${
               isAdmin ? "108px" : "58px"

@@ -12,7 +12,8 @@ import { useGetAllCookingTimesVisibles } from "@/hooks/cooking-times/useGetAllCo
 import { useGetAllRecipesVisibles } from "@/hooks/recipes/useGetAllRecipesVisibles";
 import { useSearchBar } from "@/hooks/search/useSearchBar";
 import { useGetAllUsersVisibles } from "@/hooks/users/useGetAllUsersVisibles";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { GroupInput } from "../shared/GroupInput";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
@@ -23,6 +24,7 @@ import { SearchRecipeItem } from "./SearchRecipeItem";
 import { SearchUserItem } from "./SearchUserItem";
 
 export const SearchBar = () => {
+  const navigate = useNavigate();
   const { recipes, isLoading: isLoadingRecipes } = useGetAllRecipesVisibles();
   const { cookingTimes, isLoading: isLoadingCookingTimes } =
     useGetAllCookingTimesVisibles();
@@ -66,10 +68,11 @@ export const SearchBar = () => {
 
   return (
     <div>
-      <div data-slot="command-input-wrapper" className="p-4 pb-0">
+      <div data-slot="command-input-wrapper" className="p-4 pb-0 flex gap-4">
         <GroupInput
           type="text"
           placeholder="Rechercher une recette, catégorie, chef..."
+          className="w-1/2!"
           onClick={() => setOpen(true)}
           inputGroupAddon={
             <SearchIcon className="size-4 shrink-0 text-foreground" />
@@ -77,6 +80,16 @@ export const SearchBar = () => {
           groupAddonAlign="inline-start"
           inputGroupAddonClassName="pl-2!"
         />
+        <div className="w-[38.88px]">
+          <Button
+            variant="ia"
+            size="icon-lg"
+            onClick={() => navigate("/chat")}
+            className=""
+          >
+            <Sparkles />
+          </Button>
+        </div>
       </div>
 
       <CommandDialog

@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useKeyboardOpen } from "@/hooks/useKeyboardOpen";
 import { cn } from "@/lib/utils";
 import { Home, Plus, Search, ShoppingBasket, UserRound } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -16,8 +17,16 @@ const navLinks = [
 export const BottomNav = () => {
   const { pathname } = useLocation();
   const { user, isLoading } = useAuth();
+
+  const keyboardOpen = useKeyboardOpen();
+
   return (
-    <nav className="w-full bg-background z-30 border-t px-7 pt-2 flex justify-between fixed bottom-0 items-center max-w-lg inset-x-0 mx-auto pb-[calc(env(safe-area-inset-bottom)+8px)]">
+    <nav
+      className={cn(
+        "w-full bg-background z-30 border-t px-7 pt-2 flex justify-between fixed bottom-0 items-center max-w-lg inset-x-0 mx-auto pb-[calc(env(safe-area-inset-bottom)+8px)]",
+        keyboardOpen && "hidden",
+      )}
+    >
       {navLinks.map(({ to, icon: Icon }) => (
         <Link key={to} to={to}>
           {Icon == Plus ? (

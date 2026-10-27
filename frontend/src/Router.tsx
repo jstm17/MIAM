@@ -9,6 +9,7 @@ import { AdminPage } from "./pages/AdminPage.js";
 import { AdminRecipesPage } from "./pages/AdminRecipesPage.js";
 import { AdminUsersPage } from "./pages/AdminUsersPage.js";
 import { CategoriesPage } from "./pages/CategoriesPage.js";
+import { ChatPage } from "./pages/ChatPage.js";
 import { CategoryPage } from "./pages/CategoryPage.js";
 import { CookingTimeDetailsPage } from "./pages/CookingTimeDetailsPage.js";
 import { CookingTimeUpdatePage } from "./pages/CookingTimeUpdatePage.js";
@@ -58,6 +59,14 @@ export const Router = () => {
           element={
             <ProtectedRoute>
               <RecipeAddPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <ChatPage />
             </ProtectedRoute>
           }
         />

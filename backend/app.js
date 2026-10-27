@@ -9,6 +9,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const cookingTimeRoutes = require("./routes/cookingTimeRoutes");
 const testUploadRoutes = require("./routes/testUpload");
 const adminRoutes = require("./routes/adminRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
 
@@ -37,5 +38,6 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/cooking-times", cookingTimeRoutes);
 app.use("/api/upload", testUploadRoutes);
 app.use("/api/admins", adminRoutes);
+app.use("/api/chat", chatRoutes);
 
 module.exports = app;

@@ -1,5 +1,7 @@
 // AuthContext.tsx
 import { useGetStoredToken } from "@/hooks/useGetStoredToken";
+import { clearChatHistory } from "@/utils/chatHistory";
+import { clearFormDrafts } from "@/utils/formDraft";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useRef, useState, type ReactNode } from "react";
 import { LoginUser, RegisterUser, getMe } from "../services/authService";
@@ -48,6 +50,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     onSuccess: async (data) => {
       const jwtToken = data.data?.token;
       if (!jwtToken) throw new Error("Token manquant");
+      clearChatHistory();
+      clearFormDrafts();
       updateToken(jwtToken, rememberMeRef.current);
       await queryClient.invalidateQueries({ queryKey: ["me"] });
     },
@@ -71,6 +75,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
+    clearChatHistory();
+    clearFormDrafts();
     updateToken(null);
     queryClient.removeQueries({ queryKey: ["me"] });
   };

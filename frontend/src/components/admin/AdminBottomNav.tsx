@@ -1,5 +1,13 @@
+import { useKeyboardOpen } from "@/hooks/useKeyboardOpen";
 import { cn } from "@/lib/utils";
-import { Carrot, Home, Tags, Timer, UsersRound, UtensilsCrossed } from "lucide-react";
+import {
+  Carrot,
+  Home,
+  Tags,
+  Timer,
+  UsersRound,
+  UtensilsCrossed,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
@@ -14,8 +22,15 @@ const navLinks = [
 export const AdminBottomNav = () => {
   const { pathname } = useLocation();
 
+  const keyboardOpen = useKeyboardOpen();
+
   return (
-    <nav className="w-full bg-background z-30 border-t px-7 py-3 flex justify-between fixed bottom-[calc(env(safe-area-inset-bottom)+58px)] items-center max-w-lg inset-x-0 mx-auto ">
+    <nav
+      className={cn(
+        "w-full bg-background z-30 border-t px-7 py-3 flex justify-between fixed bottom-[calc(env(safe-area-inset-bottom)+58px)] items-center max-w-lg inset-x-0 mx-auto ",
+        keyboardOpen && "hidden",
+      )}
+    >
       {navLinks.map(({ to, icon: Icon }) => (
         <Link key={to} to={to}>
           <Icon

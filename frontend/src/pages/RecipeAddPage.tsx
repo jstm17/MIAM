@@ -1,35 +1,78 @@
 import { CookingTimeAddContent } from "@/components/cooking-time-add/CookingTimeAddContent";
 import { RecipeAddContent } from "@/components/recipe-add/RecipeAddContent";
+import { RecipeAddHeader } from "@/components/recipe-add/RecipeAddHeader";
 import { Layout } from "@/components/shared/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  clearCookingTimeFormDraft,
+  clearRecipeFormDraft,
+  getFormDraftFlags,
+  readAddTab,
+  saveAddTab,
+  subscribeFormDrafts,
+  type AddTab,
+} from "@/utils/formDraft";
 import { Timer, UtensilsCrossed } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function RecipeAddPage() {
   const [searchParams] = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  const drafts = useSyncExternalStore(
+    subscribeFormDrafts,
+    getFormDraftFlags,
+    getFormDraftFlags,
+  );
 
-  const defaultTab =
-    searchParams.get("tab") === "cooking-time"
-      ? "add-cooking-time"
-      : "add-recipe";
+  const [tab, setTab] = useState<AddTab>(() => {
+    if (requestedTab === "cooking-time") return "add-cooking-time";
+    if (requestedTab === "recipe") return "add-recipe";
+    return readAddTab();
+  });
+  const [recipeFormKey, setRecipeFormKey] = useState(0);
+  const [cookingTimeFormKey, setCookingTimeFormKey] = useState(0);
 
-  const [tab, setTab] = useState(defaultTab);
+  useEffect(() => {
+    if (requestedTab === "cooking-time") setTab("add-cooking-time");
+    if (requestedTab === "recipe") setTab("add-recipe");
+  }, [requestedTab]);
+
+  useEffect(() => {
+    saveAddTab(tab);
+  }, [tab]);
 
   const title =
     tab === "add-recipe"
       ? "Ajouter une recette"
       : "Ajouter un temps de cuisson";
 
+  const canClear =
+    tab === "add-recipe" ? drafts.recipe : drafts.cookingTime;
+
+  const clearCurrentForm = () => {
+    if (tab === "add-recipe") {
+      clearRecipeFormDraft();
+      setRecipeFormKey((key) => key + 1);
+      return;
+    }
+    clearCookingTimeFormDraft();
+    setCookingTimeFormKey((key) => key + 1);
+  };
+
   return (
-    <Layout
-      title={title}
-      titleSize="lg"
-      className="items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+32px)]"
-    >
+    <Layout className="items-center pt-4 pb-[calc(env(safe-area-inset-bottom)+32px)]">
+      <RecipeAddHeader
+        title={title}
+        tab={tab}
+        canClear={canClear}
+        onClear={clearCurrentForm}
+      />
       <Tabs
         value={tab}
-        onValueChange={setTab}
+        onValueChange={(value) => {
+          if (value === "add-recipe" || value === "add-cooking-time") setTab(value);
+        }}
         className="relative mr-auto w-full flex flex-col mt-[20px]"
       >
         <TabsList className="w-full justify-start rounded-none border-b p-0 sticky top-0 z-40 bg-background">
@@ -47,10 +90,10 @@ export function RecipeAddPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="add-recipe" className="py-4">
-          <RecipeAddContent />
+          <RecipeAddContent key={recipeFormKey} />
         </TabsContent>
         <TabsContent value="add-cooking-time" className="py-4">
-          <CookingTimeAddContent />
+          <CookingTimeAddContent key={cookingTimeFormKey} />
         </TabsContent>
       </Tabs>
     </Layout>

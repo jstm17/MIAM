@@ -10,19 +10,50 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { useAddRecipe } from "@/hooks/recipes/useAddRecipe";
 import { useAuth } from "@/hooks/useAuth";
+import { useKeyboardOpen } from "@/hooks/useKeyboardOpen";
+import { cn } from "@/lib/utils";
 import type { RecipeFormData } from "@/schemas/recipeForm.schemas";
 import { recipeSchema } from "@/schemas/recipeForm.schemas";
 import type { ApiError } from "@/types/error.types";
+import {
+  clearRecipeFormDraft,
+  getRecipeDraftGeneration,
+  readRecipeFormDraft,
+  saveRecipeFormDraft,
+} from "@/utils/formDraft";
+import { readRecipeDraft } from "@/utils/recipeDraft";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function RecipeAddContent() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addRecipe, isPending } = useAddRecipe();
   const { isAdmin } = useAuth();
+  const [draft] = useState(() => readRecipeFormDraft());
+  const [chatDraft] = useState(() => readRecipeDraft(location.state));
+  const keyboardOpen = useKeyboardOpen();
+
+  const initial = draft?.values ?? {
+    name: chatDraft?.name ?? "",
+    timePrep: chatDraft?.timePrep,
+    timeCook: chatDraft?.timeCook,
+    personsNumber: chatDraft?.personsNumber,
+    categories: chatDraft?.categories ?? [],
+    ingredients: chatDraft?.ingredients?.length
+      ? chatDraft.ingredients
+      : [{ ingredient: "", quantity: "" }],
+    instructions: chatDraft?.instructions?.length
+      ? chatDraft.instructions
+      : [{ content: "" }],
+    visible: true,
+  };
+  const keepDraft = useRef(true);
+  const draftGeneration = useRef(getRecipeDraftGeneration());
   const {
     register,
     handleSubmit,
@@ -30,28 +61,25 @@ export function RecipeAddContent() {
     trigger,
     setValue,
     watch,
+    getValues,
     formState: { errors },
   } = useForm<RecipeFormData>({
     resolver: zodResolver(recipeSchema),
-    defaultValues: {
-      ingredients: [{ ingredient: "", quantity: "" }],
-      instructions: [{ content: "" }],
-      visible: true,
-      // name: "Pain",
-      // timePrep: 30,
-      // personsNumber: 4,
-      // ingredients: [
-      //   { ingredient: "Poulet", quantity: "1" },
-      //   // { ingredient: "Sel", quantity: "1 pincée" },
-      //   // { ingredient: "Eau", quantity: "500 ml" },
-      //   // { ingredient: "Pâte", quantity: "500 ml" },
-      //   // { ingredient: "Pate", quantity: "500 ml" },
-      //   // { ingredient: "Pâte brisée", quantity: "500 ml" },
-      // ],
-      // instructions: [{ content: "1" }],
-      // categories: ["Italienne", "Rapide"],
-    },
+    defaultValues: initial,
   });
+
+  useEffect(() => {
+    const stillCurrent = () =>
+      getRecipeDraftGeneration() === draftGeneration.current;
+    if (!draft && chatDraft && stillCurrent()) saveRecipeFormDraft(getValues());
+    const subscription = watch(() => {
+      if (stillCurrent()) saveRecipeFormDraft(getValues());
+    });
+    return () => {
+      subscription.unsubscribe();
+      if (keepDraft.current && stillCurrent()) saveRecipeFormDraft(getValues());
+    };
+  }, [chatDraft, draft, getValues, watch]);
 
   const isPublic = watch("visible");
 
@@ -69,6 +97,8 @@ export function RecipeAddContent() {
         timePrep: formData.timePrep ?? 0,
         timeCook: formData.timeCook ?? 0,
       });
+      keepDraft.current = false;
+      clearRecipeFormDraft();
       navigate("/recipe/" + res.data.slug);
       toast.success(res.message);
     } catch (err: unknown) {
@@ -186,6 +216,7 @@ export function RecipeAddContent() {
           <ImageSectionForm
             register={register}
             setValue={setValue}
+            existingImage={draft?.imagePreview}
             error={
               typeof errors.image?.message === "string"
                 ? errors.image.message
@@ -195,7 +226,10 @@ export function RecipeAddContent() {
         </div>
 
         <Field
-          className="fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4 z-10"
+          className={cn(
+            "fixed inset-x-0 px-4 py-2 bg-background border-t max-w-lg m-auto flex-row gap-4 z-10",
+            keyboardOpen && "hidden",
+          )}
           style={{
             bottom: `calc(${
               isAdmin ? "108px" : "58px"

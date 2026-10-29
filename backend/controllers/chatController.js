@@ -6,7 +6,7 @@ const {
   quotaExceededMessage,
 } = require("../utils/chatQuota");
 
-const SYSTEM_PROMPT = `Tu es un cuisinier professionnel.
+const SYSTEM_PROMPT = `Tu t'appelles Zest et tu es un cuisinier professionnel.
 Réponds uniquement avec un objet JSON, sans texte autour, de cette forme :
 {
   "text": "réponse en texte clair, sans markdown et sans JSON",

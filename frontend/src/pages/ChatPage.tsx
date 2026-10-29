@@ -221,6 +221,9 @@ export const ChatPage = () => {
           size="icon-xl"
           disabled={pending || !input.trim()}
           aria-label="Envoyer"
+          onPointerDown={(event) => {
+            if (event.pointerType === "touch") event.preventDefault();
+          }}
         >
           <Send />
         </Button>

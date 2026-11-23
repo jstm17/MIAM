@@ -139,6 +139,7 @@ export const IngredientsSectionForm = ({
                 id={field.id}
                 index={index}
                 total={fields.length}
+                control={control}
                 register={register}
                 setValue={setValue}
                 errors={errors}

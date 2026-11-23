@@ -7,6 +7,15 @@ type ShowSuggestionsProps = {
   children: React.ReactNode;
 };
 
+const normalizeSearch = (str: string) =>
+  str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/œ/g, "oe")
+    .replace(/æ/g, "ae")
+    .trim();
+
 export const ShowSuggestions = ({
   inputValue,
   items,
@@ -15,9 +24,20 @@ export const ShowSuggestions = ({
   setShow,
   children,
 }: ShowSuggestionsProps) => {
-  const filtered = items.filter((item) =>
-    item.name.toLowerCase().includes(inputValue.toLowerCase()),
-  );
+  const cleanInput = normalizeSearch(inputValue);
+
+  const filtered = items.filter((item) => {
+    if (!cleanInput) return true;
+    const cleanItem = normalizeSearch(item.name);
+    if (cleanItem.includes(cleanInput)) return true;
+
+    // Si l'utilisateur tape un pluriel (ex: "pommes") mais que l'élément est au singulier ("pomme")
+    if (cleanInput.endsWith("s") || cleanInput.endsWith("x")) {
+      const singularInput = cleanInput.slice(0, -1);
+      if (singularInput && cleanItem.includes(singularInput)) return true;
+    }
+    return false;
+  });
 
   return (
     <div className="relative w-full">

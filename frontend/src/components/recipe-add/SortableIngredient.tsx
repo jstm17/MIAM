@@ -1,12 +1,18 @@
 import { useGetAllIngredients } from "@/hooks/ingredients/useGetAllIngredients";
 import { cn } from "@/lib/utils";
 import type { RecipeFormData } from "@/schemas/recipeForm.schemas";
+import {
+  isQuantityPlural,
+  pluralizeFrenchIngredient,
+} from "@/utils/pluralizeFrench";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
 import { GripVertical, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
+  useWatch,
+  type Control,
   type FieldErrors,
   type UseFormRegister,
   type UseFormSetValue,
@@ -28,6 +34,7 @@ type Props = {
   setShowIndex: (val: number | null) => void;
   inputValues: Record<number, string>;
   setInputValues: React.Dispatch<React.SetStateAction<Record<number, string>>>;
+  control?: Control<RecipeFormData>;
 };
 
 export const SortableIngredient = ({
@@ -43,9 +50,25 @@ export const SortableIngredient = ({
   setShowIndex,
   inputValues,
   setInputValues,
+  control,
 }: Props) => {
   const [showDelete, setShowDelete] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+
+  const watchedQuantity = useWatch({
+    control,
+    name: `ingredients.${index}.quantity`,
+  });
+
+  const isPlural = isQuantityPlural(watchedQuantity);
+
+  const displayedIngredients = useMemo(() => {
+    if (!isPlural) return ingredients;
+    return ingredients.map((item) => ({
+      ...item,
+      name: pluralizeFrenchIngredient(item.name),
+    }));
+  }, [ingredients, isPlural]);
 
   const {
     attributes,
@@ -126,7 +149,7 @@ export const SortableIngredient = ({
 
             <ShowSuggestions
               inputValue={inputValues[index] ?? ""}
-              items={ingredients}
+              items={displayedIngredients}
               show={showIndex === index}
               setShow={(val) => setShowIndex(val ? index : null)}
               onSelect={(val) => {
@@ -149,7 +172,10 @@ export const SortableIngredient = ({
                   }));
                   setShowIndex(index);
                 }}
-                onFocus={() => setIsFocused(true)}
+                onFocus={() => {
+                  setIsFocused(true);
+                  setShowIndex(index);
+                }}
                 onBlur={() => {
                   setIsFocused(false);
                   setTimeout(() => setShowIndex(null), 150);

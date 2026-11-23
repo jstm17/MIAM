@@ -5,6 +5,32 @@ const {
 const { translateIngredientCached } = require("./translateIngredientCached");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const exceptions = {
+  ails: "ail",
+  choux: "chou",
+  couscous: "couscous",
+  épices: "épices",
+};
+
+const containsException = (name) =>
+  (name.match(/[\p{L}]+/gu) || []).some((word) =>
+    Object.prototype.hasOwnProperty.call(exceptions, word),
+  );
+
+const normalizeWord = (word, preservePlural = false) => {
+  if (word === "aux") return word;
+
+  const normalized = word.replace(/œ/g, "oe").replace(/æ/g, "ae");
+  if (preservePlural) return normalized;
+
+  return normalized
+    .replace(/(.+)eaux$/, "$1eau")
+    .replace(/(.+)aux$/, "$1al")
+    .replace(/(.{3,})s$/, "$1");
+};
+
+const isAfterPluralPreservingPreposition = (words, index) =>
+  index > 0 && (words[index - 1] === "de" || words[index - 1] === "à");
 
 const resolveIngredients = async (ingredients) => {
   const resolved = [];
@@ -34,17 +60,10 @@ const resolveIngredients = async (ingredients) => {
 const singularizeFrench = (word) => {
   if (!word) return "";
 
-  let name = word.trim();
+  const name = word.trim();
 
-  // 1. Exceptions courantes (Ingrédients)
-  const exceptions = {
-    'ails': 'ail',
-    'choux': 'chou',
-    'couscous': 'couscous',
-  };
-
- const singularizeWord = (w) => {
-    if (exceptions[w]) return exceptions[w];
+  const singularizeWord = (w) => {
+    if (Object.prototype.hasOwnProperty.call(exceptions, w)) return exceptions[w];
 
     if (w.endsWith('aux')) return w.slice(0, -3) + 'al';
 
@@ -55,8 +74,23 @@ const singularizeFrench = (word) => {
     return w;
   };
 
-  const words = word.trim().split(' ');
-  const singularized = words.map((w) => singularizeWord(w)).join(' ');
+  const words = name.split(/\s+/);
+  if (words.length > 1 && containsException(name)) {
+    const singularized = words
+      .map((w, index) =>
+        Object.prototype.hasOwnProperty.call(exceptions, w) || w === "aux"
+          ? w
+          : normalizeWord(w, isAfterPluralPreservingPreposition(words, index)),
+      )
+      .join(" ");
+    return singularized[0].toUpperCase() + singularized.slice(1);
+  }
+
+  const singularized = words
+    .map((w, index) =>
+      isAfterPluralPreservingPreposition(words, index) ? w : singularizeWord(w),
+    )
+    .join(" ");
 
   return singularized[0].toUpperCase() + singularized.slice(1);
 };
@@ -64,22 +98,22 @@ const singularizeFrench = (word) => {
 const normalizeIngredientName = (str) => {
   if (!str) return "";
 
-  return (
-    str
-      .toLowerCase()
-      .trim()
-      // 1. Retirer les parenthèses et leur contenu en premier
-      .replace(/\(.*?\)/g, '')
-      .trim()
-      // 2. Gérer les ligatures comme œ et æ
-      .replace(/œ/g, "oe")
-      .replace(/æ/g, "ae")
-      // 3. Gérer les pluriels en -aux (ex: poireaux -> poireau) AVANT le -s
-      .replace(/(.+)eaux$/, "$1eau")
-      .replace(/(.+)aux$/, "$1al")
-      // 4. Gérer le pluriel simple (retrait du 's' final)
-      .replace(/(.{3,})s$/, "$1")
-  );
+  const cleaned = str.toLowerCase().trim().replace(/\(.*?\)/g, "").trim();
+  const words = cleaned.split(/\s+/);
+  if (words.length > 1) {
+    return words
+      .map((word, index) =>
+        Object.prototype.hasOwnProperty.call(exceptions, word) || word === "aux"
+          ? word
+          : normalizeWord(word, isAfterPluralPreservingPreposition(words, index)),
+      )
+      .join(" ");
+  }
+  if (Object.prototype.hasOwnProperty.call(exceptions, cleaned)) {
+    return exceptions[cleaned];
+  }
+
+  return normalizeWord(cleaned);
 };
 
 const resolveIngredientsFast = async (ingredients) => {
